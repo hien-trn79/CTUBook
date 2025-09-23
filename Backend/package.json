@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --inspect src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hien-trn79/CTUBook.git"
+  },
+  "keywords": [
+    "backend",
+    "ctubookBackend"
+  ],
+  "author": "hintran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hien-trn79/CTUBook/issues"
+  },
+  "homepage": "https://github.com/hien-trn79/CTUBook#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
