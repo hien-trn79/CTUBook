@@ -1,9 +1,9 @@
 import express from "express";
+import bookRouter from "./app/routes/book.route.js";
 
 const app = express();
 
-app.get("/api", (req, res, next) => {
-  res.send("Hello Backend");
-});
+// /api/books/
+app.use("/api/books/", bookRouter);
 
 export default app;
