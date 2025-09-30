@@ -1,0 +1,65 @@
+/* -------CSS Footer ------ */
+.footer-main {
+    display: flex;
+    align-items: center;
+}
+
+.footer--left {
+    display: flex;
+    justify-content: center;
+    width: 30%;
+}
+
+.footer_logo-img {
+    width: 200px;
+    height: 120px;
+}
+
+.footer_logo .footer--title,
+.footer_logo .footer_content {
+    text-align: center;
+}
+
+.footer--title {
+    color: var(--text-primary);
+    font-size: var(--text-font-title2);
+    padding: 10px 0px;
+}
+
+.footer_content {
+    font-size: var(--text-font-sm);
+}
+
+.footer--right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.infor_read {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0px 16px;
+    min-width: 200px;
+}
+
+.infor_item {
+    padding: 4px 0px;
+}
+
+.infor_item:hover .infor--link {
+    color: #333;    
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.infor--link {
+    font-weight: 450;
+    color: #999;
+}
+
+.infor__icon {
+    margin-right: 12px;
+}

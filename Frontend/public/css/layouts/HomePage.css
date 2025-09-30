@@ -1,0 +1,103 @@
+/* -------CSS Chung-------- */
+
+.slider {
+    overflow: hidden;
+}
+
+.slider_list {
+    position: relative;
+    left: 0;
+    width: 300%;
+    animation: 20s slideMove infinite;
+}
+
+.slide {
+    position: relative;
+    width: 33.3333%;
+    float: left;
+}
+
+.slider-img {
+    height: 650px;
+    width: 100%;
+    object-fit: cover;
+}
+
+@keyframes slideMove {
+    0% {
+        left: 0;
+    }
+    10% {
+        left: 0;
+    }
+    33% {
+        left: -100%;
+    }
+    40% {
+        left: -100%;
+    }
+    66% {
+        left: -200%;
+    }
+    75% {
+        left: -200%;
+    }
+}
+
+/* ---------CSS section intro------- */
+.section_page {
+    position: relative;
+    padding: 48px 0px;
+    width: 100%;
+}
+
+.section_intro--img {
+    width: 50%;
+}
+
+.section_intro {
+    display: grid;
+    grid-template-areas: 'section_intro--left section_intro--right';
+    grid-template-columns: 1.5fr 2.5fr;
+    row-gap: 12px;
+    justify-content: center;
+}
+
+.section_intro--left {
+    grid-area: section_intro--left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.section_intro--right {
+    grid-area: section_intro--right;
+}
+
+.section--title {
+    font-size: var(--text-font-title1);
+    color: var(--text-primary);
+    letter-spacing: 0.9px;
+    padding: 16px 0px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.section_content {
+    font-size:  var(--text-font-sm);
+    color: var(--text-black);
+    padding: 8px 0px;
+    letter-spacing: 1px;
+    line-height: 2.2rem;
+    text-align: justify;
+}
+
+.section_final--line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 1px;
+    width: 50%;
+    background-color: var(--text-primary);
+    margin-top: 24px;
+}

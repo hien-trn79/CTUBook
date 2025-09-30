@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css');
 
 * {
     padding: 0;
@@ -17,7 +18,8 @@ html {
     --text-white: #fff;
     --text-black: #333;
     --text-font-normal: 1.5rem;
-    --text-font-title1: 2.2rem;
+    --text-font-sm: 1.4rem;
+    --text-font-title1: 2.6rem;
     --text-font-title2: 2rem;
     --text-bold-title: 700;
     --text-font-description: 1.3rem;
@@ -37,4 +39,9 @@ ul {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.page-main_content {
+    max-width: 95%;
+    margin: auto;
 }

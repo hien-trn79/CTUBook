@@ -1,0 +1,18 @@
+@media (max-width: 500px) {
+    .section_intro {
+        display: block ;
+    }
+
+    .slider {
+        display: none;
+    }
+
+    .footer-main {
+        display: block ;
+    }
+
+    .footer_logo {
+
+        width: 100%;
+    }
+}

@@ -1,5 +1,6 @@
 <script setup>
 import HeaderPage from '@/components/HeaderPage.vue';
+import Footer from '@/components/Footer.vue';
 
 </script>
 
@@ -14,7 +15,7 @@ import HeaderPage from '@/components/HeaderPage.vue';
         </main>
 
         <footer class="page-footer">
-
+            <Footer></Footer>
         </footer>
     </div>
 </template>
@@ -47,16 +48,14 @@ import HeaderPage from '@/components/HeaderPage.vue';
 }
 
 .page-main {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     grid-area: page-main;
     margin: auto;
-    width: 100%;
 }
 
 .page-footer {
     grid-area: page-footer;
+    background-color: #eaf3fa;
+    height: fit-content;
+    padding: 12px;
 }
 </style>
