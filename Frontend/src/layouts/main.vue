@@ -4,13 +4,13 @@ import HeaderPage from '@/components/HeaderPage.vue';
 </script>
 
 <template>
+    <header class="page-header">
+        <HeaderPage></HeaderPage>
+    </header>
     <div class="page">
-        <header class="page-header">
-            <HeaderPage></HeaderPage>
-        </header>
 
-        <main class="page-main">
-
+        <main class="page-main container">
+            <router-view></router-view>
         </main>
 
         <footer class="page-footer">
@@ -24,10 +24,11 @@ import HeaderPage from '@/components/HeaderPage.vue';
 .page {
     position: relative;
     display: grid;
-    grid-template-areas: 'page-header' 'page-main' 'page-footer';
-    grid-template-rows: 120px auto 100px;
+    grid-template-areas: 'page-main' 'page-footer';
+    grid-template-rows: auto 100px;
     row-gap: 8px;
     min-height: 100vh;
+    margin-top: 105px;
 }
 
 .page-header {
@@ -46,8 +47,13 @@ import HeaderPage from '@/components/HeaderPage.vue';
 }
 
 .page-main {
-    margin-top: 80px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     grid-area: page-main;
+    margin: auto;
+    width: 100%;
 }
 
 .page-footer {
