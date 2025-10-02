@@ -1,6 +1,7 @@
 import express from "express";
 import bookRouter from "./app/routes/book.route.js";
 import userRouter from "./app/routes/user.route.js";
+import ApiError from "./app/api-error.js";
 
 const app = express();
 

@@ -1,3 +1,7 @@
+import ApiError from "../api-error.js";
+import BookService from "../services/book.service.js";
+import MongoDB from "../utils/mongodb.util";
+
 class book {
   // [GET] /api/books/
   findAll(req, res, next) {
@@ -7,7 +11,15 @@ class book {
   // [POST] /api/books/
   async create(req, res, next) {
     if (!req.body?.name) {
-      return new ApiError();
+      return new ApiError(400, "Name can not be empty");
+    }
+
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const document = await bookService.create(req.body);
+      return res.send(document);
+    } catch (error) {
+      return next(new ApiError(500, "Có lỗi trong hàm quá trình tạo sách mới"));
     }
   }
 

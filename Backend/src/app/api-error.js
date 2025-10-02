@@ -5,3 +5,5 @@ class ApiError extends Error {
     this.message = message;
   }
 }
+
+export default ApiError;
