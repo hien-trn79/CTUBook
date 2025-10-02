@@ -5,8 +5,10 @@ class book {
   }
 
   // [POST] /api/books/
-  create(req, res, next) {
-    res.send("handler create");
+  async create(req, res, next) {
+    if (!req.body?.name) {
+      return new ApiError();
+    }
   }
 
   // [DELETE] /api/books/
