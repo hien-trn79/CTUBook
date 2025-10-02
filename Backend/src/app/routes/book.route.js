@@ -13,4 +13,7 @@ router.get("/:id", book.findOne);
 router.put("/:id", book.update);
 router.delete("/:id", book.delete);
 
+// /api/books/favorite
+router.get("/favorite", book.findAllFavorite);
+
 export default router;
