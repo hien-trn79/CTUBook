@@ -70,7 +70,7 @@ class BookService {
   }
 
   async findFavorite() {
-    return await this.Book.find({ YEUTHICH: true });
+    return await this.Book.find({ YEUTHICH: true }).toArray();
   }
 
   async deleteAll() {

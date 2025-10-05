@@ -5,5 +5,5 @@ export default {
 </script>
 
 <template>
-    <h1>This is book list page</h1>
+    <h1>This is sign up page</h1>
 </template>

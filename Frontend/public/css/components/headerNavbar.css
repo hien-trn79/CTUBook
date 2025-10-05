@@ -18,14 +18,14 @@
 .navbar--link {
     display: block;
     font-size: 1.8rem;
-    color: rgb(168, 204, 248);
+    color: rgb(120, 180, 253);
     text-transform: uppercase;
-    text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
+    text-shadow: 3px 3px 3px rgba(0, 51, 105, 0.222);
     font-weight: var(--text-bold-title);
 }
 
 .navbar_item:hover .navbar--link {
-    color: var(--text-white);
+    color: var(--text-primary);
 }
 
 .navbar_item:hover {
@@ -33,9 +33,9 @@
 }
 
 .navbar_item.active {
-    border-bottom: 1px solid var(--text-white);
+    border-bottom: 1px solid var(--text-primary);
 }
 
 .navbar_item.active .navbar--link {
-    color: var(--text-white);
+    color: var(--text-primary);
 }

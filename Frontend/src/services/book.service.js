@@ -34,6 +34,11 @@ class BookService {
   async delete(id) {
     return (await this.api.delete(`/${id}`)).data;
   }
+
+  // [GET] http://localhost:8080/api/books/favorite
+  async getAllFavorite() {
+    return (await this.api.get("/favorite")).data;
+  }
 }
 
 export default new BookService();

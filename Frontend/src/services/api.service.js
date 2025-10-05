@@ -8,5 +8,5 @@ const commonConfig = {
 };
 
 export default (baseURL) => {
-  return axios.create(baseURL, ...commonConfig);
+  return axios.create({ baseURL, ...commonConfig });
 };

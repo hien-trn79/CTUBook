@@ -8,12 +8,12 @@ router.get("/", book.findAll);
 router.post("/", book.create);
 router.delete("/", book.deleteAll);
 
+// /api/books/favorite
+router.get("/favorite", book.findAllFavorite);
+
 // /api/books/:id
 router.get("/:id", book.findOne);
 router.put("/:id", book.update);
 router.delete("/:id", book.delete);
-
-// /api/books/favorite
-router.get("/favorite", book.findAllFavorite);
 
 export default router;

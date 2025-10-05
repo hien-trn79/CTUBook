@@ -1,7 +1,31 @@
 <script>
+import BookShow from '@/components/BookShowList.vue';
+import bookService from '@/services/book.service';
 export default {
+    components: {
+        BookShow,
+    },
+    data() {
+        return {
+            books: null,
+            activeIndex: -1,
+        }
+    },
 
+    methods: {
+        async getBookList() {
+            try {
+                this.books = await bookService.getAllFavorite();
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    },
+    mounted() {
+        this.getBookList();
+    }
 }
+
 </script>
 
 <template>
@@ -49,6 +73,14 @@ export default {
                     dùng đã mượn hoặc mua, đảm bảo quyền lợi đọc và riêng tư.</p>
             </div>
             <div class="section_final--line"></div>
+        </section>
+
+        <section class="section-page">
+            <div class="section_page-header">
+                <h2 class="section--title">Sách được yêu thích nhất</h2>
+                <i class="fa-solid fa-book-open section--icon"></i>
+            </div>
+            <BookShow :books="this.books"></BookShow>
         </section>
     </article>
 </template>

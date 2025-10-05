@@ -1,0 +1,21 @@
+.form-control {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    outline: none;
+    border: none;
+    box-shadow: 0px 0px 3px rgb(0, 128, 255);
+}
+
+.form-checkbox {
+    font-size: var(--text-font-normal);
+    margin-right: 8px;
+}
+
+.form-label {
+    font-size: var(--text-font-normal);
+    color: var(--text-black);
+}

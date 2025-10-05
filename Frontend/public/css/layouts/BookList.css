@@ -1,0 +1,35 @@
+.section_content {
+    margin-left: 24px;
+    font-weight: 500;
+}
+
+.bookList {
+    display: grid;
+    grid-template-areas: 'bookList-aside bookList-article';;
+    grid-template-columns: 1fr 5.5fr;;
+    column-gap: 12px;
+    width: 100%;
+}
+
+.bookList-aside_navbar {
+    grid-area: bookList-aside;
+    background-color: #e6f4ff84;
+    padding: 12px;
+    border-radius: 10px;
+    height: fit-content;
+}
+
+.bookList-article_main {
+    grid-area: bookList-article;
+}
+
+.book_list {
+    column-gap: 8px;
+    justify-content: space-evenly;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 200px));;
+
+}
+
+.book_item {
+    width: 180px;
+}

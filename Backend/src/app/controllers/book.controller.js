@@ -44,6 +44,23 @@ class book {
     }
   }
 
+  // [GET] /api/books/favorite
+  async findAllFavorite(req, res, next) {
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const document = await bookService.findFavorite();
+      return res.send(document);
+    } catch (error) {
+      console.log(error);
+      return next(
+        new ApiError(
+          500,
+          error.message || "Có lỗi trong quá trình tìm sách được yêu thích"
+        )
+      );
+    }
+  }
+
   // [GET] /api/books/:id
   async findOne(req, res, next) {
     try {
@@ -101,19 +118,6 @@ class book {
       });
     } catch (error) {
       return next(new ApiError(500, "Có lỗi trong quá trình xóa sách"));
-    }
-  }
-
-  // [GET] /api/books/favorite
-  async findAllFavorite(req, res, next) {
-    try {
-      const bookService = new BookService(MongoDB.client);
-      const document = await bookService.findFavorite();
-      return res.send(document);
-    } catch (error) {
-      return next(
-        new ApiError(500, "Có lỗi trong quá trình tìm sách được yêu thích")
-      );
     }
   }
 }

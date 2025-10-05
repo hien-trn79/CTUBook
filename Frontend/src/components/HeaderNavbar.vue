@@ -1,33 +1,52 @@
-<script setup>
-import { reactive } from 'vue';
+<script>
+export default {
+    data() {
+        return {
+            navbar: [
+                {
+                    name: 'Trang chủ',
+                    url: 'home',
+                },
+                {
+                    name: 'Danh sách sách',
+                    url: 'books'
+                },
+                {
+                    name: 'Sự kiện',
+                    url: 'event'
+                },
+                {
+                    name: 'Giỏ hàng',
+                    url: 'cart'
+                },
+                {
+                    name: 'Đăng nhập',
+                    url: 'signIn'
+                }
+            ],
+            activeIndex: 0
+        }
+    },
 
-
-const navbar = reactive([
-    {
-        name: 'Trang chủ',
-        url: 'home',
+    methods: {
+        updateIndex(index) {
+            this.activeIndex = index;
+            console.log(this.activeIndex)
+        }
     },
-    {
-        name: 'Danh sách sách',
-        url: 'books'
-    },
-    {
-        name: 'Sự kiện',
-        url: 'event'
-    },
-    {
-        name: 'Giỏ hàng',
-        url: 'cart'
+    created() {
+        console.log(this.$route.path)
     }
-])
-
+}
 </script>
 
 <template>
     <nav class="header-navbar">
         <ul class="navbar_list">
-            <li class="navbar_item" v-for="(navbarItem, index) in navbar" :key="index">
-                <router-link :to="`/${navbarItem.url}`" class="navbar--link">{{ navbarItem.name }}</router-link>
+            <li class="navbar_item" v-for="(navbarItem, index) in navbar" :key="index"
+                :class="{ active: activeIndex === index }">
+                <router-link :to="`/${navbarItem.url}`" class="navbar--link" @click="updateIndex(index)">{{
+                    navbarItem.name }}</router-link>
             </li>
         </ul>
     </nav>
