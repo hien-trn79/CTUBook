@@ -1,5 +1,5 @@
 <script>
-import BookShowList from '@/components/BookShowList.vue';
+import BookShowList from '@/components/BookShowList.user.vue';
 import bookService from '@/services/book.service.js';
 import NavbarBookList from '@/components/NavbarBookList.vue';
 export default {
@@ -9,34 +9,44 @@ export default {
     },
     data() {
         return {
-            books: { type: Array, default: [] },
+            books: [],
             bookfilters: [
                 {
                     name: 'Giáo trình',
+                    check: false
                 },
                 {
                     name: 'Công nghệ & kỹ thuật',
+                    check: false
                 },
                 {
                     name: 'Ngôn ngữ',
+                    check: false
                 },
                 {
                     name: 'Thể thao & sức khỏe',
+                    check: false
                 },
                 {
                     name: 'Kỹ năng & văn hóa',
+                    check: false
                 },
                 {
                     name: 'Toán học',
+                    check: false
                 },
                 {
                     name: 'Địa lý',
+                    check: false
                 },
                 {
                     name: 'Thực phẩm & chế biến',
+                    check: false
                 }
             ],
-            booksChoice: []
+            booksChoice: [],
+            filter: {},
+            filterSubmit: []
         }
     },
 
@@ -48,7 +58,22 @@ export default {
                 console.log('Co loi trong qua trinh lay danh sach sach!')
                 console.log(error);
             }
+        },
+        // xu ly nhung lua chon
+        getChoice() {
+            const choice = this.bookfilters.filter(item => {
+                return item.check === true
+            })
+            this.booksChoice.push(choice.map(item => item.name))
+        },
+        handlerSubmit(bookFilter) {
+            this.booksChoice = bookFilter.map(item => item.name)
         }
+
+    },
+
+    computed() {
+        this.getChoice()
     },
 
     mounted() {
@@ -62,7 +87,7 @@ export default {
     <h1 class="section--title">Tất cả các sách</h1>
     <div class="bookList">
         <aside class="bookList-aside_navbar">
-            <NavbarBookList :book-filters="bookfilters" />
+            <NavbarBookList :book-filters="bookfilters" @filterSubmit="handlerSubmit" />
         </aside>
 
         <article class="bookList-article_main">

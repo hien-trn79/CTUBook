@@ -1,5 +1,5 @@
 <script>
-import BookShow from '@/components/BookShowList.vue';
+import BookShow from '@/components/BookShowList.user.vue';
 import bookService from '@/services/book.service';
 export default {
     components: {

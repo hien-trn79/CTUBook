@@ -1,9 +1,9 @@
 <script setup>
-import mainPage from './layouts/main.vue'
+import mainPage from './layouts/UserLayouts.vue'
 </script>
 
 <template>
-  <mainPage></mainPage>
+  <router-view></router-view>
 </template>
 
 <style></style>

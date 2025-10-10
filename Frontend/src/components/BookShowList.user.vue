@@ -16,12 +16,12 @@ export default {
 
 <template>
     <div class="book_list">
-        <div class="book_item" v-for="(bookItem, index) in books" :key="index">
+        <div class="book_item" v-for="(bookItem, index) in this.books" :key="index">
             <img src="/images/books/bia_sach_DienToanDamMay.png" alt="" class="book_item-img">
             <div class="book_item-main">
                 <h3 class="book_name">{{ bookItem.TENSACH }}</h3>
                 <div class="book_price"><span class="book_price--number">{{ bookItem.DONGIA }}</span> đ</div>
-                <button class="btn btn_book--detail">Xem chi tiết</button>
+                <router-link class="btn btn_book--detail" :to="`books/${bookItem._id}`">Xem chi tiết</router-link>
             </div>
         </div>
     </div>
@@ -92,6 +92,8 @@ export default {
     border-radius: 7px;
     border: 1px solid rgb(84, 152, 255);
     min-width: 150px;
+    margin-top: 12px;
+    font-size: 1.3rem;
     margin-top: 12px;
 }
 

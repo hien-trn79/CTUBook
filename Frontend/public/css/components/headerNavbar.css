@@ -22,6 +22,7 @@
     text-transform: uppercase;
     text-shadow: 3px 3px 3px rgba(0, 51, 105, 0.222);
     font-weight: var(--text-bold-title);
+    padding: 4px 0px;
 }
 
 .navbar_item:hover .navbar--link {
@@ -32,10 +33,7 @@
     cursor: pointer;
 }
 
-.navbar_item.active {
-    border-bottom: 1px solid var(--text-primary);
-}
-
-.navbar_item.active .navbar--link {
+.navbar--link.active {
+    border-bottom: 2px solid var(--text-primary);
     color: var(--text-primary);
 }

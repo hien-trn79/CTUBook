@@ -10,6 +10,7 @@ html {
     font-size: 62.5%;
     box-sizing: border-box;
     font-family: "Noto Sans", sans-serif;
+    background-color: #e7e7e744;
 }
 
 :root {
@@ -45,4 +46,40 @@ ul {
 .page-main_content {
     max-width: 95%;
     margin: auto;
+}
+
+.btn {
+    border: none;
+    background-color: #f1f1f1;
+    padding: 6px 16px;
+    border-radius: 7px;
+    font-size: var(--text-font-sm);
+}
+
+.btn:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.btn:active {
+    transform: scale(0.99);
+}
+
+/* ---------CSS FORM ------ */
+.form-control {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+}
+
+.form-control:focus {
+    outline: none;
+    box-shadow: 0px 0px 2px rgb(3, 192, 255);
+}
+
+.form-label {
+    display: block;
+    font-size: var(--text-font-sm);
+    font-weight: bold;
+    padding: 6px 12px;
 }

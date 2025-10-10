@@ -30,13 +30,9 @@ export default {
 
     methods: {
         updateIndex(index) {
-            this.activeIndex = index;
-            console.log(this.activeIndex)
+            this.index = index
         }
     },
-    created() {
-        console.log(this.$route.path)
-    }
 }
 </script>
 
