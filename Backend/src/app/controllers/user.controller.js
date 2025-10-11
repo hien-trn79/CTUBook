@@ -1,31 +1,114 @@
-class user {
+import ApiError from "../api-error.js";
+import UserService from "../services/user.service..js";
+import MongoDB from "../utils/mongodb.util.js";
+
+class UserController {
   // [GET] /api/users/
-  async findAll(req, res, next) {}
+  async findAll(req, res, next) {
+    let document = [];
+    try {
+      const userService = new UserService(MongoDB.client);
+      document = await userService.find({});
+      res.send(document);
+    } catch (error) {
+      console.log("LỖI findAll");
+      console.log(error);
+      return next(new ApiError(500, "Không tìm thấy người dùng"));
+    }
+  }
 
   // [POST] /api/users/
-  create(req, res, next) {
-    res.send("Handler create user");
+  async create(req, res, next) {
+    try {
+      const userService = new UserService(MongoDB.client);
+      const result = await userService.create(req.body);
+      return res.send({
+        message: "Tạo người dùng thành công",
+      });
+    } catch (error) {
+      console.log("LỖI tạo người dùng create.controller");
+      console.log(error);
+      return next(new ApiError(500, "Có lỗi khi tạo người dùng"));
+    }
   }
 
   // [DELETE] /api/users/
-  deleteAll(req, res, next) {
-    res.send("Handler delete all user");
+  async deleteAll(req, res, next) {
+    try {
+      const userService = new UserService(MongoDB.client);
+      const result = await userService.deleteAll({});
+      return res.send({
+        message: `Đã xóa thành công ${result} users`,
+      });
+    } catch (error) {
+      console.log("LỖI xóa tất cả users");
+      console.log(error);
+      return next(new ApiError(500, "Không thể xóa tất cả users"));
+    }
   }
 
   // [GET] /api/users/:id
-  findOne(req, res, next) {
-    res.send("Handler findOne");
+  async findOne(req, res, next) {
+    try {
+      const userService = new UserService(MongoDB.client);
+      let document = await userService.findById(req.params.id);
+
+      if (!document) {
+        return next(404, `Không tìm thấy user với id=${req.params.id}`);
+      }
+      return res.send(document);
+    } catch (error) {
+      console.log("LỖI TÌM USER" + error);
+      return next(
+        new ApiError(500, `Không tìm thấy user với id=${req.params.id}`)
+      );
+    }
   }
 
   // [PUT] /api/users/:id
-  update(req, res, next) {
-    res.send("Handler update user");
+  async update(req, res, next) {
+    if (Object.keys(req.body).length == 0) {
+      return next(new ApiError(500, "Dữ liệu cập nhật không được để trống"));
+    }
+    try {
+      const userService = new UserService(MongoDB.client);
+      const document = await userService.update(req.params.id, req.body);
+      if (!document) {
+        return next(
+          new ApiError(404, `Không thể tìm thấy user id=${req.params.id}`)
+        );
+      }
+      return res.send({
+        message: "Cập nhật user thành công",
+      });
+    } catch (error) {
+      console.log("LỖI Cập nhật user");
+      console.log(error);
+      return next(new ApiError(500, "Có lỗi trong quá trình cập nhật user"));
+    }
   }
 
   // [DELETE] /api/users/:id
-  delete(req, res, next) {
-    res.send("Handler delete user by ID");
+  async delete(req, res, next) {
+    try {
+      const userService = new UserService(MongoDB.client);
+      const result = await userService.delete(req.params.id);
+      if (!result) {
+        return next(
+          new ApiError(500, `Không thể xóa user với id=${req.params.id}`)
+        );
+      }
+      return res.send({
+        message: "Xóa thành công",
+      });
+    } catch (error) {
+      console.log("Lỗi xóa 1 user");
+      console.log(error);
+      return next(
+        new ApiError(500, `Không thể xóa user với id=${req.params.id}`)
+      );
+    }
   }
 }
 
-export default new user();
+export default new UserController();

@@ -18,16 +18,15 @@ class book {
 
   // [POST] /api/books/
   async create(req, res, next) {
-    if (!req.body?.name) {
-      return new ApiError(400, "Name can not be empty");
-    }
-
     try {
       const bookService = new BookService(MongoDB.client);
-      const document = await bookService.create(req.body);
-      return res.send(document);
+      const result = await bookService.create(req.body);
+      return res.send({
+        message: "Thêm mới sách thành công",
+      });
     } catch (error) {
-      return next(new ApiError(500, "Có lỗi trong hàm quá trình tạo sách mới"));
+      console.log("LỖI TẠO SÁCH");
+      return next(new ApiError(500, "Có lỗi trong quá trình tạo sách"));
     }
   }
 
@@ -68,13 +67,13 @@ class book {
       const document = await bookService.findById(req.params.id);
       if (!document) {
         return next(
-          new ApiError(404, `Khong tim thay sach voi id=${req.params.id}`)
+          new ApiError(404, `Không tìm thấy sách với id=${req.params.id}`)
         );
       }
       return res.send(document);
     } catch (error) {
       return next(
-        new ApiError(404, `Khong tim thay sach voi id=${req.params.id}`)
+        new ApiError(404, `Không tìm thấy sách với id=${req.params.id}`)
       );
     }
   }
@@ -83,22 +82,20 @@ class book {
   async update(req, res, next) {
     if (Object.keys(req.body).length === 0) {
       // du lieu cap nhat la rong
-      return next(
-        new ApiError(400, "Du lieu cap nhat sach khong duoc de rong")
-      );
+      return next(new ApiError(400, "Dữ liệu cập nhật không được để trống !!"));
     }
     try {
       const bookService = new BookService(MongoDB.client);
       const document = await bookService.update(req.params.id, req.body);
       if (!document) {
-        return next(new ApiError(404, "Khong tim thay sach de cap nhat"));
+        return next(new ApiError(404, "Không tìm thấy sách để cập nhật"));
       }
       return res.send(document);
     } catch (error) {
       return next(
         new ApiError(
           500,
-          `Co loi trong qua trinh cap nhat sach voi id=${req.params.id}`
+          `Có lỗi trong quá trình cập nhật sách với id=${req.params.id}`
         )
       );
     }
