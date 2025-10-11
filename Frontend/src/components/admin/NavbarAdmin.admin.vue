@@ -6,22 +6,22 @@ export default {
             navbarVer: [
                 {
                     name: 'Quản lý sách',
-                    url: 'book-manage',
+                    url: 'books',
                     icon: "fa-solid fa-book"
                 },
                 {
                     name: 'Quản lý tồn kho',
-                    url: 'book-retain',
+                    url: 'warehouse',
                     icon: 'fa-solid fa-warehouse'
                 },
                 {
                     name: 'Quản lý mượn - trả',
-                    url: 'book-borrow',
+                    url: 'borrow',
                     icon: "fa-solid fa-book-open-reader"
                 },
                 {
                     name: 'Quản lý tài khoản',
-                    url: 'account-manage',
+                    url: 'account',
                     icon: 'fa-solid fa-users'
                 }
             ]
@@ -41,7 +41,7 @@ export default {
         <ul class="navbar_vertical--list">
             <li class="navbar_vertical--item" v-for="(navbarItem, index) in navbarVer" :key="index"
                 @click="handlerNavbar(navbarItem)">
-                <router-link class="navbar_vertical--link" to="#">
+                <router-link class="navbar_vertical--link" :to="navbarItem.url">
                     <i :class="[navbarItem.icon, 'navbar_vertical--icon']"></i>
                     {{ navbarItem.name }}
                 </router-link>

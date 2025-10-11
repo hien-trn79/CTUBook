@@ -15,7 +15,7 @@ html {
 
 :root {
     --text-primary: #1269b5;
-    --text-no-active: #c1e0fcfb;
+    --text-no-active: #c0e0fcfb;
     --text-white: #fff;
     --text-black: #333;
     --text-font-normal: 1.5rem;
@@ -83,3 +83,9 @@ ul {
     font-weight: bold;
     padding: 6px 12px;
 }
+
+/* ----CSS text color --- */
+.text-black {color: var(--text-black); font-weight: 500;}
+.text-orange{color: orange;font-weight: 500}
+.text-green{color: green;font-weight: 500}
+.text-blue {color: blue;font-weight: 500}

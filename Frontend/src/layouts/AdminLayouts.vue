@@ -37,7 +37,7 @@ export default {
                 <NavbarAdmin @navbarActive="handlerActive" />
             </aside>
             <article class="page_admin-article">
-                <BookShowListAdmin :choice-side-bar="this.navbarActive" />
+                <router-view></router-view>
             </article>
         </main>
 

@@ -1,8 +1,6 @@
 class user {
   // [GET] /api/users/
-  findAll(req, res, next) {
-    res.send("Handler findAll");
-  }
+  async findAll(req, res, next) {}
 
   // [POST] /api/users/
   create(req, res, next) {

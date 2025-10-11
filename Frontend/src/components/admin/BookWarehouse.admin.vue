@@ -9,7 +9,7 @@ export default {
 
     data() {
         return {
-            choiceSideBar: 'Quản lý sách',
+            choiceSideBar: 'Quản lý tồn kho',
             books: {}
         }
     },

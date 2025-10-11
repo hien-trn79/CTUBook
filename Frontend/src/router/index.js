@@ -12,54 +12,9 @@ import NotFound from "@/components/NotFound.vue";
 // admin layouts
 import BookShowListAdmin from "@/components/admin/BookShowList.admin.vue";
 import AdminLayouts from "@/layouts/AdminLayouts.vue";
-
-// const routes = [
-//   {
-//     path: "/",
-//     name: "home",
-//     component: HomePage,
-//   },
-//   {
-//     path: "/home",
-//     name: "homepage",
-//     component: HomePage,
-//   },
-//   {
-//     path: "/event",
-//     name: "event",
-//     component: EventPage,
-//   },
-//   {
-//     path: "/user",
-//     children: [
-//       {
-//         path: "books",
-//         component: User_BookList,
-//       },
-//       {
-//         path: "books/:id",
-//         component: UserBookDetail,
-//       },
-//     ],
-//   },
-//   {
-//     path: "/admin",
-//     components: {
-//       sideBar: BookListAdmin,
-//     },
-//   },
-//   {
-//     path: "/cart",
-//     name: "cart",
-//     component: CartPage,
-//   },
-//   {
-//     path: "/signIn",
-//     name: "signIn",
-//     component: SignInpage,
-//   },
-
-// ];
+import BookWarehouseAdmin from "@/components/admin/BookWarehouse.admin.vue";
+import BookBorrowAdmin from "@/components/admin/BookBorrow.admin.vue";
+import BookAccountAdmin from "@/components/admin/BookAccount.admin.vue";
 
 const routes = [
   // User Routes
@@ -105,7 +60,23 @@ const routes = [
     children: [
       {
         path: "",
-        component: AdminLayouts,
+        component: BookShowListAdmin,
+      },
+      {
+        path: "books",
+        component: BookShowListAdmin,
+      },
+      {
+        path: "warehouse",
+        component: BookWarehouseAdmin,
+      },
+      {
+        path: "borrow",
+        component: BookBorrowAdmin,
+      },
+      {
+        path: "account",
+        component: BookAccountAdmin,
       },
     ],
   },
