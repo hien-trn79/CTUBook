@@ -48,7 +48,6 @@ class BookService {
 
   async create(data) {
     const book = this.extractBookData(data);
-    console.log(book);
     const result = await this.Book.insertOne(book);
     return result.value;
   }
