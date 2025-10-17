@@ -16,7 +16,7 @@ export default {
         <div class="detail_info-main">
             <div class="detail_content">
                 <label for="detail_value" class="detail-label">Nhà xuất bản</label>
-                <p class="detail_value">{{ book.MANXB }}</p>
+                <p class="detail_value">{{ book.TENNXB }}</p>
             </div>
             <div class="detail_content">
                 <label for="detail_value" class="detail-label">Tác giả</label>

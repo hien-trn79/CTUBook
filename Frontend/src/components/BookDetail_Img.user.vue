@@ -3,19 +3,12 @@ export default {
     props: {
         book: { type: Object }
     },
-
-    data() {
-        return {
-
-        }
-    }
-
 }
 </script>
 
 <template>
     <div class="img_area">
-        <img src="/images/books/bia_sach_DienToanDamMay.png" alt="" class="detail-img">
+        <img :src="book.IMAGE" alt="" class="detail-img">
     </div>
 </template>
 <style scoped>

@@ -27,11 +27,18 @@ export default {
                     scale: [0.95, 1]
                 },
                 {
-                    duration: 0.8,           // Tăng từ 0.5s lên 0.8s (chậm hơn 60%)
-                    delay: stagger(0.15),    // Tăng từ 0.1s lên 0.15s giữa mỗi item
+                    duration: 0.3,
+                    delay: stagger(0.1),
                     easing: [0.22, 0.03, 0.26, 1] // Easing mượt mà
                 }
             );
+        },
+
+        handlerImage(bookItem) {
+            if (!bookItem.IMAGE) {
+                bookItem.IMAGE = '/CTUBook_Logo.png';
+            }
+            return bookItem.IMAGE
         }
     },
 
@@ -56,7 +63,7 @@ export default {
 <template>
     <div class="book_list">
         <div class="book_item" v-for="(bookItem, index) in this.books" :key="index">
-            <img :src="bookItem.IMAGE" alt="" class="book_item-img">
+            <img :src="handlerImage(bookItem)" alt="" class="book_item-img">
             <div class="book_item-main">
                 <h3 class="book_name">{{ bookItem.TENSACH }}</h3>
                 <div class="book_price"><span class="book_price--number">{{ bookItem.DONGIA }}</span> đ</div>
@@ -120,8 +127,8 @@ export default {
 
 .book_item:hover {
     transform: translateY(-10px) scale(1.01);
-    box-shadow: 0 12px 24px rgba(84, 152, 255, 0.3);
-    border-color: rgba(84, 152, 255, 0.093);
+    box-shadow: 0 12px 24px rgba(114, 170, 255, 0.129);
+    border-color: rgba(111, 169, 255, 0.093);
 }
 
 .book_item:hover::before {

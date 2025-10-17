@@ -19,6 +19,7 @@ export default {
     methods: {
         async getBooksById() {
             this.book = await bookService.getId(this.id);
+            if (!this.book.IMAGE) this.book.IMAGE = '/CTUBook_Logo.png';
         }
     },
 
@@ -31,7 +32,7 @@ export default {
 <template>
     <article class="book_detail">
         <div class="book_detail-img">
-            <BookDetail_ImgUser />
+            <BookDetail_ImgUser :book="book" />
         </div>
 
         <div class="book_detail--info">

@@ -1,18 +1,64 @@
 .header-navbar {
-    margin-left: 32px;
-    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 24px;
+    background-color: #e0f1ffe1;
+}
+
+/* Hiệu ứng khi scroll - Ôm trọn cả header */
+.header-navbar.scrolled {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95));
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    backdrop-filter: blur(10px);
+    border-radius: 50px; /* Bo tròn 2 đầu */
+    box-shadow: 0 4px 20px rgba(84, 152, 255, 0.3);
+    padding: 8px 20px; /* Thu nhỏ padding */
+    margin: 8px 16px; /* Thêm margin để tạo không gian */
+    border: 2px solid rgba(84, 152, 255, 0.2);
+    width: calc(100% - 32px); /* Trừ margin 2 bên */
+}
+
+/* Logo styling */
+.header_logo {
+    transition: all 0.3s ease;
+}
+
+.header_logo-img {
+    height: 60px;
+    transition: all 0.3s ease;
+}
+
+/* Thu nhỏ logo khi scroll */
+.header-navbar.scrolled .header_logo-img {
+    height: 60px;
 }
 
 .navbar_list {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    transition: all 0.3s ease;
+}
+
+/* Thu nhỏ navbar items khi scroll */
+.header-navbar.scrolled .navbar_list {
+    gap: 24px;
 }
 
 .navbar_item {
     padding: 6px 16px;
     border-radius: var(--border-radius-button);
     margin: 0px 8px;
+    transition: all 0.3s ease;
+}
+
+/* Thu nhỏ items khi scroll */
+.header-navbar.scrolled .navbar_item {
+    padding: 4px 12px;
+    margin: 12px 4px;
 }
 
 .navbar--link {
@@ -23,14 +69,29 @@
     text-shadow: 3px 3px 3px rgba(0, 51, 105, 0.222);
     font-weight: var(--text-bold-title);
     padding: 4px 0px;
+    transition: all 0.3s ease;
+}
+
+/* Thu nhỏ font khi scroll */
+.header-navbar.scrolled .navbar--link {
+    font-size: 1.6rem;
+    padding: 2px 0px;
 }
 
 .navbar_item:hover .navbar--link {
     color: var(--text-primary);
+    transform: translateY(-2px);
 }
 
 .navbar_item:hover {
     cursor: pointer;
+    background: rgba(84, 152, 255, 0.1);
+}
+
+/* Hiệu ứng hover mạnh hơn khi scrolled */
+.header-navbar.scrolled .navbar_item:hover {
+    background: rgba(84, 152, 255, 0.2);
+    transform: scale(1.05);
 }
 
 .navbar--link.active {
