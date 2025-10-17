@@ -12,8 +12,8 @@ export default {
                     url: 'books'
                 },
                 {
-                    name: 'Sự kiện',
-                    url: 'event'
+                    name: 'Lịch sử',
+                    url: 'history'
                 },
                 {
                     name: 'Giỏ hàng',
@@ -21,7 +21,7 @@ export default {
                 },
                 {
                     name: 'Đăng nhập',
-                    url: 'signIn'
+                    url: 'signin'  // Sửa từ 'signIn' thành 'signin'
                 }
             ],
             activeIndex: 0,

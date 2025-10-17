@@ -2,13 +2,15 @@ import { createWebHistory, createRouter } from "vue-router";
 // user layout
 import UserLayouts from "@/layouts/UserLayouts.vue";
 import HomePage from "@/layouts/HomePage.vue";
-import EventPage from "@/layouts/EventPage.vue";
+import HistoryPage from "@/layouts/HistoryPage.vue";
 import User_BookList from "@/layouts/BookList.user.vue";
 import CartPage from "@/layouts/Cart.vue";
 import SignInpage from "@/layouts/SignIn.vue";
+import SignUppage from "@/layouts/SignUp.vue";
 import UserBookDetail from "@/components/BookDetail.user.vue";
 import NotFound from "@/components/NotFound.vue";
 import TestMotion from "@/components/TestMotion.vue";
+import UserProfile from "@/components/UserProfile.user.vue";
 
 // admin layouts
 import BookShowListAdmin from "@/components/admin/BookShowList.admin.vue";
@@ -42,20 +44,29 @@ const routes = [
         component: UserBookDetail,
       },
       {
-        path: "event",
-        component: EventPage,
+        path: "history",
+        component: HistoryPage,
       },
       {
         path: "cart",
         component: CartPage,
       },
       {
-        path: "signIn",
-        component: SignInpage,
-      },
-      {
         path: "testMotion",
         component: TestMotion,
+      },
+      {
+        path: "user",
+        children: [
+          {
+            path: "",
+            redirect: UserProfile,
+          },
+          {
+            path: "/:id",
+            component: UserProfile,
+          },
+        ],
       },
     ],
   },
@@ -101,10 +112,22 @@ const routes = [
     ],
   },
 
+  // Auth Routes
+  {
+    path: "/signin",
+    name: "signin",
+    component: SignInpage,
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: SignUppage,
+  },
+
   // Not found page
   {
     path: "/:pathMatch(.*)*",
-    name: "notdound",
+    name: "notfound",
     component: NotFound,
   },
 ];

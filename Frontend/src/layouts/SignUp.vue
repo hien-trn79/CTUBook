@@ -4,12 +4,15 @@ export default {
         return {
             formData: {
                 username: '',
-                password: ''
+                email: '',
+                password: '',
+                confirmPassword: ''
             },
             notification: {
                 show: false,
                 message: '',
-                type: ''
+                type: '',
+                progress: 100
             }
         }
     },
@@ -19,47 +22,78 @@ export default {
             this.notification.message = message;
             this.notification.type = type;
             this.notification.show = true;
+            this.notification.progress = 100;
+
+            // Animate progress bar
+            const duration = 3000; // 3 seconds
+            const interval = 30; // Update every 30ms
+            const steps = duration / interval;
+            const decrement = 100 / steps;
+
+            const progressInterval = setInterval(() => {
+                this.notification.progress -= decrement;
+                if (this.notification.progress <= 0) {
+                    clearInterval(progressInterval);
+                }
+            }, interval);
 
             setTimeout(() => {
                 this.notification.show = false;
-            }, 3000);
+                this.notification.progress = 100;
+            }, duration);
         },
 
-        handleSignIn() {
-            if (!this.formData.username || !this.formData.password) {
-                this.showNotification('Vui lòng nhập đầy đủ thông tin!', 'error');
+        handleSignUp() {
+            // Validate
+            if (this.formData.password !== this.formData.confirmPassword) {
+                this.showNotification('Mật khẩu xác nhận không khớp!', 'error');
                 return;
             }
 
-            console.log('Sign in:', this.formData);
-            this.showNotification('Đăng nhập thành công!', 'success');
+            // TODO: Call API đăng ký
+            console.log('Sign up:', this.formData);
+            this.showNotification('Đăng ký thành công! Đang chuyển hướng...', 'success');
+
+            setTimeout(() => {
+                this.$router.push('/signin');
+            }, 3000)
         }
     }
 }
 </script>
 
 <template>
-    <div class="page_signin">
+    <div class="page_signup">
         <!-- Toast Notification -->
         <transition name="slide-fade">
             <div v-if="notification.show" :class="['toast-notification', notification.type]">
-                <i
-                    :class="['toast-icon', notification.type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark']"></i>
-                <span class="toast-message">{{ notification.message }}</span>
+                <div class="toast-content">
+                    <i
+                        :class="['toast-icon', notification.type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark']"></i>
+                    <span class="toast-message">{{ notification.message }}</span>
+                </div>
+                <div class="toast-progress">
+                    <div class="toast-progress-bar" :style="{ width: notification.progress + '%' }"></div>
+                </div>
             </div>
         </transition>
 
-        <div class="signIn_area">
-            <div class="signIn-header">
+        <div class="signUp_area">
+            <div class="signUp-header">
                 <img src="https://res.cloudinary.com/dw7aqqwti/image/upload/v1758456626/CTUBook/cdpqkf7qwfx9jnozrrjm.png"
                     alt="Logo_Ctubook" class="sign-header_logo">
             </div>
-            <div class="signIn-main">
-                <h2 class="section--title form--title">Đăng nhập</h2>
-                <form @submit.prevent="handleSignIn" id="form-signIn">
+            <div class="signUp-main">
+                <h2 class="section--title form--title">Đăng ký tài khoản</h2>
+                <form @submit.prevent="handleSignUp" id="form-signUp">
                     <div class="form-group">
                         <i class="form-icon fa-solid fa-user"></i>
                         <input type="text" name="username" v-model="formData.username" placeholder="Tên đăng nhập"
+                            class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="form-icon fa-solid fa-envelope"></i>
+                        <input type="email" name="email" v-model="formData.email" placeholder="Email"
                             class="form-control" required>
                     </div>
                     <div class="form-group">
@@ -67,15 +101,20 @@ export default {
                         <input type="password" name="password" v-model="formData.password" placeholder="Mật khẩu"
                             class="form-control" required>
                     </div>
+                    <div class="form-group">
+                        <i class="form-icon fa-solid fa-lock"></i>
+                        <input type="password" name="confirmPassword" v-model="formData.confirmPassword"
+                            placeholder="Xác nhận mật khẩu" class="form-control" required>
+                    </div>
 
                     <div class="form-group button_area">
-                        <button type="submit" class="btn btn_signIn">Đăng nhập</button>
+                        <button type="submit" class="btn btn_signUp">Đăng ký</button>
                     </div>
                 </form>
 
                 <div class="hasAccount">
-                    <span class="hasAccount_noti">Bạn chưa có tài khoản? </span>
-                    <router-link to="/signup" class="link_signUp">Đăng ký</router-link>
+                    <span class="hasAccount_noti">Đã có tài khoản? </span>
+                    <router-link to="/signin" class="link_signIn">Đăng nhập</router-link>
                 </div>
             </div>
         </div>
@@ -83,7 +122,7 @@ export default {
 </template>
 
 <style scoped>
-.page_signin {
+.page_signup {
     height: 100vh;
     width: 100vw;
     background: url('https://res.cloudinary.com/dw7aqqwti/image/upload/v1760709695/TruongNongNghiep_daxclb.jpg') no-repeat;
@@ -94,7 +133,7 @@ export default {
     align-items: center;
 }
 
-.signIn_area {
+.signUp_area {
     width: 450px;
     background: rgb(255, 255, 255);
     backdrop-filter: blur(10px);
@@ -103,7 +142,7 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.signIn-header {
+.signUp-header {
     text-align: center;
     margin-bottom: 30px;
 }
@@ -149,11 +188,15 @@ export default {
     box-shadow: 0 0 0 3px rgba(84, 152, 255, 0.1);
 }
 
+.form-control:focus .form-icon {
+    color: var(--text-primary);
+}
+
 .button_area {
     margin-top: 30px;
 }
 
-.btn_signIn {
+.btn_signUp {
     width: 100%;
     padding: 14px;
     background: linear-gradient(135deg, var(--text-primary), #5498ff);
@@ -166,12 +209,12 @@ export default {
     transition: all 0.3s ease;
 }
 
-.btn_signIn:hover {
+.btn_signUp:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(84, 152, 255, 0.4);
 }
 
-.btn_signIn:active {
+.btn_signUp:active {
     transform: translateY(0);
 }
 
@@ -185,16 +228,16 @@ export default {
     color: #666;
 }
 
-.link_signUp {
+.link_signIn {
     color: var(--text-primary);
     font-weight: 600;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.link_signUp:hover {
-    color: #5498ff;
+.link_signIn:hover {
     text-decoration: underline;
+    color: #5498ff;
 }
 
 /* Toast Notification Styles */
@@ -202,17 +245,21 @@ export default {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 16px 24px;
     border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    min-width: 300px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.toast-content {
+    padding: 16px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
     font-size: 1.5rem;
     font-weight: 500;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 9999;
-    min-width: 300px;
-    backdrop-filter: blur(10px);
 }
 
 .toast-notification.success {
@@ -231,6 +278,19 @@ export default {
 
 .toast-message {
     flex: 1;
+}
+
+/* Progress Bar */
+.toast-progress {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    width: 100%;
+}
+
+.toast-progress-bar {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    transition: width 0.03s linear;
 }
 
 /* Slide Fade Transition */
