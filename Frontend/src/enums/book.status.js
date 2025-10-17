@@ -13,8 +13,18 @@ export const bookLabel = {
 };
 
 export const bookClass = {
-  [bookStatus.NONE]: "text-black",
+  [bookStatus.NONE]: "text-gray",
   [bookStatus.WAITTING]: "text-orange",
   [bookStatus.APPROVED]: "text-green",
   [bookStatus.RETURNED]: "text-blue",
+};
+
+export const request = {
+  0: "Chờ xác nhận",
+  1: "Đã xác nhận",
+};
+
+export const ClassRequest = {
+  0: "text-blue",
+  1: "text-green",
 };

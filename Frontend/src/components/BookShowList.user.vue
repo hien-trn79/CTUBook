@@ -1,4 +1,6 @@
 <script>
+import { animate, stagger } from 'motion';
+
 export default {
     props: {
         books: { type: Array, default: [] },
@@ -6,9 +8,46 @@ export default {
     },
 
     emits: ["update:activeIndex"],
+
     methods: {
         updateActiveIndex(index) {
             this.$emit("update:activeIndex", index);
+        },
+
+        // Tạo animation cho các book items
+        animateBooks() {
+            const bookItems = document.querySelectorAll('.book_item');
+            if (!bookItems.length) return; // Nếu không có book items thì dừng lại
+            // Animate tất cả book items với stagger effect
+            animate(
+                bookItems,
+                {
+                    opacity: [0, 1],
+                    y: [30, 0],
+                    scale: [0.95, 1]
+                },
+                {
+                    duration: 0.8,           // Tăng từ 0.5s lên 0.8s (chậm hơn 60%)
+                    delay: stagger(0.15),    // Tăng từ 0.1s lên 0.15s giữa mỗi item
+                    easing: [0.22, 0.03, 0.26, 1] // Easing mượt mà
+                }
+            );
+        }
+    },
+
+    mounted() {
+        // Chạy animation khi component được mount
+        this.$nextTick(() => {
+            this.animateBooks();
+        });
+    },
+
+    watch: {
+        // Chạy lại animation khi danh sách books thay đổi
+        books() {
+            this.$nextTick(() => {
+                this.animateBooks();
+            });
         }
     }
 }
@@ -17,7 +56,7 @@ export default {
 <template>
     <div class="book_list">
         <div class="book_item" v-for="(bookItem, index) in this.books" :key="index">
-            <img src="/images/books/bia_sach_DienToanDamMay.png" alt="" class="book_item-img">
+            <img :src="bookItem.IMAGE" alt="" class="book_item-img">
             <div class="book_item-main">
                 <h3 class="book_name">{{ bookItem.TENSACH }}</h3>
                 <div class="book_price"><span class="book_price--number">{{ bookItem.DONGIA }}</span> đ</div>
@@ -46,22 +85,70 @@ export default {
     justify-content: space-around;
     column-gap: 12px;
     width: 100%;
+    background-color: white;
+    border-radius: 7px;
 }
 
 .book_item {
     padding: 12px;
-    border-radius: 5px;
+    border-radius: 10px;
     height: fit-content;
     text-align: center;
+    opacity: 0;
+    background-color: #fff;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin: 12px 0px;
+}
+
+/* Hiệu ứng gradient overlay khi hover */
+.book_item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(125, 177, 255, 0.1), rgba(123, 205, 255, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.book_item:hover {
+    transform: translateY(-10px) scale(1.01);
+    box-shadow: 0 12px 24px rgba(84, 152, 255, 0.3);
+    border-color: rgba(84, 152, 255, 0.093);
+}
+
+.book_item:hover::before {
+    opacity: 1;
+}
+
+.book_item:active {
+    transform: translateY(-5px) scale(1);
 }
 
 .book_item-img {
     width: 100%;
     height: 60%;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.book_item:hover .book_item-img {
+    transform: scale(1.05);
 }
 
 .book_item-main {
     height: 40%;
+    position: relative;
+    z-index: 1;
 }
 
 .book_name {
@@ -72,12 +159,22 @@ export default {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: color 0.3s ease;
+}
+
+.book_item:hover .book_name {
+    color: rgb(84, 152, 255);
 }
 
 .book_price {
     font-size: var(--text-font-normal);
     padding: 8px 0px;
     color: red;
+    transition: transform 0.3s ease;
+}
+
+.book_item:hover .book_price {
+    transform: scale(1.1);
 }
 
 .book_price--number {
@@ -94,15 +191,54 @@ export default {
     min-width: 150px;
     margin-top: 12px;
     font-size: 1.3rem;
-    margin-top: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn_book--detail::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn_book--detail:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn_book--detail:hover {
     cursor: pointer;
-    transform: scale(1.02);
+    transform: scale(1.05);
+    background-color: rgb(62, 139, 255);
+    color: white;
+    box-shadow: 0 4px 12px rgb(69, 142, 252);
+}
+
+.book_item:hover .btn_book--detail {
+    animation: pulse 1s ease-in-out infinite;
 }
 
 .btn_book--detail:active {
-    transform: scale(0.99);
+    transform: scale(0.98);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(84, 152, 255, 0.186);
+    }
+
+    50% {
+        box-shadow: 0 6px 16px rgba(84, 152, 255, 0.6);
+    }
 }
 </style>

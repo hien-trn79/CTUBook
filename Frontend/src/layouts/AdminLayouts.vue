@@ -13,14 +13,11 @@ export default {
     },
     data() {
         return {
-            navbarActive: 'Danh sách sách'
+            navbarActive: 'Danh sách sách',
         }
     },
 
     methods: {
-        handlerActive() {
-            this.navbarActive = event.target.textContent;
-        }
     }
 
 }
@@ -34,7 +31,7 @@ export default {
     <div class="page">
         <main class="page_admin-main page-main">
             <aside class="page_admin-aside">
-                <NavbarAdmin @navbarActive="handlerActive" />
+                <NavbarAdmin />
             </aside>
             <article class="page_admin-article">
                 <router-view></router-view>

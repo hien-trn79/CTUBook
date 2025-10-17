@@ -49,11 +49,12 @@ class BrandController {
   async findOne(req, res, next) {
     try {
       const brandService = new BrandService(MongoDB.client);
-      const result = await brandService.findByName(req.params.id);
+      const result = await brandService.findById(req.params.id);
 
       if (!result) {
         return next(new ApiError(404, "Khong tim thay nha xuat ban"));
       }
+      return res.send(result);
     } catch (error) {
       console.log("Loi tim nha xuat ban");
       console.log(error);

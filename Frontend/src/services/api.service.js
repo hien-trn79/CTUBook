@@ -7,6 +7,15 @@ const commonConfig = {
   },
 };
 
-export default (baseURL) => {
-  return axios.create({ baseURL, ...commonConfig });
+export const jsonClient = (baseURL) => {
+  return axios.create({
+    baseURL,
+    headers: commonConfig.headers,
+  });
+};
+
+export const formClient = (baseURL) => {
+  return axios.create({
+    baseURL,
+  });
 };

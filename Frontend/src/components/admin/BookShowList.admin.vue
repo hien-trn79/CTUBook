@@ -2,15 +2,42 @@
 import bookService from '@/services/book.service';
 import InputSearchAdmin from './InputSearch.admin.vue';
 import { bookClass, bookLabel } from '@/enums/book.status';
+import TableList from '../TableList.vue';
+import { icon, iconColor } from '@/enums/icon.enum';
 export default {
     components: {
         InputSearchAdmin,
+        TableList
     },
 
     data() {
         return {
             choiceSideBar: 'Quản lý sách',
-            books: {}
+            books: {},
+            thead: ['STT', 'Mã sách', 'Tên sách', 'Nhà xuất bản', 'Tác giả', 'Thể loại', 'Số lượng',],
+            colValue: ['MASACH', 'TENSACH', 'MANXB', 'TACGIA', 'THELOAI', 'SOQUYEN'],
+            colValueIcon: [
+                {
+                    url: 'detail',
+                    icon: icon.eyeOpen,
+                    id: 'btn-detail',
+                    color: iconColor.eyeOpen
+                },
+                {
+                    url: 'edit',
+                    icon: icon.pen,
+                    id: 'btn-edit',
+                    color: iconColor.pen
+                },
+                {
+                    url: 'remove',
+                    icon: icon.trash,
+                    id: 'btn-remove',
+                    color: iconColor.trash
+                }
+            ],
+            bookClass,
+            bookLabel
         }
     },
 
@@ -18,15 +45,6 @@ export default {
         async getBooksAll() {
             this.books = await bookService.getAll();
         },
-
-        getClass(bookItem) {
-            return bookClass[bookItem]
-        },
-
-        getLabel(bookItem) {
-            if (!("TRANGTHAI" in bookItem)) return bookLabel[0];
-            else return bookLabel[bookItem.TRANGTHAI]
-        }
     },
 
     mounted() {
@@ -37,112 +55,37 @@ export default {
 
 <template>
     <header class="bookShowList-header">
-        <h2 class="bookShowList--title">{{ this.choiceSideBar }}</h2>
+        <div class="bookList-header_area">
+            <h2 class="bookShowList--title">{{ this.choiceSideBar }}</h2>
+            <router-link class="btn btn-add_book" to="addBook">
+                <i class="fa-solid fa-plus icon"></i>
+                Thêm sách mới
+            </router-link>
+        </div>
         <InputSearchAdmin />
     </header>
     <main class="bookShowList-main">
-        <table class="bookList-table">
-            <tr class="bookList_row row-head">
-                <th class="bookList_head">STT</th>
-                <th class="bookList_head">Tên sách</th>
-                <th class="bookList_head">Nhà xuất bản</th>
-                <th class="bookList_head">Số lượng</th>
-                <th class="bookList_head">Trạng thái</th>
-                <th class="bookList_head">Xem</th>
-                <th class="bookList_head">Cập nhật</th>
-                <th class="bookList_head">Xóa</th>
-            </tr>
-
-            <tr class="bookList_row" v-for="(book, index) in books" :key="index">
-                <td class="bookList_col bookList_ten">{{ index + 1 }}</td>
-                <td class="bookList_col bookList_ten">{{ book.TENSACH }}</td>
-                <td class="bookList_col bookList_nxb">{{ book.MANXB }}</td>
-                <td class="bookList_col bookList_soluong">{{ book.SOQUYEN }}</td>
-                <td class="bookList_col bookList_soluong" :class="getClass(book.TRANGTHAI)">
-                    {{ getLabel(book) }}
-                </td>
-                <td class="bookList_col bookList_update">
-                    <i class="fa-regular fa-eye bookList--icon bookList_detail--icon"></i>
-                </td>
-                <td class="bookList_col bookList_update">
-                    <i class="fa-solid fa-rotate bookList--icon bookList_update--icon"></i>
-                </td>
-                <td class="bookList_col bookList_delete">
-                    <i class="fa-solid fa-minus bookList--icon bookList_delete--icon"></i>
-                </td>
-            </tr>
-        </table>
+        <TableList :head-list-table="thead" :col-value-list="colValue" :books="books"
+            :col-value-contact-icon="colValueIcon" :col-class="bookClass" :col-label="bookLabel" />
     </main>
 </template>
 
-<style>
-.bookShowList--title {
-    font-size: 1.8rem;
-    padding: 12px 0px 24px 12px;
-}
-
-.bookShowList-main {
-    background-color: white;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.row-head {
-    background-color: rgba(83, 172, 250, 0.984);
-}
-
-.bookList_head,
-.bookList_col {
-    font-size: 1.4rem;
-}
-
-th,
-td {
-    padding: 6px 12px;
-    text-align: center;
-}
-
-.bookList_ten {
-    text-align: left;
-}
-
-.bookList_row {
-    border-bottom: 1px solid #ccc;
-}
-
-.bookList--icon {
-    border: 2px solid #ccc;
-    padding: 4px;
-    border-radius: 50%;
-    text-align: center;
-    font-size: 1.1rem;
-}
-
-.bookList--icon:hover {
-    cursor: pointer;
-}
-
-.bookList_update--icon {
-    border-color: rgb(0, 115, 255);
-    color: rgb(0, 115, 255);
-}
-
-.bookList_delete--icon {
-    color: red;
-    border-color: red;
-}
-
-.bookList_detail--icon {
-    border: none;
-    color: orange;
-    font-size: 1.6rem;
-}
-
-/* ------CSS Input Search--------- */
+<style scoped>
 .bookShowList-header {
-    margin-bottom: 16px;
-    background-color: white;
-    border-radius: 7px;
-    padding-bottom: 12px;
+    padding: 12px;
+}
+
+.bookList-header_area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-add_book {
+    background-color: var(--text-primary);
+    color: white;
+    border-radius: 5px;
+    padding: 8px 12px;
+    height: 20px;
 }
 </style>

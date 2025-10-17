@@ -1,6 +1,5 @@
 <script>
 export default {
-
     data() {
         return {
             navbarVer: [
@@ -10,9 +9,9 @@ export default {
                     icon: "fa-solid fa-book"
                 },
                 {
-                    name: 'Quản lý tồn kho',
-                    url: 'warehouse',
-                    icon: 'fa-solid fa-warehouse'
+                    name: 'Quản lý yêu cầu',
+                    url: 'request',
+                    icon: 'fa-solid fa-message'
                 },
                 {
                     name: 'Quản lý mượn - trả',
@@ -24,14 +23,32 @@ export default {
                     url: 'account',
                     icon: 'fa-solid fa-users'
                 }
-            ]
+            ],
+
+            activeItem: 0
         }
     },
     methods: {
-        handlerNavbar(navbarItem) {
+        handlerNavbar(navbarItem, index) {
             this.$emit('navbarActive', navbarItem)
+            this.activeItem = index
+        },
+
+        handlerPath(path) {
+            let newPath = path.substr(7);
+            this.navbarVer.forEach((item, index) => {
+                if (item.url === newPath) {
+                    this.activeItem = index;
+                    return;
+                }
+            })
         }
+    },
+
+    mounted() {
+        this.handlerPath(this.$route.path)
     }
+
 }
 </script>
 
@@ -40,8 +57,8 @@ export default {
         <h2 class="navbar_admin--title">Quản lý sách</h2>
         <ul class="navbar_vertical--list">
             <li class="navbar_vertical--item" v-for="(navbarItem, index) in navbarVer" :key="index"
-                @click="handlerNavbar(navbarItem)">
-                <router-link class="navbar_vertical--link" :to="navbarItem.url">
+                @click="handlerNavbar(navbarItem, index)" :class="{ active: this.activeItem === index }">
+                <router-link class="navbar_vertical--link" :to="`/admin/${navbarItem.url}`">
                     <i :class="[navbarItem.icon, 'navbar_vertical--icon']"></i>
                     {{ navbarItem.name }}
                 </router-link>
@@ -82,5 +99,14 @@ export default {
 .navbar_vertical--link {
     display: block;
     font-size: var(--text-font-normal);
+}
+
+.navbar_vertical--item.active {
+    background-color: var(--hover-primary);
+}
+
+.navbar_vertical--item.active .navbar_vertical--link {
+    color: var(--text-primary);
+    font-weight: bold;
 }
 </style>

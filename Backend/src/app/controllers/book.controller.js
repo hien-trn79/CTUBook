@@ -1,6 +1,10 @@
 import ApiError from "../api-error.js";
 import BookService from "../services/book.service.js";
 import MongoDB from "../utils/mongodb.util.js";
+import config from "../config/index.js";
+import fs from "fs";
+
+const cloudinary = config.cloudinary;
 
 class book {
   // [GET] /api/books/
@@ -19,14 +23,34 @@ class book {
   // [POST] /api/books/
   async create(req, res, next) {
     try {
+      let data = req.body;
+      let file = req.file;
+
+      // Upload ảnh lên Cloudinary
+      const resultFile = await cloudinary.uploader.upload(file.path, {
+        folder: process.env.FOLDER,
+      });
+
+      data["IMAGE"] = resultFile.secure_url;
+
       const bookService = new BookService(MongoDB.client);
-      const result = await bookService.create(req.body);
-      return res.send({
+      const result = await bookService.create(data);
+
+      // Xóa file tạm KHÔNG ĐỒNG BỘ (async) - không chờ
+      fs.unlink(file.path, (err) => {
+        if (err) console.log("Không thể xóa file tạm:", err.message);
+      });
+
+      // Trả về ngay lập tức sau khi insert thành công
+      return res.status(201).send({
         message: "Thêm mới sách thành công",
+        data: result,
       });
     } catch (error) {
-      console.log("LỖI TẠO SÁCH");
-      return next(new ApiError(500, "Có lỗi trong quá trình tạo sách"));
+      console.error("LỖI TẠO SÁCH:", error);
+      return next(
+        new ApiError(500, "Có lỗi trong quá trình tạo sách: " + error.message)
+      );
     }
   }
 
@@ -81,21 +105,45 @@ class book {
   // [PUT] /api/books/:id
   async update(req, res, next) {
     if (Object.keys(req.body).length === 0) {
-      // du lieu cap nhat la rong
       return next(new ApiError(400, "Dữ liệu cập nhật không được để trống !!"));
     }
     try {
-      const bookService = new BookService(MongoDB.client);
-      const document = await bookService.update(req.params.id, req.body);
-      if (!document) {
-        return next(new ApiError(404, "Không tìm thấy sách để cập nhật"));
+      let id = req.params.id;
+      let data = req.body;
+
+      if (req.file) {
+        let file = req.file;
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: process.env.FOLDER,
+        });
+        data["IMAGE"] = result.secure_url;
+
+        // Xóa file tạm KHÔNG ĐỒNG BỘ - không chờ
+        fs.unlink(file.path, (err) => {
+          if (err) console.log("Không thể xóa file tạm:", err.message);
+        });
       }
-      return res.send(document);
+
+      const bookService = new BookService(MongoDB.client);
+      let document = await bookService.update(id, data);
+
+      if (!document) {
+        return next(
+          new ApiError(404, `Không tìm thấy sách cập nhật với id=${id}`)
+        );
+      }
+
+      // Trả về ngay lập tức
+      return res.send({
+        message: "Cập nhật sách thành công",
+        data: document,
+      });
     } catch (error) {
+      console.error("LỖI CẬP NHẬT SÁCH:", error);
       return next(
         new ApiError(
           500,
-          `Có lỗi trong quá trình cập nhật sách với id=${req.params.id}`
+          `Có lỗi trong quá trình cập nhật sách với id=${req.params.id}: ${error.message}`
         )
       );
     }
@@ -115,6 +163,58 @@ class book {
       });
     } catch (error) {
       return next(new ApiError(500, "Có lỗi trong quá trình xóa sách"));
+    }
+  }
+
+  // [GET] /api/books/status-approved
+  async getApprovedAll(req, res, next) {
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const document = await bookService.getApproveAll();
+      return res.send(document);
+    } catch (error) {
+      console.log("LOI lay danh sach da duyet");
+      console.error(error);
+      return next(new ApiError(500, "Khong the lay danh sach sach da duyet"));
+    }
+  }
+
+  // [GET] /api/books/status-waiting
+  async getWaitingAll(req, res, next) {
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const document = await bookService.getWaitingAll();
+      return res.send(document);
+    } catch (error) {
+      console.log("LOI lay danh sach da duyet");
+      console.error(error);
+      return next(new ApiError(500, "Khong the lay danh sach sach da duyet"));
+    }
+  }
+
+  // [GET] /api/books/status-none
+  async getNoneAll(req, res, next) {
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const document = await bookService.getNoneAll();
+      return res.send(document);
+    } catch (error) {
+      console.log("LOI lay danh sach da duyet");
+      console.error(error);
+      return next(new ApiError(500, "Khong the lay danh sach sach da duyet"));
+    }
+  }
+
+  // [GET] /api/books/status-returned
+  async getReturnedAll(req, res, next) {
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const document = await bookService.getReturnedAll();
+      return res.send(document);
+    } catch (error) {
+      console.log("LOI lay danh sach da duyet");
+      console.error(error);
+      return next(new ApiError(500, "Khong the lay danh sach sach da duyet"));
     }
   }
 }

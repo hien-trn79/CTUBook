@@ -8,13 +8,16 @@ import CartPage from "@/layouts/Cart.vue";
 import SignInpage from "@/layouts/SignIn.vue";
 import UserBookDetail from "@/components/BookDetail.user.vue";
 import NotFound from "@/components/NotFound.vue";
+import TestMotion from "@/components/TestMotion.vue";
 
 // admin layouts
 import BookShowListAdmin from "@/components/admin/BookShowList.admin.vue";
 import AdminLayouts from "@/layouts/AdminLayouts.vue";
-import BookWarehouseAdmin from "@/components/admin/BookWarehouse.admin.vue";
+import BookRequestAdmin from "@/components/admin/BookRequest.admin.vue";
 import BookBorrowAdmin from "@/components/admin/BookBorrow.admin.vue";
 import BookAccountAdmin from "@/components/admin/BookAccount.admin.vue";
+import AddBookAdmin from "@/components/admin/AddBook.admin.vue";
+import UpdateBookAdmin from "@/components/admin/UpdateBook.admin.vue";
 
 const routes = [
   // User Routes
@@ -50,6 +53,10 @@ const routes = [
         path: "signIn",
         component: SignInpage,
       },
+      {
+        path: "testMotion",
+        component: TestMotion,
+      },
     ],
   },
 
@@ -60,15 +67,15 @@ const routes = [
     children: [
       {
         path: "",
-        component: BookShowListAdmin,
+        redirect: "admin/books",
       },
       {
         path: "books",
         component: BookShowListAdmin,
       },
       {
-        path: "warehouse",
-        component: BookWarehouseAdmin,
+        path: "request",
+        component: BookRequestAdmin,
       },
       {
         path: "borrow",
@@ -77,6 +84,19 @@ const routes = [
       {
         path: "account",
         component: BookAccountAdmin,
+      },
+      {
+        path: "addBook",
+        component: AddBookAdmin,
+      },
+      {
+        path: ":id",
+        children: [
+          {
+            path: "edit",
+            component: UpdateBookAdmin,
+          },
+        ],
       },
     ],
   },

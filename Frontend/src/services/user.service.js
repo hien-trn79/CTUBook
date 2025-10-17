@@ -1,8 +1,8 @@
-import createClientApi from "@/services/api.service.js";
+import { jsonClient } from "@/services/api.service.js";
 
 class UserService {
   constructor(baseUrl = "/api/users") {
-    this.api = createClientApi(baseUrl);
+    this.api = jsonClient(baseUrl);
   }
   // [GET] http://localhost:8080/api/users/
   async getAll() {

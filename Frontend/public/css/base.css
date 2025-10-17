@@ -30,6 +30,7 @@ html {
     --border-radius-button: 7px;
     --background-color: #f2f4f6;
     --background-color-primary: #eaf3fa;
+    --color-ctu: rgb(0, 123, 255);
 }
 
 a {
@@ -41,6 +42,10 @@ ul {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.icon {
+    margin-right: 6px;
 }
 
 .page-main_content {
@@ -63,6 +68,14 @@ ul {
 
 .btn:active {
     transform: scale(0.99);
+}
+
+.btn-red {
+    color: red;
+}
+
+.btn-green {
+    color: green;
 }
 
 /* ---------CSS FORM ------ */
@@ -89,3 +102,31 @@ ul {
 .text-orange{color: orange;font-weight: 500}
 .text-green{color: green;font-weight: 500}
 .text-blue {color: blue;font-weight: 500}
+.text-gray {color: gray}
+.text-red {color: red;}
+
+
+/* -----CSS color------- */
+.color-red {
+    color: red;
+}
+
+.color-orange {
+    color: orange;
+}
+
+.color-green {
+    color: green;
+}
+
+.color-blue {
+    color: blue;
+}
+
+.color-ctu {
+    color: rgb(0, 123, 255);
+}
+
+.color-primary {
+    color: var(--text-primary);
+}

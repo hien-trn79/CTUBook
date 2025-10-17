@@ -30,9 +30,9 @@ class BrandService {
     });
   }
 
-  async findByName(manxb) {
-    return await this.Brand.find({
-      MANXB: { $regex: new RegExp(new RegExp(MANXB)), $option: "i" },
+  async findByNXB(manxb) {
+    return this.Brand.findOne({
+      MANXB: manxb,
     });
   }
 

@@ -2,9 +2,10 @@
 import InputSearchAdmin from './InputSearch.admin.vue';
 import TableList from '../TableList.vue';
 import { icon, iconColor } from '@/enums/icon.enum';
+import requestService from '@/services/request.service';
 import userService from '@/services/user.service';
-import muonService from '@/services/muon.service';
-import { hinhthuc, trangthai, ClassTrangThai } from '@/enums/muon.enum';
+import bookService from '@/services/book.service';
+import { request, ClassRequest } from '@/enums/book.status';
 export default {
     components: {
         InputSearchAdmin,
@@ -13,10 +14,10 @@ export default {
 
     data() {
         return {
-            choiceSideBar: 'Quản lý Mượn - Trả',
+            choiceSideBar: 'Quản lý sách',
             dataList: {},
-            thead: ['STT', 'Mã độc giả', "Tên độc giả", 'Email', 'Số lượng sách', 'Thời gian mượn', 'Thời gian trả', 'Hình thức'],
-            colValue: ['MADOCGIA', 'HOVATEN', 'EMAIL', 'SOQUYEN', 'THOIGIANMUON', 'THOIGIANTRA', 'HINHTHUC'],
+            thead: ['STT', 'Tên sách', 'Tên tài khoản', 'Số điện thoại', 'Tác giả', 'Thời gian đặt', 'Số lượng'],
+            colValue: ['TENSACH', 'TENTAIKHOAN', 'SODIENTHOAI', 'TACGIA', 'THOIGIANDAT', 'SOQUYEN'],
             colValueIcon: [
                 {
                     url: 'detail',
@@ -25,42 +26,49 @@ export default {
                     color: iconColor.eyeOpen
                 },
                 {
-                    url: 'edit',
-                    icon: icon.pen,
-                    id: 'btn-edit',
-                    color: iconColor.pen
+                    url: 'cancel',
+                    icon: icon.cross,
+                    id: 'btn-cancel',
+                    color: iconColor.cross
+                },
+                {
+                    url: 'accept',
+                    icon: icon.tick,
+                    id: 'btn-accept',
+                    color: iconColor.tick
                 },
             ],
-            hinhthuc,
-            trangthai,
-            ClassTrangThai
+            request,
+            ClassRequest
         }
     },
 
     methods: {
-
-        getFullName(holot, ten) {
-            return holot + ' ' + ten;
+        async getUser(MaDocGia) {
+            return await userService.getId(MaDocGia);
         },
 
-        async getUser(MADOCGIA) {
-            let user = await userService.getId(MADOCGIA);
-            return user;
+        async getBook(MaSach) {
+            return await bookService.getId(MaSach);
         },
 
         async getDataAll() {
-            this.dataList = await muonService.getAll();
+            this.dataList = await requestService.getAll();
             this.dataList.forEach(async (item) => {
-                let user = await this.getUser(item.MADOCGIA)
-                item['HOVATEN'] = user.HOLOT + " " + user.TEN;
-                item['HINHTHUC'] = hinhthuc[item.HINHTHUC]
+                let user = await this.getUser(item.MADOCGIA);
+                let book = await this.getBook(item.MASACH);
+                item['TENSACH'] = book.TENSACH;
+                item['TENTAIKHOAN'] = user.HOLOT + ' ' + user.TEN;
+                item['SODIENTHOAI'] = user.DIENTHOAI;
+                item['TACGIA'] = book.TACGIA;
+                item['SOQUYEN'] = 1;
             })
-
-        }
+            console.log(this.dataList)
+        },
     },
 
     mounted() {
-        this.getDataAll()
+        this.getDataAll();
     }
 }
 </script>
@@ -78,7 +86,7 @@ export default {
     </header>
     <main class="bookShowList-main">
         <TableList :head-list-table="thead" :col-value-list="colValue" :books="dataList"
-            :col-value-contact-icon="colValueIcon" :col-label="trangthai" :col-class="ClassTrangThai" />
+            :col-value-contact-icon="colValueIcon" :col-label="request" :col-class="ClassRequest" />
     </main>
 </template>
 

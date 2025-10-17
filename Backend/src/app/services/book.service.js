@@ -3,6 +3,28 @@ import { ObjectId } from "mongodb";
 class BookService {
   constructor(client) {
     this.Book = client.db().collection("Book");
+    this.Counter = client.db().collection("Counter"); // Collection để lưu counter
+  }
+
+  // Hàm tạo mã sách tự động tăng
+  async getNextMASACH() {
+    try {
+      const result = await this.Counter.findOneAndUpdate(
+        { _id: "MASACH" }, // Document ID cho counter của MASACH
+        { $inc: { sequence_value: 1 } }, // Tăng giá trị lên 1
+        {
+          upsert: true, // Tạo mới nếu chưa có
+          returnDocument: "after", // Trả về document sau khi update
+        }
+      );
+
+      // Format: MS0001, MS0002, MS0003, ...
+      const sequenceNumber = result.sequence_value || 1;
+      return `MS${String(sequenceNumber).padStart(4, "0")}`;
+    } catch (error) {
+      console.error("Lỗi khi tạo mã sách:", error);
+      throw error;
+    }
   }
 
   // giai ma du lieu
@@ -13,12 +35,14 @@ class BookService {
       DONGIA: payload.DONGIA,
       SOQUYEN: payload.SOQUYEN,
       NAMXUATBAN: payload.NAMXUATBAN,
-      MANXB: payload.MANXB,
+      TENNXB: payload.TENNXB,
       TACGIA: payload.TACGIA,
       NGONNGU: payload.NGONNGU,
       SOTRANG: payload.SOTRANG,
       THELOAI: payload.THELOAI,
       YEUTHICH: payload.YEUTHICH,
+      TRANGTHAI: payload.TRANGTHAI,
+      IMAGE: payload.IMAGE,
     };
 
     // xoa nhung truong khong xac dinh
@@ -46,10 +70,22 @@ class BookService {
     });
   }
 
+  async findByPrimary(primary) {
+    return await this.Book.findOne({
+      MASACH: primary,
+    });
+  }
+
   async create(data) {
+    // Tự động tạo MASACH nếu chưa có
+    if (!data.MASACH) {
+      data.MASACH = await this.getNextMASACH();
+    }
+
     const book = this.extractBookData(data);
     const result = await this.Book.insertOne(book);
-    return result.value;
+    // Trả về document vừa tạo kèm _id
+    return { _id: result.insertedId, ...book };
   }
 
   async update(id, data) {
@@ -58,13 +94,14 @@ class BookService {
     };
 
     const update = this.extractBookData(data);
-    const result = await this.Book.findOneAndUpdate(
+    // returnDocument: 'after' để lấy document sau khi update
+    let result = await this.Book.findOneAndUpdate(
       filter,
       { $set: update },
       { returnDocument: "after" }
     );
 
-    return result.value; // tra ve ket qua sau khi update
+    return result; // Trả về document đã update
   }
 
   async delete(id) {
@@ -82,6 +119,22 @@ class BookService {
   async deleteAll() {
     const result = await this.Book.deleteMany();
     return result.deleteCount;
+  }
+
+  async getApproveAll() {
+    return await this.Book.find({ TRANGTHAI: 2 }).toArray();
+  }
+
+  async getWaitingAll() {
+    return await this.Book.find({ TRANGTHAI: 1 }).toArray();
+  }
+
+  async getReturnedAll() {
+    return await this.Book.find({ TRANGTHAI: 3 }).toArray();
+  }
+
+  async getNoneAll() {
+    return await this.Book.find({ TRANGTHAI: 0 }).toArray();
   }
 }
 

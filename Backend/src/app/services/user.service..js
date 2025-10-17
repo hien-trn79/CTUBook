@@ -36,7 +36,7 @@ class UserService {
   // [GET] /api/users/:id
   async findById(id) {
     return await this.User.findOne({
-      _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+      MADOCGIA: id,
     });
   }
 

@@ -1,5 +1,5 @@
 <script>
-import bookService from '@/services/book.service';
+import userService from '@/services/user.service';
 import InputSearchAdmin from './InputSearch.admin.vue';
 import { bookClass, bookLabel } from '@/enums/book.status';
 export default {
@@ -10,68 +10,77 @@ export default {
     data() {
         return {
             choiceSideBar: 'Quản lý tài khoản',
-            books: {}
+            users: {},
+            deleteAll: true
         }
     },
 
     methods: {
-        async getBooksAll() {
-            this.books = await bookService.getAll();
+        async getUserssAll() {
+            this.users = await userService.getAll();
         },
 
-        getClass(bookItem) {
-            return bookClass[bookItem]
+        RemoveUser(id) {
+            console.log(`remove ${id}`)
         },
 
-        getLabel(bookItem) {
-            if (!("TRANGTHAI" in bookItem)) return bookLabel[0];
-            else return bookLabel[bookItem.TRANGTHAI]
-        }
     },
 
     mounted() {
-        this.getBooksAll()
-    }
+        this.getUserssAll()
+    },
 }
+
 </script>
 
 <template>
-    <header class="bookShowList-header">
+    <header class="bookShowList-header" hidden="true">
         <h2 class="bookShowList--title">{{ this.choiceSideBar }}</h2>
         <InputSearchAdmin />
     </header>
     <main class="bookShowList-main">
         <table class="bookList-table">
             <tr class="bookList_row row-head">
+                <th class="bookList_head"></th>
                 <th class="bookList_head">STT</th>
-                <th class="bookList_head">Tên sách</th>
-                <th class="bookList_head">Nhà xuất bản</th>
-                <th class="bookList_head">Số lượng</th>
-                <th class="bookList_head">Trạng thái</th>
+                <th class="bookList_head">Mã độc giả</th>
+                <th class="bookList_head">Họ lót</th>
+                <th class="bookList_head">Tên</th>
+                <th class="bookList_head">Email</th>
+                <th class="bookList_head">Ngày sinh</th>
+                <th class="bookList_head">Phái</th>
+                <th class="bookList_head">Địa chỉ</th>
+                <th class="bookList_head">Điện thoại</th>
                 <th class="bookList_head">Xem</th>
-                <th class="bookList_head">Cập nhật</th>
                 <th class="bookList_head">Xóa</th>
             </tr>
 
-            <tr class="bookList_row" v-for="(book, index) in books" :key="index">
-                <td class="bookList_col bookList_ten">{{ index + 1 }}</td>
-                <td class="bookList_col bookList_ten">{{ book.TENSACH }}</td>
-                <td class="bookList_col bookList_nxb">{{ book.MANXB }}</td>
-                <td class="bookList_col bookList_soluong">{{ book.SOQUYEN }}</td>
-                <td class="bookList_col bookList_soluong" :class="getClass(book.TRANGTHAI)">
-                    {{ getLabel(book) }}
+            <tr class="bookList_row" v-for="(user, index) in users" :key="index">
+                <td class="bookList_col user-checkbox_area">
+                    <input type="checkbox" class="user-checkbox" :checked="checkAll">
                 </td>
+                <td class="bookList_col bookList_ten">{{ index + 1 }}</td>
+                <td class="bookList_col bookList_ten">{{ user.MADOCGIA }}</td>
+                <td class="bookList_col bookList_ten">{{ user.HOLOT }}</td>
+                <td class="bookList_col bookList_ten">{{ user.TEN }}</td>
+                <td class="bookList_col bookList_ten">{{ user.EMAIL }}</td>
+                <td class="bookList_col bookList_ten">{{ user.NGAYSINH }}</td>
+                <td class="bookList_col bookList_nxb">{{ user.PHAI }}</td>
+                <td class="bookList_col bookList_soluong">{{ user.DIACHI }}</td>
+                <td class="bookList_col bookList_ten">{{ user.DIENTHOAI }}</td>
                 <td class="bookList_col bookList_update">
                     <i class="fa-regular fa-eye bookList--icon bookList_detail--icon"></i>
                 </td>
-                <td class="bookList_col bookList_update">
-                    <i class="fa-solid fa-rotate bookList--icon bookList_update--icon"></i>
-                </td>
-                <td class="bookList_col bookList_delete">
+                <td class="bookList_col bookList_delete" @click="RemoveUser(user._id)">
                     <i class="fa-solid fa-minus bookList--icon bookList_delete--icon"></i>
                 </td>
             </tr>
         </table>
+
+        <div class="deleteAll_area">
+            <input type="checkbox" name="deleteAll" id="deleteAll" class="deleteAll-checkbox" :checked="deleteAll">
+            <button class="btn btn-deleteAll">Xóa tất cả</button>
+        </div>
     </main>
 </template>
 
@@ -144,5 +153,32 @@ td {
     background-color: white;
     border-radius: 7px;
     padding-bottom: 12px;
+}
+
+/* ------- CSS User ------- */
+.user-checkbox_area {
+    margin: auto 0px;
+}
+
+.user-checkbox {
+    height: 1.7rem;
+    width: 1.7rem;
+}
+
+.deleteAll_area {
+    margin: 24px 0px 0px 12px;
+    text-align: left;
+}
+
+.deleteAll-checkbox {
+    height: 1.7rem;
+    width: 1.7rem;
+    margin-right: 16px;
+}
+
+.btn-deleteAll {
+    background-color: red;
+    color: white;
+    font-weight: bold;
 }
 </style>
