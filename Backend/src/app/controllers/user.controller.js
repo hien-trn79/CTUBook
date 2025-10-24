@@ -20,13 +20,25 @@ class UserController {
   // [POST] /api/users/
   async create(req, res, next) {
     try {
-      console.log(req.body);
+      let data = req.body;
+
       const userService = new UserService(MongoDB.client);
-      const result = await userService.create(req.body);
-      console.log("Đã tạo người dùng mới:", result);
-      return res.send({
-        message: "Tạo người dùng thành công",
+      const resultEmail = await userService.find({
+        EMAIL: data.EMAIL,
       });
+
+      const resultUser = await userService.find({
+        USERNAME: data.USERNAME,
+      });
+      if (resultEmail.length > 0 || resultUser.length > 0) {
+        return next(new ApiError(400, "Email hoặc Username đã được sử dụng"));
+      } else {
+        const user = await userService.create(data);
+        return res.status(201).send({
+          message: "Tạo người dùng thành công",
+          data: user,
+        });
+      }
     } catch (error) {
       console.log("LỖI tạo người dùng create.controller");
       console.log(error);
@@ -53,7 +65,9 @@ class UserController {
   async findOne(req, res, next) {
     try {
       const userService = new UserService(MongoDB.client);
-      let document = await userService.findByUsername(req.params.username);
+      let document = await userService.find({
+        USERNAME: req.params.username,
+      });
 
       if (!document) {
         return next(

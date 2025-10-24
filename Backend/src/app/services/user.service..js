@@ -58,7 +58,9 @@ class UserService {
   // [GET] /api/users/:username
   async findByUsername(username) {
     console.log("Tìm kiếm user với username:", username);
-    const result = await this.User.find({ USERNAME: username });
+    const result = await this.User.find({
+      USERNAME: username,
+    });
     return result;
   }
 

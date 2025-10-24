@@ -53,14 +53,20 @@ export default {
             }
 
             // TODO: Call API đăng ký
-            this.formData['LOAITK'] = 0; // Mặc định là tài khoản người dùng
-            const result = await userService.create(this.formData);
-            this.showNotification('Đăng ký thành công! Đang chuyển hướng...', 'success');
+            try {
+                this.formData['LOAITK'] = 0; // Mặc định là tài khoản người dùng
+                this.formData['IMAGE'] = 'https://res.cloudinary.com/dw7aqqwti/image/upload/v1761294585/UserDefault_vch7wc.jpg';
+                const result = await userService.create(this.formData);
+                this.showNotification('Đăng ký thành công! Đang chuyển hướng...', 'success');
+            } catch (error) {
+                this.showNotification('Email hoặc Username của bạn đã được sử dụng!', 'error');
+                return;
+            }
 
             setTimeout(() => {
                 this.$router.push('/signin');
             }, 3000)
-        }
+        },
     }
 }
 </script>
@@ -88,7 +94,8 @@ export default {
             </div>
             <div class="signUp-main">
                 <h2 class="section--title form--title">Đăng ký tài khoản</h2>
-                <form @submit.prevent="handleSignUp" id="form-signUp">
+                <form @submit.prevent="handleSignUp" id="form-signUp"
+                    :action="`?username=${formData.USERNAME}&email=${formData.EMAIL}`">
                     <div class="form-group">
                         <i class="form-icon fa-solid fa-user"></i>
                         <input type="text" name="USERNAME" v-model="formData.USERNAME" placeholder="Tên đăng nhập"
@@ -111,7 +118,7 @@ export default {
                     </div>
 
                     <div class="form-group button_area">
-                        <button type="submit" class="btn btn_signUp">Đăng ký</button>
+                        <button type="submit" class="btn btn_signUp" @click.prevent="handleSignUp">Đăng ký</button>
                     </div>
                 </form>
 

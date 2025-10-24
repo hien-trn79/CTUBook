@@ -10,20 +10,49 @@ export default {
             notification: {
                 show: false,
                 message: '',
-                type: ''
+                type: '',
+                progress: 100
             }
         }
     },
 
     methods: {
-        showNotification(message, type = 'error') {
+        /**
+         * Show toast notification with an optional redirect when progress completes.
+         * options: { duration: ms, redirect: string }
+         */
+        showNotification(message, type = 'error', options = {}) {
+            const duration = options.duration || 3000;
+            const redirect = options.redirect || null;
+
             this.notification.message = message;
             this.notification.type = type;
             this.notification.show = true;
+            this.notification.progress = 100;
 
+            // Animate progress bar
+            const interval = 30; // Update every 30ms
+            const steps = Math.max(1, Math.floor(duration / interval));
+            const decrement = 100 / steps;
+
+            let progressInterval = setInterval(() => {
+                this.notification.progress = Math.max(0, this.notification.progress - decrement);
+                if (this.notification.progress <= 0) {
+                    clearInterval(progressInterval);
+                    // If redirect requested, navigate after a tiny delay to allow the UI to settle
+                    if (redirect) {
+                        // small timeout to ensure toast hide animation has time
+                        setTimeout(() => this.$router.push(redirect), 150);
+                    }
+                }
+            }, interval);
+
+            // Auto-hide toast after duration
             setTimeout(() => {
                 this.notification.show = false;
-            }, 3000);
+                this.notification.progress = 100;
+                clearInterval(progressInterval);
+            }, duration);
         },
 
         async handleSignIn() {
@@ -32,13 +61,24 @@ export default {
                 return;
             }
 
-            const user = await userService.findByUsername(this.formData.username);
-            if (!user || user.PASSWORD !== this.formData.password) {
-                this.showNotification('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
+            try {
+                const user = await userService.findByUsername(this.formData.username);
+                console.log(user)
+                if (!user && (user.PASSWORD !== this.formData.password)) {
+                    this.showNotification('Mật khẩu không hợp lệ!', 'error');
+                    return;
+                }
+
+                // Lưu thông tin người dùng vào localStorage
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                // Show success toast and redirect when progress finishes
+                this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success', { redirect: '/', duration: 2000 });
+
+
+            } catch (error) {
+                this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
                 return;
             }
-
-            this.showNotification('Đăng nhập thành công!', 'success');
         }
     }
 }
@@ -49,9 +89,14 @@ export default {
         <!-- Toast Notification -->
         <transition name="slide-fade">
             <div v-if="notification.show" :class="['toast-notification', notification.type]">
-                <i
-                    :class="['toast-icon', notification.type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark']"></i>
-                <span class="toast-message">{{ notification.message }}</span>
+                <div class="toast-content">
+                    <i
+                        :class="['toast-icon', notification.type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark']"></i>
+                    <span class="toast-message">{{ notification.message }}</span>
+                </div>
+                <div class="toast-progress">
+                    <div class="toast-progress-bar" :style="{ width: notification.progress + '%' }"></div>
+                </div>
             </div>
         </transition>
 
@@ -208,17 +253,21 @@ export default {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 16px 24px;
     border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    min-width: 300px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.toast-content {
+    padding: 16px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
     font-size: 1.5rem;
     font-weight: 500;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 9999;
-    min-width: 300px;
-    backdrop-filter: blur(10px);
 }
 
 .toast-notification.success {
@@ -237,6 +286,19 @@ export default {
 
 .toast-message {
     flex: 1;
+}
+
+/* Progress Bar */
+.toast-progress {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    width: 100%;
+}
+
+.toast-progress-bar {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    transition: width 0.03s linear;
 }
 
 /* Slide Fade Transition */
