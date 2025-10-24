@@ -20,8 +20,10 @@ class UserController {
   // [POST] /api/users/
   async create(req, res, next) {
     try {
+      console.log(req.body);
       const userService = new UserService(MongoDB.client);
       const result = await userService.create(req.body);
+      console.log("Đã tạo người dùng mới:", result);
       return res.send({
         message: "Tạo người dùng thành công",
       });
@@ -47,20 +49,26 @@ class UserController {
     }
   }
 
-  // [GET] /api/users/:id
+  // [GET] /api/users/:username
   async findOne(req, res, next) {
     try {
       const userService = new UserService(MongoDB.client);
-      let document = await userService.findById(req.params.id);
+      let document = await userService.findByUsername(req.params.username);
 
       if (!document) {
-        return next(404, `Không tìm thấy user với id=${req.params.id}`);
+        return next(
+          404,
+          `Không tìm thấy user với username=${req.params.username}`
+        );
       }
       return res.send(document);
     } catch (error) {
       console.log("LỖI TÌM USER" + error);
       return next(
-        new ApiError(500, `Không tìm thấy user với id=${req.params.id}`)
+        new ApiError(
+          500,
+          `Không tìm thấy user với username=${req.params.username}`
+        )
       );
     }
   }

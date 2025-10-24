@@ -1,4 +1,5 @@
 <script>
+import userService from '@/services/user.service';
 export default {
     data() {
         return {
@@ -25,13 +26,18 @@ export default {
             }, 3000);
         },
 
-        handleSignIn() {
+        async handleSignIn() {
             if (!this.formData.username || !this.formData.password) {
                 this.showNotification('Vui lòng nhập đầy đủ thông tin!', 'error');
                 return;
             }
 
-            console.log('Sign in:', this.formData);
+            const user = await userService.findByUsername(this.formData.username);
+            if (!user || user.PASSWORD !== this.formData.password) {
+                this.showNotification('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
+                return;
+            }
+
             this.showNotification('Đăng nhập thành công!', 'success');
         }
     }

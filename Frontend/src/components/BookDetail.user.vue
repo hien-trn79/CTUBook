@@ -30,22 +30,29 @@ export default {
 </script>
 
 <template>
-    <article class="book_detail">
-        <div class="book_detail-img">
-            <BookDetail_ImgUser :book="book" />
-        </div>
+    <div class="page_book_detail">
+        <article class="book_detail">
+            <div class="book_detail-img">
+                <BookDetail_ImgUser :book="book" />
+            </div>
 
-        <div class="book_detail--info">
-            <BookDetail_InfoUser :book="book" />
-        </div>
-    </article>
-    <div class="section--title section_book--title">Mô tả</div>
-    <section class="section_book_detail book_detail--description" v-if="book.MOTA">
-        <p class="section_content section_book--description">{{ book.MOTA }}</p>
-    </section>
+            <div class="book_detail--info">
+                <BookDetail_InfoUser :book="book" />
+            </div>
+        </article>
+        <div class="section--title section_book--title">Mô tả</div>
+        <section class="section_book_detail book_detail--description" v-if="book.MOTA">
+            <p class="section_content section_book--description">{{ book.MOTA }}</p>
+        </section>
+    </div>
 </template>
 
 <style>
+.page_book_detail {
+    max-width: 97%;
+    margin: auto;
+}
+
 .book_detail {
     display: grid;
     grid-template-areas: 'book_detail-img book_detail--info';

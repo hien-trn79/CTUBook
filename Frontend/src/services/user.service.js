@@ -19,17 +19,17 @@ class UserService {
     return (await this.api.delete("/")).data;
   }
 
-  // [GET] http://localhost:8080/api/users/:id
-  async getId(id) {
-    return (await this.api.get(`/${id}`)).data;
+  // [GET] http://localhost:8080/api/users/:username
+  async findByUsername(username) {
+    return (await this.api.get(`/${username}`)).data;
   }
 
-  // [POST] http://localhost:8080/api/users/:id
-  async update(id, data) {
-    return (await this.api.post(`/${id}`, data)).data;
+  // [POST] http://localhost:8080/api/users/:username
+  async update(username, data) {
+    return (await this.api.post(`/${username}`, data)).data;
   }
 
-  // [DELETE] http://localhost:8080/api/users/:id
+  // [DELETE] http://localhost:8080/api/users/:username
   async delete(id) {
     return (await this.api.delete(`/${id}`)).data;
   }

@@ -3,6 +3,27 @@ import { ObjectId } from "mongodb";
 class UserService {
   constructor(client) {
     this.User = client.db().collection("User");
+    this.Counter = client.db().collection("Counter"); // Collection để lưu counter
+  }
+
+  async getNextMADOCGIA() {
+    try {
+      const result = await this.Counter.findOneAndUpdate(
+        {
+          _id: "MADOCGIA",
+        },
+        { $inc: { sequence_value: 1 } },
+        {
+          upsert: true,
+          returnDocument: "after",
+        }
+      );
+      const sequenceNumber = result.sequence_value || 1;
+      return `DG${String(sequenceNumber).padStart(4, "0")}`;
+    } catch (error) {
+      console.error("Lỗi khi tạo mã độc giả", error);
+      throw error;
+    }
   }
 
   extractUserData(payload) {
@@ -17,6 +38,7 @@ class UserService {
       DIACHI: payload.DIACHI,
       DIENTHOAI: payload.DIENTHOAI,
       LOAITK: payload.LOAITK,
+      USERNAME: payload.USERNAME,
     };
 
     Object.keys(user).forEach((key) => {
@@ -33,18 +55,19 @@ class UserService {
     return await cursor.toArray();
   }
 
-  // [GET] /api/users/:id
-  async findById(id) {
-    return await this.User.findOne({
-      MADOCGIA: id,
-    });
+  // [GET] /api/users/:username
+  async findByUsername(username) {
+    console.log("Tìm kiếm user với username:", username);
+    const result = await this.User.find({ USERNAME: username });
+    return result;
   }
 
   // [POST] /api/users/
   async create(data) {
+    console.log(data);
     const user = this.extractUserData(data);
     const result = await this.User.insertOne(user);
-    return result.value;
+    return result;
   }
 
   // [PUT] /api/users/:id

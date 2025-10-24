@@ -136,6 +136,24 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   linkActiveClass: "active",
+  // Tu dong cuon len dau trang khi chuyen huong
+  scrollBehavior(to, from, savedPosition) {
+    // Neu co savedPosition (quay ve/di chuyen), su dung no
+    if (savedPosition) {
+      return savedPosition;
+    }
+
+    // Neu route co hash (neo), cuon toi phan tu mot cach tron ven
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: "smooth",
+      };
+    }
+
+    // Default: cuon toi dau trang
+    return { left: 0, top: 0, behavior: "smooth" };
+  },
 });
 
 export default router;

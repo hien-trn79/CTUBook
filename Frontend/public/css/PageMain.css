@@ -7,6 +7,7 @@
     row-gap: 8px;
     min-height: 100vh;
     margin-top: 80px;
+    background-color: white;
 }
 
 .page-header {
@@ -15,8 +16,6 @@
     right: 0;
     left: 0;
     height: 80px;
-    /* background-color: #e0f1ffe1;
-    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.08); */
     z-index: 10;
     display: flex;
     align-items: center;
@@ -25,7 +24,6 @@
 .page-main {
     grid-area: page-main;
     margin: 0px auto 0px auto;
-    width: 95%;
 }
 
 .page-footer {
@@ -34,3 +32,4 @@
     height: fit-content;
     padding: 12px;
 }
+

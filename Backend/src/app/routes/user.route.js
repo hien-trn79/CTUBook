@@ -7,8 +7,8 @@ router.get("/", userController.findAll);
 router.post("/", userController.create);
 router.delete("/", userController.deleteAll);
 
-router.get("/:id", userController.findOne);
-router.put("/:id", userController.update);
-router.delete("/:id", userController.delete);
+router.get("/:username", userController.findOne);
+router.put("/:username", userController.update);
+router.delete("/:username", userController.delete);
 
 export default router;

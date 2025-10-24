@@ -1,12 +1,14 @@
 <script>
+import userService from '@/services/user.service';
+
 export default {
     data() {
         return {
             formData: {
-                username: '',
-                email: '',
-                password: '',
-                confirmPassword: ''
+                USERNAME: '',
+                EMAIL: '',
+                PASSWORD: '',
+                CONFIRM_PASSWORD: ''
             },
             notification: {
                 show: false,
@@ -43,15 +45,16 @@ export default {
             }, duration);
         },
 
-        handleSignUp() {
+        async handleSignUp() {
             // Validate
-            if (this.formData.password !== this.formData.confirmPassword) {
+            if (this.formData.PASSWORD !== this.formData.CONFIRM_PASSWORD) {
                 this.showNotification('Mật khẩu xác nhận không khớp!', 'error');
                 return;
             }
 
             // TODO: Call API đăng ký
-            console.log('Sign up:', this.formData);
+            this.formData['LOAITK'] = 0; // Mặc định là tài khoản người dùng
+            const result = await userService.create(this.formData);
             this.showNotification('Đăng ký thành công! Đang chuyển hướng...', 'success');
 
             setTimeout(() => {
@@ -88,22 +91,22 @@ export default {
                 <form @submit.prevent="handleSignUp" id="form-signUp">
                     <div class="form-group">
                         <i class="form-icon fa-solid fa-user"></i>
-                        <input type="text" name="username" v-model="formData.username" placeholder="Tên đăng nhập"
+                        <input type="text" name="USERNAME" v-model="formData.USERNAME" placeholder="Tên đăng nhập"
                             class="form-control" required>
                     </div>
                     <div class="form-group">
                         <i class="form-icon fa-solid fa-envelope"></i>
-                        <input type="email" name="email" v-model="formData.email" placeholder="Email"
+                        <input type="email" name="EMAIL" v-model="formData.EMAIL" placeholder="Email"
                             class="form-control" required>
                     </div>
                     <div class="form-group">
                         <i class="form-icon fa-solid fa-lock"></i>
-                        <input type="password" name="password" v-model="formData.password" placeholder="Mật khẩu"
+                        <input type="password" name="PASSWORD" v-model="formData.PASSWORD" placeholder="Mật khẩu"
                             class="form-control" required>
                     </div>
                     <div class="form-group">
                         <i class="form-icon fa-solid fa-lock"></i>
-                        <input type="password" name="confirmPassword" v-model="formData.confirmPassword"
+                        <input type="password" name="COMFIRMPASSWORD" v-model="formData.CONFIRM_PASSWORD"
                             placeholder="Xác nhận mật khẩu" class="form-control" required>
                     </div>
 
