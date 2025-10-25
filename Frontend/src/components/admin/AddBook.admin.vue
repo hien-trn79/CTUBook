@@ -1,6 +1,6 @@
 <script>
 import bookService from '@/services/book.service';
-import FormInput from '../FormInput.vue';
+import FormInput from '@/components/books/FormInput.vue';
 export default {
     components: {
         FormInput,
@@ -10,6 +10,7 @@ export default {
         return {
             isLoading: false,
             error: null,
+            book: {}, // Khởi tạo book object rỗng cho form thêm mới
             dataForm: [
                 {
                     name: 'TENSACH',

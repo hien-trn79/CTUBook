@@ -1,5 +1,5 @@
 <script>
-import BookCard from '@/components/BookCard.vue';
+import BookCard from '@/components/books/BookCard.vue';
 import bookService from '@/services/book.service';
 export default {
     components: {

@@ -7,10 +7,10 @@ import User_BookList from "@/layouts/BookList.user.vue";
 import CartPage from "@/layouts/Cart.vue";
 import SignInpage from "@/layouts/SignIn.vue";
 import SignUppage from "@/layouts/SignUp.vue";
-import UserBookDetail from "@/components/BookDetail.user.vue";
+import UserBookDetail from "@/components/user/BookDetail.user.vue";
 import NotFound from "@/components/NotFound.vue";
 import TestMotion from "@/components/TestMotion.vue";
-import UserProfile from "@/components/UserProfile.user.vue";
+import UserProfile from "@/components/user/UserProfile.user.vue";
 
 // admin layouts
 import BookShowListAdmin from "@/components/admin/BookShowList.admin.vue";
@@ -60,10 +60,10 @@ const routes = [
         children: [
           {
             path: "",
-            redirect: UserProfile,
+            component: UserProfile,
           },
           {
-            path: "/:id",
+            path: ":id",
             component: UserProfile,
           },
         ],
@@ -135,7 +135,8 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  linkActiveClass: "active",
+  linkExactActiveClass: "active",
+
   // Tu dong cuon len dau trang khi chuyen huong
   scrollBehavior(to, from, savedPosition) {
     // Neu co savedPosition (quay ve/di chuyen), su dung no

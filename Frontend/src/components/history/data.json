@@ -1,0 +1,68 @@
+{
+  "_id": "68fb80a4823a7ff11261afec",
+  "HINHTHUC": 1,
+  "TRANGTHAI": 0,
+  "IDDOCGIA": "68f264e8b0d17826a57bdc8b",
+  "THOIGIANMUON": "2025-10-24T00:00:00.000Z",
+  "THOIGIANTRA": "2025-10-30T00:00:00.000Z",
+  "books": [
+    {
+      "book": {
+        "_id": "68cd560f2b74d75c7489a673",
+        "MASACH": "S001",
+        "TENSACH": "Giáo trình điện toán đám mây",
+        "DONGIA": "65000",
+        "SOQUYEN": "10",
+        "NAMXUATBAN": "2023-10-07",
+        "TACGIA": "Ngô Bá Hùng, Thái Minh Tuấn, Triệu Thanh Ngoan",
+        "NGONNGU": "Tiếng Việt",
+        "SOTRANG": "342",
+        "THELOAI": "Giáo trình, công nghệ, kỹ thuật",
+        "YEUTHICH": "true",
+        "MOTA": "Điện toán đám mây (Cloud computing) là một công nghệ giúp cho việc tổ chức và quản lý một lượng lớn các nguồn tài nguyên tính toán (gồm cả phần cứng và phần mềm) để việc cung cấp các dịch vụ công nghệ thông tin trở nên dễ dàng và hiệu quả hơn. Học phần này sẽ cung cấp cho người học một cái nhìn đầy đủ về hiệu quả, lợi ích cùng những thách thức mà công nghệ điện toán đám mây mang lại. Người học sẽ được tìm hiểu về lịch sử phát triển của công nghệ điện toán đám mây, cùng những kỹ thuật, cơ chế nền tảng giúp cho công nghệ này trở thành hiện thực. Ngoài ra, người học cũng được cung cấp đầy đủ về các khái niệm, mô hình và các kiến trúc có thể sử dụng để xây dựng nên các tính năng của một hệ thống điện toán đám mây. Người học sẽ được giới thiệu và làm quen với cách thức khai thác các nền tảng đám mây phổ biến trên thế giới.",
+        "TRANGTHAI": 0,
+        "TENNXB": "Đại học Cần Thơ",
+        "IMAGE": "https://res.cloudinary.com/dw7aqqwti/image/upload/v1760627948/CTUBook/utiid2qvxelqezaq95ro.png"
+      },
+      "SOLUONG": 5
+    },
+    {
+      "book": {
+        "_id": "68cd560f2b74d75c7489a679",
+        "MASACH": "S007",
+        "TENSACH": "Giáo trình Ứng dụng hệ thống thông tin địa lý trong quản lý môi trường và tài nguyên thiên nhiên",
+        "DONGIA": "15000",
+        "SOQUYEN": "3",
+        "NAMXUATBAN": "2021-02-10",
+        "TACGIA": "Nguyễn Hiếu Trung, Trương Ngọc Phương",
+        "NGONNGU": "Tiếng Việt",
+        "SOTRANG": "88",
+        "THELOAI": "Giáo trình, địa lý",
+        "YEUTHICH": "true",
+        "TRANGTHAI": "2",
+        "TENNXB": "Đại học Cần Thơ",
+        "IMAGE": "https://res.cloudinary.com/dw7aqqwti/image/upload/v1760629509/CTUBook/aicnwkv4ytpqhbxm2avn.png"
+      },
+      "SOLUONG": 2
+    },
+    {
+      "book": {
+        "_id": "68cd560f2b74d75c7489a67a",
+        "MASACH": "S008",
+        "TENSACH": "Giáo trình Xử lý sau thu hoạch và chế biến sản phẩm động vật",
+        "DONGIA": "40000",
+        "SOQUYEN": "6",
+        "NAMXUATBAN": "2014-1-1",
+        "TACGIA": "Nguyễn Văn Mười, Trần Thanh Trúc",
+        "NGONNGU": "Tiếng Việt",
+        "SOTRANG": "280",
+        "THELOAI": "Giáo trình, chế biến",
+        "YEUTHICH": "true",
+        "TRANGTHAI": "3",
+        "TENNXB": "Đại học Cần Thơ",
+        "IMAGE": "https://res.cloudinary.com/dw7aqqwti/image/upload/v1760680463/CTUBook/g2dzdf0hmi9qkzllbipv.png"
+      },
+      "SOLUONG": 1
+    }
+  ]
+}

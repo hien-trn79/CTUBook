@@ -1,7 +1,5 @@
 <script>
-import bookService from '@/services/book.service';
-import UploadImage from './UploadImage.vue';
-import brandService from '@/services/brand.service';
+import UploadImage from '@/components/user/UploadImage.vue';
 import { bookLabel, bookStatus } from '@/enums/book.status';
 
 export default {

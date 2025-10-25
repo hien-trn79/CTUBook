@@ -2,7 +2,7 @@
 import bookService from '@/services/book.service';
 import InputSearchAdmin from './InputSearch.admin.vue';
 import { bookClass, bookLabel } from '@/enums/book.status';
-import TableList from '../TableList.vue';
+import TableList from './TableList.vue';
 import { icon, iconColor } from '@/enums/icon.enum';
 export default {
     components: {

@@ -101,7 +101,6 @@ export default {
     border-radius: 10px;
     height: fit-content;
     text-align: center;
-    opacity: 0;
     background-color: #fff;
     border: 2px solid transparent;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -135,9 +134,9 @@ export default {
     opacity: 1;
 }
 
-.book_item:active {
+/* .book_item:active {
     transform: translateY(-5px) scale(1);
-}
+} */
 
 .book_item-img {
     width: 100%;

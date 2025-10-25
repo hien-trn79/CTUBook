@@ -1,6 +1,6 @@
 <script>
 import InputSearchAdmin from './InputSearch.admin.vue';
-import TableList from '../TableList.vue';
+import TableList from './TableList.vue';
 import { icon, iconColor } from '@/enums/icon.enum';
 import requestService from '@/services/request.service';
 import userService from '@/services/user.service';

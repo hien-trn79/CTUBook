@@ -2,6 +2,7 @@ import express from "express";
 import book from "../controllers/book.controller.js";
 import muonRouter from "./muon.routes.js";
 import requestRouter from "./request.route.js";
+import chitietRouter from "./chitiet.route.js";
 import multer from "multer";
 
 const upload = multer({
@@ -26,6 +27,9 @@ router.get("/status-returned", book.getReturnedAll);
 
 // danh sach muon tra
 router.use("/muon-tra", muonRouter);
+
+// danh sach chi tiet don muon
+router.use("/chi-tiet-don-muon", chitietRouter);
 
 // danh sach cac yeu cau
 router.use("/request", requestRouter);

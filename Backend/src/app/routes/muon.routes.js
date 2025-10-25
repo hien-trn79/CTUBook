@@ -3,11 +3,11 @@ import muonController from "../controllers/muon.controller.js";
 
 const router = express.Router();
 
+// [Get] /api/books/muon-tra
 router.get("/", muonController.findAll);
-// router.post("/", muonController.create);
-// router.delete("/", muonController.deleteAll);
 
-// router.get("/:id", muonController.findOne);
+// [GET] /api/books/muon-tra/:MADOCGIA
+router.get("/:MADOCGIA", muonController.findByMaDocGia);
 // router.put("/:id", muonController.update);
 // router.delete("/:id", muonController.delete);
 

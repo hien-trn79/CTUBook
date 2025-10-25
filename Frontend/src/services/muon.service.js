@@ -8,6 +8,10 @@ class MuonService {
   async getAll() {
     return (await this.api.get("/")).data;
   }
+
+  async getByMaDocGia(maDocGia) {
+    return (await this.api.get(`/${maDocGia}`)).data;
+  }
 }
 
 export default new MuonService();

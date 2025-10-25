@@ -1,6 +1,6 @@
 <script>
 import bookService from '@/services/book.service';
-import FormInput from '../FormInput.vue';
+import FormInput from '@/components/books/FormInput.vue';
 import BrandService from '@/services/brand.service';
 
 export default {

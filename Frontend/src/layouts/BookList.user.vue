@@ -1,7 +1,7 @@
 <script>
-import BookShowList from '@/components/BookShowList.user.vue';
+import BookShowList from '@/components/user/BookShowList.user.vue';
 import bookService from '@/services/book.service.js';
-import NavbarBookList from '@/components/NavbarBookList.vue';
+import NavbarBookList from '@/components/books/NavbarBookList.vue';
 export default {
     components: {
         BookShowList,
