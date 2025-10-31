@@ -2,7 +2,10 @@ import express from "express";
 import book from "../controllers/book.controller.js";
 import muonRouter from "./muon.routes.js";
 import requestRouter from "./request.route.js";
+// chi tiet don muon
 import chitietRouter from "./chitiet.route.js";
+// chi tiet yeu cau
+import chitietyeucauRouter from "./chitietyeucau.route.js";
 import multer from "multer";
 
 const upload = multer({
@@ -30,6 +33,9 @@ router.use("/muon-tra", muonRouter);
 
 // danh sach chi tiet don muon
 router.use("/chi-tiet-don-muon", chitietRouter);
+
+// danh sach yeu cau
+router.use("/chi-tiet-yeu-cau", chitietyeucauRouter);
 
 // danh sach cac yeu cau
 router.use("/request", requestRouter);

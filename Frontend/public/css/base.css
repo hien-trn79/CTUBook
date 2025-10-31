@@ -101,6 +101,25 @@ ul {
 .text-gray {color: gray}
 .text-red {color: red;}
 
+/* -----CSS border color------- */
+.bd-blue { 
+    border-color: rgb(30, 95, 224); 
+    background-color: rgba(161, 220, 255, 0.349);
+    box-shadow: 2px 2px 3px rgba(30, 95, 224, 0.205);
+}
+
+.bd-red { 
+    border-color: red; 
+    background-color: rgba(255, 0, 0, 0.045);
+    box-shadow: 2px 2px 3px rgba(255, 0, 0, 0.205);
+}
+
+.bd-green { 
+    border-color: green; 
+    background-color: rgba(0, 255, 0, 0.1);
+    box-shadow: 2px 2px 3px rgba(0, 255, 0, 0.205);
+}
+
 
 /* -----CSS color------- */
 .color-red {

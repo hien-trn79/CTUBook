@@ -1,4 +1,5 @@
 <script>
+import { hinhthuc, trangthai, ClassTrangThai } from '../../enums/muon.enum.js';
 export default {
     props: {
         ticket: {
@@ -7,8 +8,17 @@ export default {
                 _id: '',
                 THOIGIANMUON: '',
                 THOIGIANTRA: '',
-                books: []
+                books: [],
+
             })
+        }
+    },
+
+    data() {
+        return {
+            trangthai,
+            hinhthuc,
+            ClassTrangThai
         }
     },
 
@@ -51,6 +61,10 @@ export default {
         // Lấy hình ảnh sách, nếu không có thì dùng ảnh mặc định
         getBookImage(book) {
             return book?.IMAGE || '/CTUBook_Logo.png';
+        },
+
+        getStatusTicket(trangthai) {
+            return this.trangthai[trangthai] || 'Không xác định';
         }
     },
 
@@ -62,8 +76,8 @@ export default {
 
 <template>
     <div class="ticket_book">
-        <div class="ticket_status">
-
+        <div class="ticket_status" :class="ClassTrangThai[ticket.TRANGTHAI]">
+            {{ getStatusTicket(ticket.TRANGTHAI) }}
         </div>
         <div class="ticket_book-header">
             <h3 class="ticket--title">Đơn mượn</h3>
@@ -113,17 +127,32 @@ export default {
 
 <style scoped>
 .ticket_book {
+    position: relative;
     background-color: white;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .ticket_book:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
+}
+
+.ticket_status {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 2px solid;
+    padding: 6px 12px;
+    font-size: 1.4rem;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    min-width: 80px;
+    text-align: center;
 }
 
 .ticket_book-header {

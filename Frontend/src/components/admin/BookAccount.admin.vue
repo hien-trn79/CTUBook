@@ -10,8 +10,9 @@ export default {
     data() {
         return {
             choiceSideBar: 'Quản lý tài khoản',
-            users: {},
-            deleteAll: true
+            users: [],
+            selected: [],
+            checkAll: false,
         }
     },
 
@@ -20,10 +21,56 @@ export default {
             this.users = await userService.getAll();
         },
 
-        RemoveUser(id) {
-            console.log(`remove ${id}`)
+        // Toggle single user selection
+        toggleUserSelection(id, checked) {
+            if (checked) {
+                if (!this.selected.includes(id)) this.selected.push(id);
+            } else {
+                this.selected = this.selected.filter(x => x !== id);
+            }
         },
 
+        // Toggle select all
+        changeCheckAll(checked) {
+            this.checkAll = checked;
+            if (checked) {
+                this.selected = this.users.map(u => u._id);
+            } else {
+                this.selected = [];
+            }
+        },
+
+        async RemoveUser(id) {
+            try {
+                const ok = window.confirm('Bạn có chắc muốn xóa người dùng này không?');
+                if (!ok) return;
+                await userService.delete(id);
+                this.users = this.users.filter(u => u._id !== id);
+                this.selected = this.selected.filter(x => x !== id);
+                alert('Xóa người dùng thành công');
+            } catch (error) {
+                console.error('Lỗi xóa người dùng:', error);
+                alert('Xóa không thành công');
+            }
+        },
+
+        // Delete all selected users
+        async deleteSelected() {
+            if (!this.selected.length) return alert('Chưa chọn người dùng nào');
+            const ok = window.confirm(`Bạn có chắc muốn xóa ${this.selected.length} người dùng đã chọn không?`);
+            if (!ok) return;
+            try {
+                // delete one by one (backend doesn't provide bulk delete by ids)
+                await Promise.all(this.selected.map(id => userService.delete(id)));
+                this.users = this.users.filter(u => !this.selected.includes(u._id));
+                this.selected = [];
+                this.checkAll = false;
+                alert('Xóa người dùng đã chọn thành công');
+            } catch (error) {
+                console.error('Lỗi khi xóa nhiều người dùng:', error);
+                alert('Có lỗi khi xóa. Vui lòng thử lại.');
+            }
+        },
     },
 
     mounted() {
@@ -55,9 +102,10 @@ export default {
                 <th class="bookList_head">Xóa</th>
             </tr>
 
-            <tr class="bookList_row" v-for="(user, index) in users" :key="index">
+            <tr class="bookList_row" v-for="(user, index) in users" :key="user._id || index">
                 <td class="bookList_col user-checkbox_area">
-                    <input type="checkbox" class="user-checkbox" :checked="checkAll">
+                    <input type="checkbox" class="user-checkbox" :checked="selected.includes(user._id)"
+                        @change="toggleUserSelection(user._id, $event.target.checked)">
                 </td>
                 <td class="bookList_col bookList_ten">{{ index + 1 }}</td>
                 <td class="bookList_col bookList_ten">{{ user.MADOCGIA }}</td>
@@ -71,15 +119,19 @@ export default {
                 <td class="bookList_col bookList_update">
                     <i class="fa-regular fa-eye bookList--icon bookList_detail--icon"></i>
                 </td>
-                <td class="bookList_col bookList_delete" @click="RemoveUser(user._id)">
-                    <i class="fa-solid fa-minus bookList--icon bookList_delete--icon"></i>
+                <td class="bookList_col bookList_delete">
+                    <button class="icon-btn" @click="RemoveUser(user._id)"><i
+                            class="fa-solid fa-minus bookList--icon bookList_delete--icon"></i></button>
                 </td>
             </tr>
         </table>
 
         <div class="deleteAll_area">
-            <input type="checkbox" name="deleteAll" id="deleteAll" class="deleteAll-checkbox" :checked="deleteAll">
-            <button class="btn btn-deleteAll">Xóa tất cả</button>
+            <input type="checkbox" name="deleteAll" id="deleteAll" class="deleteAll-checkbox"
+                :checked="selected.length === users.length && users.length > 0"
+                @change="changeCheckAll($event.target.checked)">
+            <button class="btn btn-deleteAll" @click="deleteSelected" :disabled="selected.length === 0">Xóa tất
+                cả</button>
         </div>
     </main>
 </template>

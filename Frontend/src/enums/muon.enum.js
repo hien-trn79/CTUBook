@@ -14,3 +14,9 @@ export const ClassTrangThai = {
   1: "text-green",
   2: "text-red",
 };
+
+export const borderTrangThai = {
+  0: "bd-blue",
+  1: "bd-green",
+  2: "bd-red",
+};

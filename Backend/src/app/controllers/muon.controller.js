@@ -10,6 +10,7 @@ class MuonController {
     try {
       const muonService = new MuonService(MongoDB.client);
       document = await muonService.find({});
+      res.send(document);
     } catch (error) {
       console.log("Loi tim kiem danh sach muon");
       console.log(error);

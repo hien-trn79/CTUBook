@@ -1,4 +1,5 @@
 <script>
+import meService from '@/services/me.service';
 import userService from '@/services/user.service';
 export default {
     data() {
@@ -62,9 +63,14 @@ export default {
             }
 
             try {
-                const user = await userService.findByUsername(this.formData.username);
+                const user = await meService.getQuery({ username: this.formData.username, password: this.formData.password });
                 console.log(user)
-                if (!user && (user.PASSWORD !== this.formData.password)) {
+                if (!user) {
+                    this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
+                    return;
+                }
+
+                if (user[0].PASSWORD !== this.formData.password) {
                     this.showNotification('Mật khẩu không hợp lệ!', 'error');
                     return;
                 }
@@ -73,8 +79,6 @@ export default {
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 // Show success toast and redirect when progress finishes
                 this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success', { redirect: '/', duration: 2000 });
-
-
             } catch (error) {
                 this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
                 return;

@@ -1,7 +1,12 @@
 import express from "express";
+
+// Router
 import bookRouter from "./app/routes/book.route.js";
 import userRouter from "./app/routes/user.route.js";
 import brandRouter from "./app/routes/brand.route.js";
+import meRouter from "./app/routes/me.route.js";
+
+// Other
 import ApiError from "./app/api-error.js";
 import cors from "cors";
 import { fileURLToPath } from "url";
@@ -18,6 +23,8 @@ const __dirname = dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "public")));
 
+// /api/me/
+app.use("/api/me/", meRouter);
 // /api/books/
 app.use("/api/books/", bookRouter);
 

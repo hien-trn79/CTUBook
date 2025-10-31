@@ -1,4 +1,4 @@
-import {jsonClient, formClient} from "./api.service.js";
+import { jsonClient, formClient } from "./api.service.js";
 
 class RequestService {
   constructor(baseUrl = "/api/books/request") {
@@ -8,6 +8,10 @@ class RequestService {
   // [GET] http://localhost:8080/api/books/request
   async getAll() {
     return (await this.api.get("/")).data;
+  }
+
+  async getByMaDocGia(maDocGia) {
+    return (await this.api.get(`/${maDocGia}`)).data;
   }
 }
 

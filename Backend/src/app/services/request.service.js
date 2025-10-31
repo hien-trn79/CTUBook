@@ -7,14 +7,12 @@ class RequestService {
 
   extractRequestData(payload) {
     const request = {
+      THOIGIANYEUCAU: payload.THOIGIANYEUCAU,
       MADOCGIA: payload.MADOCGIA,
-      MASACH: payload.MASACH,
-      THOIGIANDAT: payload.THOIGIANDAT,
       TRANGTHAI: payload.TRANGTHAI,
-      MAYEUCAU: payload.MAYEUCAU,
     };
 
-    ObjectId.keys(request).forEach((key) => {
+    Object.keys(request).forEach((key) => {
       request[key] == undefined && delete request[key];
     });
     return request;
@@ -25,11 +23,11 @@ class RequestService {
     return cursor.toArray();
   }
 
-  // /api/books/request/:id
-  async findById(id) {
-    return await this.Request.findOne({
-      MAYEUCAU: id,
-    });
+  // /api/books/request/:maDocGia
+  async findByMaDocGia(maDocGia) {
+    return await this.Request.find({
+      MADOCGIA: ObjectId.isValid(maDocGia) ? new ObjectId(maDocGia) : null,
+    }).toArray();
   }
 }
 

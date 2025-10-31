@@ -6,6 +6,7 @@ import requestService from '@/services/request.service';
 import userService from '@/services/user.service';
 import bookService from '@/services/book.service';
 import { request, ClassRequest } from '@/enums/book.status';
+import chitietyeucauService from '@/services/chitietyeucau.service';
 export default {
     components: {
         InputSearchAdmin,
@@ -16,8 +17,8 @@ export default {
         return {
             choiceSideBar: 'Quản lý sách',
             dataList: {},
-            thead: ['STT', 'Tên sách', 'Tên tài khoản', 'Số điện thoại', 'Tác giả', 'Thời gian đặt', 'Số lượng'],
-            colValue: ['TENSACH', 'TENTAIKHOAN', 'SODIENTHOAI', 'TACGIA', 'THOIGIANDAT', 'SOQUYEN'],
+            thead: ['STT', 'Mã Yêu Cầu', 'Email', 'Thời gian yêu cầu', 'Trạng thái', 'Số lượng'],
+            colValue: ['_id', 'TENTAIKHOAN', 'SODIENTHOAI', 'TACGIA', 'THOIGIANDAT', 'SOQUYEN'],
             colValueIcon: [
                 {
                     url: 'detail',
@@ -44,31 +45,26 @@ export default {
     },
 
     methods: {
-        async getUser(MaDocGia) {
-            return await userService.getId(MaDocGia);
-        },
-
-        async getBook(MaSach) {
-            return await bookService.getId(MaSach);
-        },
-
-        async getDataAll() {
-            this.dataList = await requestService.getAll();
-            this.dataList.forEach(async (item) => {
-                let user = await this.getUser(item.MADOCGIA);
-                let book = await this.getBook(item.MASACH);
-                item['TENSACH'] = book.TENSACH;
-                item['TENTAIKHOAN'] = user.HOLOT + ' ' + user.TEN;
-                item['SODIENTHOAI'] = user.DIENTHOAI;
-                item['TACGIA'] = book.TACGIA;
-                item['SOQUYEN'] = 1;
-            })
-            console.log(this.dataList)
-        },
+        async getRequestAll() {
+            let infoRequests = [];
+            let requestList = await requestService.getAll();
+            requestList.forEach(async (request) => {
+                let docGia = await userService.findByUsername(request.MADOCGIA);
+                const maYeuCau = request._id;
+                const chitietyeucau = await chitietyeucauService.getMAYEUCAU(maYeuCau);
+                infoRequests.push({
+                    ...request,
+                    docGia: docGia[0],
+                    chitietyeucau: { ...chitietyeucau }
+                })
+            });
+            this.dataList = infoRequests;
+            console.log(this.dataList);
+        }
     },
 
     mounted() {
-        this.getDataAll();
+        this.getRequestAll();
     }
 }
 </script>

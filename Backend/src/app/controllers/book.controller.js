@@ -152,8 +152,9 @@ class book {
   // [DELETE] /api/books/:id
   async delete(req, res, next) {
     try {
+      const id = req.params.id;
       const bookService = new BookService(MongoDB.client);
-      const document = await bookService.delete(req.params.id);
+      const document = await bookService.delete(id);
       if (!document) {
         return next(new ApiError(404, "Không tìm thấy sách để xóa !!"));
       }
@@ -162,6 +163,8 @@ class book {
         message: "Xóa sách thành công",
       });
     } catch (error) {
+      console.log("LOI xoa sach");
+      console.error(error);
       return next(new ApiError(500, "Có lỗi trong quá trình xóa sách"));
     }
   }

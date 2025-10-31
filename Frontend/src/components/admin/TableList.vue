@@ -17,6 +17,10 @@ export default {
 
         ColClass(status) {
             return this.colClass[status]
+        },
+
+        RemoveBook(book) {
+            this.$emit('remove-book', book);
         }
     },
 
@@ -41,7 +45,13 @@ export default {
             <td class="bookList_col" :class="ColClass(bookItem.TRANGTHAI)">{{ ColLabel(bookItem.TRANGTHAI) }}</td>
             <td class="bookList_col bookList_update">
                 <router-link :to="`${bookItem._id}/${icon.url}`" v-for="(icon) in colValueContactIcon">
-                    <i :class="[icon.icon, icon.id, 'icon', icon.color]"></i>
+                    <button class="icon-btn" v-if="icon.url !== 'remove'">
+                        <i :class="[icon.icon, icon.id, 'icon', icon.color]"></i>
+                    </button>
+
+                    <button class="icon-btn" v-else @click.prevent="RemoveBook(bookItem)">
+                        <i :class="[icon.icon, icon.id, 'icon', icon.color]"></i>
+                    </button>
                 </router-link>
             </td>
         </tr>
@@ -49,6 +59,15 @@ export default {
 </template>
 
 <style>
+.icon-btn {
+    background-color: transparent;
+    border: none;
+}
+
+.icon-btn:hover {
+    cursor: pointer;
+}
+
 .bookShowList--title {
     font-size: 1.8rem;
 }

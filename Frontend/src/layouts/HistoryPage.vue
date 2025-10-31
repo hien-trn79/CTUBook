@@ -1,4 +1,5 @@
 <script>
+
 import bookService from '@/services/book.service';
 import chitietdonmuonService from '@/services/chitietdonmuon.service';
 import muonService from '@/services/muon.service';
@@ -83,7 +84,7 @@ export default {
 
             } catch (error) {
                 console.error('Lỗi khi cập nhật thông tin đơn mượn:', error);
-                this.error = 'Không thể tải thông tin chi tiết đơn mượn.';
+                this.error = 'Vui lòng đăng nhập để xem lịch sử đơn mượn.';
             }
         },
 

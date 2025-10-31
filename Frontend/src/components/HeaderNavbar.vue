@@ -111,8 +111,8 @@ export default {
             <li class="navbar_item navbar_item--user-logged" v-else ref="userMenu">
                 <div class="user-profile" @click="toggleUserMenu">
                     <div class="avatar_user">
-                        <img :src="currentUser.IMAGE || '/images/default-avatar.png'" :alt="currentUser.USERNAME"
-                            class="avatar_user-img">
+                        <img :src="currentUser.IMAGE || 'https://res.cloudinary.com/dw7aqqwti/image/upload/v1761294585/UserDefault_vch7wc.jpg'"
+                            :alt="currentUser.USERNAME" class="avatar_user-img">
                     </div>
                     <span class="user-name">{{ currentUser.USERNAME }}</span>
                     <i class="fa-solid fa-chevron-down dropdown-icon" :class="{ 'rotated': showUserMenu }"></i>
@@ -123,7 +123,7 @@ export default {
                     <div class="user-dropdown" v-if="showUserMenu">
                         <div class="user-info">
                             <div class="user-avatar-large">
-                                <img :src="currentUser.IMAGE || '/images/default-avatar.png'"
+                                <img :src="currentUser.IMAGE || 'https://res.cloudinary.com/dw7aqqwti/image/upload/v1761294585/UserDefault_vch7wc.jpg'"
                                     :alt="currentUser.USERNAME">
                             </div>
                             <div class="user-details">

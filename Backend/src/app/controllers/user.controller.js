@@ -1,5 +1,5 @@
 import ApiError from "../api-error.js";
-import UserService from "../services/user.service..js";
+import UserService from "../services/user.service.js";
 import MongoDB from "../utils/mongodb.util.js";
 
 class UserController {
@@ -65,9 +65,7 @@ class UserController {
   async findOne(req, res, next) {
     try {
       const userService = new UserService(MongoDB.client);
-      let document = await userService.find({
-        USERNAME: req.params.username,
-      });
+      let document = await userService.findByUsername(req.params.username);
 
       if (!document) {
         return next(

@@ -18,9 +18,9 @@ class BookService {
         }
       );
 
-      // Format: MS0001, MS0002, MS0003, ...
+      // Format: S001, S002, S003, ...
       const sequenceNumber = result.sequence_value || 1;
-      return `MS${String(sequenceNumber).padStart(4, "0")}`;
+      return `S${String(sequenceNumber).padStart(3, "0")}`;
     } catch (error) {
       console.error("Lỗi khi tạo mã sách:", error);
       throw error;
@@ -43,6 +43,7 @@ class BookService {
       YEUTHICH: payload.YEUTHICH,
       TRANGTHAI: payload.TRANGTHAI,
       IMAGE: payload.IMAGE,
+      MOTA: payload.MOTA,
     };
 
     // xoa nhung truong khong xac dinh
@@ -106,7 +107,7 @@ class BookService {
 
   async delete(id) {
     const result = await this.Book.deleteOne({
-      _id: ObjectId(id) ? new ObjectId(id) : null,
+      _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
     });
 
     return result;

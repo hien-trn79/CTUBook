@@ -5,6 +5,7 @@ import { icon, iconColor } from '@/enums/icon.enum';
 import userService from '@/services/user.service';
 import muonService from '@/services/muon.service';
 import { hinhthuc, trangthai, ClassTrangThai } from '@/enums/muon.enum';
+import chitietdonmuonService from '@/services/chitietdonmuon.service';
 export default {
     components: {
         InputSearchAdmin,
@@ -15,8 +16,8 @@ export default {
         return {
             choiceSideBar: 'Quản lý Mượn - Trả',
             dataList: {},
-            thead: ['STT', 'Mã độc giả', "Tên độc giả", 'Email', 'Số lượng sách', 'Thời gian mượn', 'Thời gian trả', 'Hình thức'],
-            colValue: ['MADOCGIA', 'HOVATEN', 'EMAIL', 'SOQUYEN', 'THOIGIANMUON', 'THOIGIANTRA', 'HINHTHUC'],
+            thead: ['STT', 'Mã độc giả', 'Email', 'Số lượng sách', 'Thời gian mượn', 'Thời gian trả', 'Hình thức'],
+            colValue: ['IDDOCGIA', 'EMAIL', 'SOQUYEN', 'THOIGIANMUON', 'THOIGIANTRA', 'HINHTHUC'],
             colValueIcon: [
                 {
                     url: 'detail',
@@ -24,16 +25,34 @@ export default {
                     id: 'btn-detail',
                     color: iconColor.eyeOpen
                 },
-                {
-                    url: 'edit',
-                    icon: icon.pen,
-                    id: 'btn-edit',
-                    color: iconColor.pen
-                },
+                // {
+                //     url: 'edit',
+                //     icon: icon.pen,
+                //     id: 'btn-edit',
+                //     color: iconColor.pen
+                // },
             ],
             hinhthuc,
             trangthai,
-            ClassTrangThai
+            ClassTrangThai,
+            showInfor: false,
+            ticketSelected: null,
+            inforUser: [{
+                key: 'EMAIL',
+                label: 'Email'
+            }, {
+                key: 'NGAYSINH',
+                label: 'Ngày sinh'
+            }, {
+                key: 'PHAI',
+                label: 'Giới tính'
+            }, {
+                key: 'DIACHI',
+                label: 'Địa chỉ'
+            }, {
+                key: 'DIENTHOAI',
+                label: 'Điện thoại'
+            }]
         }
     },
 
@@ -50,12 +69,26 @@ export default {
 
         async getDataAll() {
             this.dataList = await muonService.getAll();
-            this.dataList.forEach(async (item) => {
-                let user = await this.getUser(item.MADOCGIA)
-                item['HOVATEN'] = user.HOLOT + " " + user.TEN;
-                item['HINHTHUC'] = hinhthuc[item.HINHTHUC]
+            this.dataList.forEach(async yeuCau => {
+                const user = await userService.findByUsername(yeuCau.IDDOCGIA);
+                yeuCau['EMAIL'] = user[0].EMAIL;
+                const chitietdonmuon = await chitietdonmuonService.getIDDonMuon(yeuCau._id);
+                yeuCau['SOQUYEN'] = chitietdonmuon[0] ? chitietdonmuon[0].SOLUONG : 0;
+                // Cap nhat hinh thuc
+                yeuCau['HINHTHUC'] = this.hinhthuc[yeuCau.HINHTHUC];
+                // dieu chinh format thoi gian
+                yeuCau['THOIGIANMUON'] = new Date(yeuCau.THOIGIANMUON).toLocaleDateString('en-GB');
+                yeuCau['THOIGIANTRA'] = new Date(yeuCau.THOIGIANTRA).toLocaleDateString('en-GB');
+
+                yeuCau.DOCGIA = user[0];
             })
 
+        },
+
+        handlerDetail(book) {
+            this.ticketSelected = book;
+            console.log(this.ticketSelected);
+            this.showInfor = true;
         }
     },
 
@@ -78,11 +111,105 @@ export default {
     </header>
     <main class="bookShowList-main">
         <TableList :head-list-table="thead" :col-value-list="colValue" :books="dataList"
-            :col-value-contact-icon="colValueIcon" :col-label="trangthai" :col-class="ClassTrangThai" />
+            :col-value-contact-icon="colValueIcon" :col-label="trangthai" :col-class="ClassTrangThai"
+            @handler-detail="handlerDetail" />
     </main>
+
+    <div class="modal" v-if="showInfor">
+        <div class="modal_showInfor">
+            <!-- Nội dung modal hiển thị thông tin chi tiết sách mượn/trả sẽ được thêm vào đây -->
+            <header class="modal-header">
+                <h3 class="section--title modal--title">Thông tin chi tiết đơn mượn</h3>
+                <p class="section_content donMuon--id">Mã đơn mượn: <span class="section_value">{{ ticketSelected._id
+                        }}</span></p>
+                <p class="section_content">
+                    <i class="fa-regular fa-clock"></i>
+                    <span class="timeStart">{{ ticketSelected.THOIGIANMUON }}</span> - <span class="timeFinish">{{
+                        ticketSelected.THOIGIANTRA }}</span>
+                </p>
+            </header>
+
+            <main class="modal-main">
+                <!-- Thông tin chi tiết sách mượn/trả sẽ được hiển thị ở đây -->
+                <h4 class="modal-main--title section_content">Thông tin độc giả</h4>
+
+                <div class="infor_user">
+                    <img :src="ticketSelected.DOCGIA.IMAGE" alt="User Image" class="infor_user-img">
+                    <div class="infor_user-main">
+                        <li class="infor_user--items" v-for="(userInfor, index) in inforUser" :key="index">
+                            <p class="section_content user_content" v-if="userInfor">
+                                {{ userInfor.label }}: <span class="section_value"
+                                    v-if="this.ticketSelected.DOCGIA[userInfor.key] === undefined">{{ 'Chưa xác định'
+                                    }}</span>
+                                <span class="section_value" v-else>{{ this.ticketSelected.DOCGIA[userInfor.key]
+                                }}</span>
+                            </p>
+                        </li>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="modal-footer">
+                <button class="btn btn--primary btn--close-modal">Đóng</button>
+            </footer>
+        </div>
+        <div class="overlay"></div>
+    </div>
 </template>
 
 <style scoped>
+/* ----------Modal ShowInformation ------------------ */
+.modal_showInfor {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+    z-index: 12;
+}
+
+.infor_user {
+    text-align: center;
+}
+
+.infor_user-img {
+    height: 120x;
+    width: 120px;
+    border-radius: 50%;
+}
+
+.infor_user-main {
+    margin-bottom: 24px;
+}
+
+.infor_user--items {
+    text-align: left;
+    border-bottom: 1px solid #ececec;
+    list-style: none;
+}
+
+.user_content {
+    font-weight: bold;
+}
+
+.section_value {
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #cccccc61;
+    z-index: 11;
+}
+
 .bookShowList-header {
     padding: 12px;
 }
