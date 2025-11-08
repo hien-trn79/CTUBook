@@ -1,4 +1,6 @@
 <script>
+import meService from '@/services/me.service';
+
 export default {
     data() {
         return {
@@ -23,7 +25,8 @@ export default {
             activeIndex: 0,
             isScrolled: false,
             currentUser: null,
-            showUserMenu: false
+            showUserMenu: false,
+            total: 0
         }
     },
 
@@ -72,6 +75,13 @@ export default {
             if (userMenu && !userMenu.contains(event.target)) {
                 this.closeUserMenu();
             }
+        },
+
+        async totalRequest() {
+            const userLocal = JSON.parse(localStorage.getItem('currentUser'));
+            const user = userLocal[0];
+            const cartItems = await meService.getMyCart(user._id);
+            this.total = cartItems.length;
         }
     },
 
@@ -80,6 +90,7 @@ export default {
         window.addEventListener('scroll', this.handleScroll);
         document.addEventListener('click', this.handleClickOutside);
         this.getCurrentUser();
+        this.totalRequest()
     },
 
     beforeUnmount() {
@@ -134,15 +145,17 @@ export default {
                         <div class="dropdown-divider"></div>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item">
-                                <router-link to="/user/profile" class="dropdown-link" @click="closeUserMenu">
+                                <router-link :to="`/user/${this.currentUser._id}`" class="dropdown-link"
+                                    @click="closeUserMenu">
                                     <i class="fa-solid fa-user"></i>
                                     <span>Thông tin cá nhân</span>
                                 </router-link>
                             </li>
-                            <li class="dropdown-item">
-                                <router-link to="/user/orders" class="dropdown-link" @click="closeUserMenu">
+                            <li class="dropdown-item dropdown-item--cart">
+                                <router-link to="/cart" class="dropdown-link" @click="closeUserMenu">
                                     <i class="fa-solid fa-box"></i>
                                     <span>Đơn hàng của tôi</span>
+                                    <span class="totalRequest">{{ this.total }}</span>
                                 </router-link>
                             </li>
                             <li class="dropdown-divider"></li>
@@ -163,4 +176,19 @@ export default {
 
 <style>
 @import url(/css/components/headerNavbar.css);
+
+.dropdown-item--cart {
+    position: relative;
+}
+
+.totalRequest {
+    position: absolute;
+    top: 2px;
+    left: 12px;
+    background-color: red;
+    color: white;
+    font-size: 1rem;
+    border-radius: 50%;
+    padding: 4px;
+}
 </style>

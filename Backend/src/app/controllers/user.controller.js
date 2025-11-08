@@ -1,6 +1,10 @@
 import ApiError from "../api-error.js";
 import UserService from "../services/user.service.js";
 import MongoDB from "../utils/mongodb.util.js";
+import config from "../config/index.js";
+import fs from "fs";
+
+const cloudinary = config.cloudinary;
 
 class UserController {
   // [GET] /api/users/
@@ -85,21 +89,46 @@ class UserController {
     }
   }
 
-  // [PUT] /api/users/:id
+  // [PUT] /api/users/:username
   async update(req, res, next) {
-    if (Object.keys(req.body).length == 0) {
-      return next(new ApiError(500, "Dữ liệu cập nhật không được để trống"));
+    if (Object.keys(req.body).length == 0 && !req.file) {
+      return next(new ApiError(400, "Dữ liệu cập nhật không được để trống"));
     }
     try {
-      const userService = new UserService(MongoDB.client);
-      const document = await userService.update(req.params.id, req.body);
-      if (!document) {
-        return next(
-          new ApiError(404, `Không thể tìm thấy user id=${req.params.id}`)
-        );
+      let userId = req.params.username; // This is actually the user ID from route
+      let data = { ...req.body };
+      let file = req.file;
+
+      console.log("Updating user with ID:", userId);
+      console.log("Update data:", data);
+
+      if (file) {
+        try {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: process.env.FOLDER,
+          });
+          data.IMAGE = result.secure_url;
+
+          // Xóa file tạm KHÔNG ĐỒNG BỘ
+          fs.unlink(file.path, (err) => {
+            if (err) console.log("Không thể xóa file tạm:", err.message);
+          });
+        } catch (uploadError) {
+          console.log("Lỗi upload ảnh:", uploadError);
+          // Continue without image update if upload fails
+        }
       }
+
+      const userService = new UserService(MongoDB.client);
+      let document = await userService.update(userId, data);
+
+      if (!document) {
+        return next(new ApiError(404, `Không tìm thấy user với id=${userId}`));
+      }
+
       return res.send({
         message: "Cập nhật user thành công",
+        data: document,
       });
     } catch (error) {
       console.log("LỖI Cập nhật user");

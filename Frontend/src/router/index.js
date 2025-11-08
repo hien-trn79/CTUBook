@@ -11,6 +11,7 @@ import UserBookDetail from "@/components/user/BookDetail.user.vue";
 import NotFound from "@/components/NotFound.vue";
 import TestMotion from "@/components/TestMotion.vue";
 import UserProfile from "@/components/user/UserProfile.user.vue";
+import UpdateUser from "@/components/user/UpdateUser.user.vue";
 
 // admin layouts
 import BookShowListAdmin from "@/components/admin/BookShowList.admin.vue";
@@ -20,6 +21,7 @@ import BookBorrowAdmin from "@/components/admin/BookBorrow.admin.vue";
 import BookAccountAdmin from "@/components/admin/BookAccount.admin.vue";
 import AddBookAdmin from "@/components/admin/AddBook.admin.vue";
 import UpdateBookAdmin from "@/components/admin/UpdateBook.admin.vue";
+import { path } from "framer-motion/client";
 
 const routes = [
   // User Routes
@@ -65,6 +67,10 @@ const routes = [
           {
             path: ":id",
             component: UserProfile,
+          },
+          {
+            path: ":id/edit",
+            component: UpdateUser,
           },
         ],
       },

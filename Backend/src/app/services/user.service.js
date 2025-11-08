@@ -31,6 +31,7 @@ class UserService {
       MADOCGIA: payload.MADOCGIA,
       HOLOT: payload.HOLOT,
       TEN: payload.TEN,
+      HOVATEN: payload.HOVATEN,
       PASSWORD: payload.PASSWORD,
       EMAIL: payload.EMAIL,
       NGAYSINH: payload.NGAYSINH,
@@ -39,6 +40,7 @@ class UserService {
       DIENTHOAI: payload.DIENTHOAI,
       LOAITK: payload.LOAITK,
       USERNAME: payload.USERNAME,
+      IMAGE: payload.IMAGE,
     };
 
     Object.keys(user).forEach((key) => {
@@ -81,9 +83,9 @@ class UserService {
     const result = await this.User.findOneAndUpdate(
       filter,
       { $set: updateData },
-      { returnDocument: false }
+      { returnDocument: "after" }
     );
-    return result.value;
+    return result;
   }
 
   // [DELETE] /api/users/:id

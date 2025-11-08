@@ -21,6 +21,12 @@ class ChiTietDonMuonService {
     const cursor = await this.ChiTietDonMuon.find(filter);
     return cursor.toArray();
   }
+
+  async create(data) {
+    const chiTietDonMuon = this.extractChiTietDonMuonData(data);
+    const result = await this.ChiTietDonMuon.insertOne(chiTietDonMuon);
+    return result;
+  }
 }
 
 export default ChiTietDonMuonService;

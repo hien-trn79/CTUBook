@@ -13,7 +13,7 @@ export default {
                     label: 'Tên tài khoản'
                 },
                 {
-                    key: 'FULLNAME',
+                    key: 'HOVATEN',
                     label: 'Họ và tên'
                 },
                 {
@@ -153,6 +153,7 @@ export default {
         <article class="userPage-article">
             <header class="userPage-header">
                 <h3 class="userPage-header--title">Thông tin độc giả</h3>
+                <router-link :to="`/user/${getValue('_id')}/edit`" class="edit-btn">Chỉnh sửa</router-link>
             </header>
 
             <main class="userPage-main">
@@ -183,7 +184,6 @@ export default {
         <aside class="userPage-aside">
             <header class="userPage-header userPage-aside-header">
                 <h3 class="userPage-header--title">Lưu trữ & Thống kê</h3>
-                <button class="edit-btn" @click.prevent="onEditProfile">Chỉnh sửa</button>
             </header>
 
             <div class="stats-wrap">
@@ -285,6 +285,9 @@ export default {
 }
 
 .userPage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     border-bottom: 2px solid rgb(3, 93, 250);
     margin-bottom: 12px;
@@ -337,7 +340,7 @@ export default {
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1.3rem;
     box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -480,13 +483,6 @@ export default {
     border-bottom: 1px solid #f0f0f0;
     transition: background-color 0.2s ease;
 }
-
-/* 
-.userInfor--item:hover {
-    background-color: #f8f9fa;
-    padding-left: 8px;
-    border-radius: 4px;
-} */
 
 .userInfor_content {
     font-size: 1.4rem;

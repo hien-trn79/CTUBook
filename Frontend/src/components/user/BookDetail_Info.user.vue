@@ -1,12 +1,30 @@
 <script>
+import meService from '@/services/me.service.js';
+
 export default {
     props: ['book'],
 
     data() {
         return {
-
-        }
+            cartItem: {}
+        };
     },
+
+    methods: {
+        async addToCart(book) {
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                const user = currentUser[0];
+                let data = {
+                    MADOCGIA: user._id,
+                    book: book
+                }
+                const result = await meService.create(data)
+            } catch (error) {
+                console.log('Lỗi khi thêm vào giỏ hàng', error);
+            }
+        }
+    }
 }
 </script>
 
@@ -40,7 +58,7 @@ export default {
             </div>
 
             <div class="detail-button">
-                <button class="btn btn_detail btn_card">
+                <button class="btn btn_detail btn_card" @click.prevent="addToCart(book)">
                     <i class="fa-solid fa-cart-shopping detail_icon"></i>
                     Thêm vào giỏ hàng
                 </button>

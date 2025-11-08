@@ -22,9 +22,13 @@ export const bookClass = {
 export const request = {
   0: "Chờ xác nhận",
   1: "Đã xác nhận",
+  2: "Đã từ chối",
+  3: "Chưa gửi yêu cầu",
 };
 
 export const ClassRequest = {
   0: "text-blue",
   1: "text-green",
+  2: "text-red",
+  3: "text-gray",
 };

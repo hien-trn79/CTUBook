@@ -1,8 +1,9 @@
-import { jsonClient } from "@/services/api.service.js";
+import { jsonClient, formClient } from "@/services/api.service.js";
 
 class UserService {
   constructor(baseUrl = "/api/users") {
     this.api = jsonClient(baseUrl);
+    this.formApi = formClient(baseUrl);
   }
   // [GET] http://localhost:8080/api/users/
   async getAll() {
@@ -12,7 +13,11 @@ class UserService {
   // [POST] http://localhost:8080/api/users/
   async create(data) {
     try {
-      const response = await this.api.post("/", data);
+      const response = await this.formApi.post("/", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -44,7 +49,13 @@ class UserService {
 
   // [POST] http://localhost:8080/api/users/:username
   async update(username, data) {
-    return (await this.api.post(`/${username}`, data)).data;
+    return (
+      await this.formApi.put(`/${username}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    ).data;
   }
 
   // [DELETE] http://localhost:8080/api/users/:username

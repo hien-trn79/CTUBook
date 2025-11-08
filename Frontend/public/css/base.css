@@ -145,3 +145,42 @@ ul {
 .color-primary {
     color: var(--text-primary);
 }
+
+/* -------- CSS Background ------- */
+.bg-primary {
+    background-color: var(--background-color-primary);
+}
+
+.bg-submit {
+    background-color: rgb(30, 95, 224);
+    color: white;
+}
+
+.bg-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+/* ----------- CSS Margin ----------*/
+
+/* Margin Top */
+.mt-12 {margin-top: 12px;}
+.mt-24 {margin-top: 24px;}
+.mt-32 {margin-top: 32px;}
+
+/* Margin Bottom */
+.mbt-12 {margin-bottom: 12px;}
+.mbt-24 {margin-bottom: 24px;}
+.mbt-32 {margin-bottom: 32px;}
+
+/* Margin Left */
+.ml-8 {margin-left: 8px;}
+.ml-12 {margin-left: 12px;}
+.ml-24 {margin-left: 24px;}
+.ml-32 {margin-left: 32px;}
+
+/* Margin Right */
+.mr-8 {margin-right: 8px;}
+.mr-12 {margin-right: 12px;}
+.mr-24 {margin-right: 24px;}
+.mr-32 {margin-right: 32px;}

@@ -9,6 +9,20 @@ class MeCService {
   async getQuery(query = {}) {
     return (await this.api.get("/", { params: query })).data;
   }
+
+  // [POST] http://localhost:8080/api/me/
+  async create(data) {
+    return (await this.api.post("/", data)).data;
+  }
+
+  // [GET] http://localhost:8080/api/me/my-cart
+  async getMyCart(id) {
+    return (await this.api.get(`/my-cart/${id}`)).data;
+  }
+
+  async updateMyCart(id, data) {
+    return (await this.api.put(`/my-cart/${id}`, data)).data;
+  }
 }
 
 export default new MeCService();
