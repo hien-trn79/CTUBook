@@ -113,6 +113,11 @@ class BookService {
     return result;
   }
 
+  async getCount() {
+    const count = await this.Book.countDocuments();
+    return count;
+  }
+
   async findFavorite() {
     return await this.Book.find({ YEUTHICH: "true" }).toArray();
   }

@@ -77,6 +77,7 @@ export default {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .row-head {

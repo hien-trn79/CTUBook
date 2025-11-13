@@ -67,6 +67,22 @@ class book {
     }
   }
 
+  // [GET] /api/books/count
+  async countBooks(req, res, next) {
+    try {
+      const bookService = new BookService(MongoDB.client);
+      const allBooks = await bookService.find({});
+      let count = 0;
+      allBooks.forEach((book) => {
+        count += Number(book.SOQUYEN);
+      });
+      return res.send({ count: count });
+    } catch (error) {
+      console.log(error);
+      return next(new ApiError(500, "Có lỗi trong quá trình đếm sách"));
+    }
+  }
+
   // [GET] /api/books/favorite
   async findAllFavorite(req, res, next) {
     try {

@@ -59,7 +59,6 @@ class UserService {
 
   // [GET] /api/users/:username
   async findByUsername(username) {
-    console.log("Tìm kiếm user với username:", username);
     const result = await this.User.find({
       _id: ObjectId.isValid(username) ? new ObjectId(username) : null,
     });

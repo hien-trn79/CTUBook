@@ -27,6 +27,11 @@ class BookService {
     return (await this.api.delete("/")).data;
   }
 
+  // [GET] http://localhost:8080/api/books/count => lay tong so luong sach
+  async getCount() {
+    return (await this.api.get(`/count`)).data;
+  }
+
   //[GET] http://localhost:8080/api/books/status-approved => lay nhung sach da duyet
   async getApproved() {
     return (await this.api.get(`/status-approved`)).data;

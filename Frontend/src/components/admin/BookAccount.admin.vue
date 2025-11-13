@@ -81,9 +81,11 @@ export default {
 </script>
 
 <template>
-    <header class="bookShowList-header" hidden="true">
-        <h2 class="bookShowList--title">{{ this.choiceSideBar }}</h2>
-        <InputSearchAdmin />
+    <header class="bookShowList-header">
+        <h2 class="bookShowList--title dashboard-title">
+            <i class="fa-solid fa-users"></i>
+            {{ choiceSideBar }}
+        </h2>
     </header>
     <main class="bookShowList-main">
         <table class="bookList-table">
@@ -138,8 +140,10 @@ export default {
 
 <style>
 .bookShowList--title {
-    font-size: 1.8rem;
-    padding: 12px 0px 24px 12px;
+    font-size: 2.4rem;
+    padding: 12px;
+    color: #1e40af;
+    font-weight: 700;
 }
 
 .bookShowList-main {
@@ -205,6 +209,7 @@ td {
     background-color: white;
     border-radius: 7px;
     padding-bottom: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* ------- CSS User ------- */

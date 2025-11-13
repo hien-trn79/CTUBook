@@ -12,7 +12,7 @@ class RequestService {
       THOIGIANDAT: payload.THOIGIANDAT,
       MADOCGIA: payload.MADOCGIA,
       TRANGTHAI: payload.TRANGTHAI,
-      MAGIOHANG: payload.MAGIOHANG,
+      THOIGIANTRA: payload.THOIGIANTRA,
     };
 
     Object.keys(request).forEach((key) => {
@@ -35,24 +35,29 @@ class RequestService {
 
   // Them yeu cau moi trong YeuCau
   async create(data) {
+    const YeuCauData = {
+      MADOCGIA: new ObjectId(data[0].MADOCGIA),
+      THOIGIANDAT: new Date(data[0].THOIGIANDAT),
+      THOIGIANTRA: new Date(data[0].THOIGIANTRA),
+      TRANGTHAI: 0,
+    };
+
+    // Tao yeu cau
+    const request = this.extractRequestData(YeuCauData);
+    const resultRequest = await this.Request.insertOne(request);
+    const idYeuCau = resultRequest.insertedId;
+
+    // Them chi tiet yeu cau
     await Promise.all(
       data.map(async (item) => {
-        item.MAGIOHANG = new ObjectId(item._id);
-        item.MADOCGIA = new ObjectId(item.MADOCGIA);
-        item.THOIGIANDAT = new Date();
-        item.TRANGTHAI = 0;
-
-        const request = this.extractRequestData(item);
+        const itemData = {
+          MAYEUCAU: idYeuCau,
+          MASACH: new ObjectId(item.bookDetails._id),
+          SOLUONG: item.SOLUONG,
+          MAGIOHANG: new ObjectId(item._id),
+        };
         const chiTietService = new ChiTietYeuCauService(MongoDB.client);
-
-        const resultRequest = await this.Request.insertOne(request);
-        const idYeuCau = resultRequest.insertedId;
-
-        item._id = idYeuCau;
-
-        console.log("Creating Chi Tiet Yeu Cau with data:", item);
-
-        const result = await chiTietService.create(item);
+        const result = await chiTietService.create(itemData);
         return result;
       })
     );
@@ -71,6 +76,10 @@ class RequestService {
       { returnDocument: "after" }
     );
     return result;
+  }
+
+  async getCount() {
+    return await this.Request.countDocuments();
   }
 }
 

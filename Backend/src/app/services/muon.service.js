@@ -31,21 +31,25 @@ class MuonService {
   }
 
   // Them muon moi trong Muon
-  async create(data) {
-    const muon = this.extractMuonData(data);
-    const result = await this.Muon.insertOne(muon);
-    const chiTietData = {
-      IDDONMUON: result.insertedId,
-      MASACH: data.MASACH,
-      SOLUONG: muon.SOQUYEN,
-    };
-
-    const chiTietDonMuonSvc = new chiTietDonMuonService(MongoDB.client);
-    const resultChiTiet = await chiTietDonMuonSvc.create(chiTietData);
-
-    console.log("Dữ liệu đơn mượn sách được tạo trong MuonService:", muon);
-
-    return result;
+  async create(donMuonData, chiTietDonMuon) {
+    // Tao don muon chung
+    const resultMuon = await this.Muon.insertOne(donMuonData);
+    const idDonMuon = resultMuon.insertedId;
+    if (chiTietDonMuon && chiTietDonMuon.length > 0) {
+      // Them chi tiet don muon
+      await Promise.all(
+        chiTietDonMuon.map(async (chiTiet) => {
+          const chiTietData = {
+            IDDONMUON: idDonMuon,
+            MASACH: chiTiet.MASACH,
+            SOLUONG: chiTiet.SOLUONG,
+          };
+          const chiTietService = new chiTietDonMuonService(MongoDB.client);
+          const result = await chiTietService.create(chiTietData);
+          return result;
+        })
+      );
+    }
   }
 }
 

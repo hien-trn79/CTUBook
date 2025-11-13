@@ -19,7 +19,8 @@ export default {
                     MADOCGIA: user._id,
                     book: book
                 }
-                const result = await meService.create(data)
+                alert('Thêm vào giỏ hàng thành công!');
+                const result = await meService.create(data);
             } catch (error) {
                 console.log('Lỗi khi thêm vào giỏ hàng', error);
             }

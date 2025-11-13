@@ -71,64 +71,98 @@ class RequestController {
   // [PUT] /api/books/request/:id
   async update(req, res, next) {
     try {
-      const id = req.params.id;
+      const idYeuCau = req.params.id;
       let data = req.body;
 
       const trangthai = data.TRANGTHAI;
+      // Tim kiem yeu cau muon sach
+      const requestService = new RequestService(MongoDB.client);
+      const result = await requestService.find({
+        _id: ObjectId.isValid(idYeuCau) ? new ObjectId(idYeuCau) : null,
+      });
+
+      const chiTietService = new ChiTietYeuCauService(MongoDB.client);
+      const chiTietList = await chiTietService.find({
+        MAYEUCAU: ObjectId.isValid(idYeuCau) ? new ObjectId(idYeuCau) : null,
+      });
+
       // Truong hop chap nhan yeu cau => chuyen trang thai
       if (trangthai === 1) {
-        const requestService = new RequestService(MongoDB.client);
-        const result = await requestService.find({
-          _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
-
-        const maGioHang = new ObjectId(result[0].MAGIOHANG);
-        // Xoa yeu cau cau trong gio hang
-        const cartService = new CartService(MongoDB.client);
-        const cartData = await cartService.find({
-          _id: ObjectId.isValid(maGioHang) ? new ObjectId(maGioHang) : null,
-        });
-        let cartUpdate = await cartService.deleteByIdCart(maGioHang);
-
-        // Tim doc gia tu yeu cau
-        const userService = new UserService(MongoDB.client);
-        const docGia = await userService.findByUsername(result[0].MADOCGIA);
-
-        // chi tiet yeu cau
-
-        const chitietYCService = new ChiTietYeuCauService(MongoDB.client);
-        const chiTietYC = await chitietYCService.find({
-          MAYEUCAU: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        });
-
-        // Tao don muon sach moi
-        const muonData = {
+        console.log("Request: ", result);
+        const MuonData = {
           IDDOCGIA: result[0].MADOCGIA,
-          EMAIL: docGia[0].EMAIL,
-          THOIGIANDAT: new Date(cartData[0].THOIGIANDAT),
-          THOIGIANTRA: new Date(cartData[0].THOIGIANTRA),
+          THOIGIANMUON: new Date(result[0].THOIGIANDAT),
+          THOIGIANTRA: new Date(result[0].THOIGIANTRA),
+          TRANGTHAI: 1, // Dang muon
           HINHTHUC: 1,
-          TRANGTHAI: 1,
-          SOQUYEN: chiTietYC[0].SOLUONG,
-          MASACH: chiTietYC[0].MASACH,
         };
-
+        // Tao don muon moi
         const muonService = new MuonService(MongoDB.client);
-        const resultMuon = await muonService.create(muonData);
+        const resultMuon = await muonService.create(MuonData, chiTietList);
 
-        const requestUpdate = await requestService.update(id, data);
-        return res.send(requestUpdate);
+        // Cap nhat trang thai yeu cau
+        const updatedRequest = await requestService.update(idYeuCau, data);
+
+        // Cap nhat trang thai gio hang
+        await Promise.all(
+          chiTietList.map(async (chiTiet) => {
+            const cartService = new CartService(MongoDB.client);
+            const cartItem = await cartService.find({
+              _id: ObjectId.isValid(chiTiet.MAGIOHANG)
+                ? new ObjectId(chiTiet.MAGIOHANG)
+                : null,
+            });
+
+            // Cap nhat trang thai gio hang
+            if (cartItem[0]) {
+              // Xoa luon gio hang sau khi cap nhat
+              const resultDeleteCart = await cartService.deleteByIdCart(
+                cartItem[0]._id
+              );
+            }
+          })
+        );
       } else {
-        // Truong hop khong phai chap nhan yeu cau => chi cap nhat trang thai
-        const requestService = new RequestService(MongoDB.client);
-        const requestUpdate = await requestService.update(id, data);
-        return res.send(requestUpdate);
+        // Truong hop khong phai chap nhan yeu cau => chi cap nhat trang thai;
+        const updatedRequest = await requestService.update(idYeuCau, data);
+        // Cap nhat lai trang thai gio hang
+        await Promise.all(async (chitiet) => {
+          const cartService = new CartService(MongoDB.client);
+          const cartItem = await cartService.find({
+            _id: ObjectId.isValid(chiTiet.MAGIOHANG)
+              ? new ObjectId(chiTiet.MAGIOHANG)
+              : null,
+          });
+          if (cartItem.length > 0) {
+            const updatedCart = await cartService.updateByIdCart(
+              cartItem[0]._id,
+              { TRANGTHAI: trangthai } // cap nhat dung trang thai yeu cau
+            );
+          }
+        });
       }
     } catch (error) {
       console.log("Lỗi cập nhật yêu cầu mượn sách với id=" + id);
       console.log(error);
       return next(
         new ApiError(500, "Có lỗi trong quá trình cập nhật yêu cầu mượn sách")
+      );
+    }
+  }
+
+  async getCount(req, res, next) {
+    try {
+      const requestService = new RequestService(MongoDB.client);
+      const count = await requestService.getCount();
+      return res.send({ count: count });
+    } catch (error) {
+      console.log("Lỗi lấy tổng số yêu cầu mượn sách");
+      console.log(error);
+      return next(
+        new ApiError(
+          500,
+          "Có lỗi trong quá trình lấy tổng số yêu cầu mượn sách"
+        )
       );
     }
   }

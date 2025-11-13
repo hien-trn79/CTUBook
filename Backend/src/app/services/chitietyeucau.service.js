@@ -10,6 +10,7 @@ class ChiTietYeuCauService {
       MAYEUCAU: payload.MAYEUCAU,
       MASACH: payload.MASACH,
       SOLUONG: payload.SOLUONG,
+      MAGIOHANG: payload.MAGIOHANG,
     };
 
     Object.keys(chiTietYeuCau).forEach((key) => {
@@ -25,19 +26,8 @@ class ChiTietYeuCauService {
   }
 
   async create(data) {
-    console.log("data received in Chi tiet Yeu Cau service:", data);
-    const maYeuCau = new ObjectId(data._id);
-    const maSach = new ObjectId(data.IDSACH);
-    const soLuong = data.SOLUONG;
-    const chiTiet = {
-      MAYEUCAU: maYeuCau,
-      MASACH: maSach,
-      SOLUONG: soLuong,
-    };
-
-    const result = this.extractChiTietYeuCauData(chiTiet);
-    const chiTietMoi = await this.ChiTietYeuCau.insertOne(result);
-    return { _id: chiTietMoi.insertedId, ...result };
+    const chiTietMoi = await this.ChiTietYeuCau.insertOne(data);
+    return { _id: chiTietMoi.insertedId, ...data };
   }
 }
 

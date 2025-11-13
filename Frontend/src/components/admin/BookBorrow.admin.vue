@@ -25,12 +25,6 @@ export default {
                     id: 'btn-detail',
                     color: iconColor.eyeOpen
                 },
-                // {
-                //     url: 'edit',
-                //     icon: icon.pen,
-                //     id: 'btn-edit',
-                //     color: iconColor.pen
-                // },
             ],
             hinhthuc,
             trangthai,
@@ -73,7 +67,13 @@ export default {
                 const user = await userService.findByUsername(yeuCau.IDDOCGIA);
                 yeuCau['EMAIL'] = user[0].EMAIL;
                 const chitietdonmuon = await chitietdonmuonService.getIDDonMuon(yeuCau._id);
-                yeuCau['SOQUYEN'] = chitietdonmuon[0] ? chitietdonmuon[0].SOLUONG : 0;
+                let soLuong = 0;
+                if (chitietdonmuon.length > 0) {
+                    chitietdonmuon.forEach(item => {
+                        soLuong += item.SOLUONG;
+                    });
+                }
+                yeuCau['SOQUYEN'] = soLuong;
                 // Cap nhat hinh thuc
                 yeuCau['HINHTHUC'] = this.hinhthuc[yeuCau.HINHTHUC];
                 // dieu chinh format thoi gian
@@ -82,37 +82,61 @@ export default {
 
                 yeuCau.DOCGIA = user[0];
             })
-
         },
 
         handlerDetail(book) {
             this.ticketSelected = book;
-            console.log(this.ticketSelected);
             this.showInfor = true;
+        }
+    },
+
+    watch: {
+        showInfor(newVal) {
+            document.body.classList.toggle("no-scroll", newVal);
         }
     },
 
     mounted() {
         this.getDataAll()
-    }
+    },
+
 }
 </script>
 
 <template>
     <header class="bookShowList-header">
         <div class="bookList-header_area">
-            <h2 class="bookShowList--title">{{ this.choiceSideBar }}</h2>
-            <button class="btn btn-add_book" :hidden="true">
-                <i class="fa-solid fa-plus icon"></i>
-                Thêm sách mới
-            </button>
+            <h2 class="bookShowList--title dashboard-title">
+                <i class="fa-solid fa-book-open-reader"></i>
+                {{ this.choiceSideBar }}
+            </h2>
         </div>
-        <InputSearchAdmin />
+        <!-- <InputSearchAdmin /> -->
     </header>
     <main class="bookShowList-main">
-        <TableList :head-list-table="thead" :col-value-list="colValue" :books="dataList"
-            :col-value-contact-icon="colValueIcon" :col-label="trangthai" :col-class="ClassTrangThai"
-            @handler-detail="handlerDetail" />
+        <table class="bookList-table">
+            <tr class="bookList_row row-head">
+                <th class="bookList_head" v-for="theadItem in thead">{{ theadItem }}</th>
+                <th class="bookList_head">Trạng thái</th>
+                <th class="bookList_head">Thao tác</th>
+            </tr>
+
+            <tr class="bookList_row" v-if="colValue.length > 0" v-for="(bookItem, index) in dataList" :key="index">
+                <td class="bookList_col bookList_ten">{{ index + 1 }}</td>
+                <td class="bookList_col bookList_ten" v-for="(colValueItem) in colValue">{{
+                    bookItem[colValueItem] }}
+                </td>
+                <td class="bookList_col" :class="ClassTrangThai[bookItem.TRANGTHAI]">{{ trangthai[bookItem.TRANGTHAI] }}
+                </td>
+                <td class="bookList_col bookList_update">
+                    <router-link :to="`${bookItem._id}/detail`">
+                        <button class="icon-btn" @click.prevent="handlerDetail(bookItem)">
+                            <i class="fa-regular fa-eye btn-detail icon color-orange"></i>
+                        </button>
+                    </router-link>
+                </td>
+            </tr>
+        </table>
     </main>
 
     <div class="modal" v-if="showInfor">
@@ -142,7 +166,7 @@ export default {
                                     v-if="this.ticketSelected.DOCGIA[userInfor.key] === undefined">{{ 'Chưa xác định'
                                     }}</span>
                                 <span class="section_value" v-else>{{ this.ticketSelected.DOCGIA[userInfor.key]
-                                }}</span>
+                                    }}</span>
                             </p>
                         </li>
                     </div>
@@ -150,7 +174,7 @@ export default {
             </main>
 
             <footer class="modal-footer">
-                <button class="btn btn--primary btn--close-modal">Đóng</button>
+                <button class="btn btn--primary btn--close-modal bg-cancel" @click="showInfor = false">Đóng</button>
             </footer>
         </div>
         <div class="overlay"></div>
@@ -159,16 +183,39 @@ export default {
 
 <style scoped>
 /* ----------Modal ShowInformation ------------------ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .modal_showInfor {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     background-color: white;
     padding: 24px;
     border-radius: 12px;
-    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
-    z-index: 12;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    z-index: 1002;
+    min-width: 500px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal--title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .infor_user {
@@ -206,8 +253,9 @@ export default {
     right: 0;
     left: 0;
     bottom: 0;
-    background-color: #cccccc61;
-    z-index: 11;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    backdrop-filter: blur(4px);
 }
 
 .bookShowList-header {

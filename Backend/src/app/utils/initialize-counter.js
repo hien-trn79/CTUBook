@@ -8,15 +8,15 @@ async function initializeCounter() {
     const client = MongoDB.client;
     const counterCollection = client.db().collection("Counter");
 
-    console.log("Đang khởi tạo Counter cho MASACH...");
+    // console.log("Đang khởi tạo Counter cho MASACH...");
 
     // Kiểm tra xem counter đã tồn tại chưa
     const existingCounter = await counterCollection.findOne({ _id: "MASACH" });
 
     if (existingCounter) {
-      console.log(
-        `✓ Counter đã tồn tại với giá trị: ${existingCounter.sequence_value}`
-      );
+      // console.log(
+      //   `✓ Counter đã tồn tại với giá trị: ${existingCounter.sequence_value}`
+      // );
       return existingCounter.sequence_value;
     }
 
@@ -51,10 +51,10 @@ async function initializeCounter() {
       created_at: new Date(),
     });
 
-    console.log(`✅ Đã tạo Counter mới với giá trị khởi đầu: ${startValue}`);
-    console.log(
-      `📖 Mã sách tiếp theo sẽ là: MS${String(startValue + 1).padStart(4, "0")}`
-    );
+    // console.log(`✅ Đã tạo Counter mới với giá trị khởi đầu: ${startValue}`);
+    // console.log(
+    //   `📖 Mã sách tiếp theo sẽ là: MS${String(startValue + 1).padStart(4, "0")}`
+    // );
 
     return startValue;
   } catch (error) {

@@ -4,6 +4,12 @@ export default {
         return {
             navbarVer: [
                 {
+                    name: 'Dashboard',
+                    url: 'overview',
+                    icon: 'fa-solid fa-chart-simple'
+                },
+
+                {
                     name: 'Quản lý sách',
                     url: 'books',
                     icon: "fa-solid fa-book"

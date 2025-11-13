@@ -6,6 +6,7 @@ import requestService from '@/services/request.service';
 import userService from '@/services/user.service';
 import { request, ClassRequest } from '@/enums/book.status';
 import chitietyeucauService from '@/services/chitietyeucau.service';
+import bookService from '@/services/book.service';
 export default {
     components: {
         InputSearchAdmin,
@@ -39,7 +40,39 @@ export default {
                 },
             ],
             request,
-            ClassRequest
+            ClassRequest,
+            showInfor: false,
+            requestSelected: null,
+            infoRequest: [
+                {
+                    key: 'MAYEUCAU',
+                    label: 'Mã yêu cầu'
+                },
+                {
+                    key: 'TENTAIKHOAN',
+                    label: 'Tên tài khoản'
+                },
+                {
+                    key: 'EMAIL',
+                    label: 'Email'
+                },
+                {
+                    key: 'DIENTHOAI',
+                    label: 'Số điện thoại'
+                },
+                {
+                    key: 'THOIGIANDAT',
+                    label: 'Thời gian đặt'
+                },
+                {
+                    key: 'SOQUYEN',
+                    label: 'Số quyển'
+                },
+                {
+                    key: 'TRANGTHAI',
+                    label: 'Trạng thái'
+                }
+            ]
         }
     },
 
@@ -47,7 +80,6 @@ export default {
         async getRequestAll() {
             try {
                 const requestList = await requestService.getAll();
-
                 // Dùng Promise.all để chờ tất cả các async operation hoàn tất
                 const dataRequests = await Promise.all(
                     requestList.map(async (request) => {
@@ -55,6 +87,12 @@ export default {
                         docGia = docGia[0];
                         const maYeuCau = request._id;
                         const chitietyeucau = await chitietyeucauService.getMAYEUCAU(maYeuCau);
+                        let soluong = 0;
+                        if (chitietyeucau.length > 0) {
+                            chitietyeucau.forEach(item => {
+                                soluong += item.SOLUONG;
+                            });
+                        }
 
                         // Chuyen dinh dang ngay
                         const date = new Date(request.THOIGIANDAT);
@@ -72,7 +110,7 @@ export default {
                             EMAIL: docGia.EMAIL,
                             DIENTHOAI: docGia.DIENTHOAI,
                             THOIGIANDAT: formattedDate,
-                            SOQUYEN: chitietyeucau?.[0]?.SOLUONG || 0,
+                            SOQUYEN: soluong,
                             TRANGTHAI: request.TRANGTHAI
                         };
                     })
@@ -88,9 +126,38 @@ export default {
         async AcceptRequest(request) {
             let data = request;
             data.TRANGTHAI = 1; // Đặt trạng thái thành "Đã chấp nhận"
-            console.log('Request before accept:', data);
             const result = await requestService.updateRequestById(request.MAYEUCAU, data);
-            console.log('Accepted request:', result);
+        },
+
+        async RejectRequest(request) {
+            let data = request;
+            data.TRANGTHAI = 2; // Đặt trạng thái thành "Đã từ chối"
+            console.log('Request before reject:', data);
+            const result = await requestService.updateRequestById(request.MAYEUCAU, data);
+            console.log('Rejected request:', result);
+        },
+
+        async DetailRequest(request) {
+            let dataRequest = { ...request };
+            const maYeuCau = dataRequest.MAYEUCAU;
+            const chitietyeucau = await chitietyeucauService.getMAYEUCAU(maYeuCau);
+
+            if (chitietyeucau.length > 0) {
+                const bookDetails = await Promise.all(
+                    chitietyeucau.map(async (chiTiet) => {
+                        const maSach = chiTiet.MASACH;
+                        const book = await bookService.getId(maSach);
+                        return book;
+                    })
+                );
+                dataRequest.bookDetails = bookDetails;
+            } else {
+                dataRequest.bookDetails = [];
+            }
+
+            this.requestSelected = dataRequest;
+            console.log('Request selected details:', this.requestSelected);
+            this.showInfor = true;
         }
     },
 
@@ -102,12 +169,12 @@ export default {
 
 <template>
     <header class="bookShowList-header">
-        <h2 class="bookShowList--title">{{ choiceSideBar }}</h2>
+        <h2 class="bookShowList--title dashboard-title">
+            <i class="fa-solid fa-book-open-reader"></i>
+            {{ choiceSideBar }}
+        </h2>
     </header>
     <main class="bookShowList-main">
-        <!-- <TableList :head-list-table="thead" :col-value-list="colValue" :books="dataList"
-            :col-value-contact-icon="colValueIcon" :col-label="request" :col-class="ClassRequest"
-            @accept-request="AcceptRequest" /> -->
         <table class="bookList-table">
             <tr class="bookList_row row-head">
                 <th class="bookList_head" v-for="theadItem in thead">{{ theadItem }}</th>
@@ -128,7 +195,12 @@ export default {
                             <i :class="[icon.icon, icon.id, 'icon', icon.color]"></i>
                         </button>
 
-                        <button class="icon-btn" v-else>
+                        <button class="icon-btn" v-else-if="icon.url === 'cancel'"
+                            @click.prevent="RejectRequest(bookItem)">
+                            <i :class="[icon.icon, icon.id, 'icon', icon.color]"></i>
+                        </button>
+
+                        <button class="icon-btn" v-else @click.prevent="DetailRequest(bookItem)">
                             <i :class="[icon.icon, icon.id, 'icon', icon.color]"></i>
                         </button>
 
@@ -137,6 +209,56 @@ export default {
             </tr>
         </table>
     </main>
+
+    <!-- Modal -->
+    <div class="modal" v-if="showInfor">
+        <div class="modal_showInfor">
+            <!-- Nội dung modal hiển thị thông tin chi tiết sách yeu cau sẽ được thêm vào đây -->
+            <header class="modal-header">
+                <h3 class="section--title modal--title">Thông tin chi tiết yêu cầu</h3>
+                <p class="section_content donMuon--id">Mã yêu cầu: <span class="section_value">{{
+                    requestSelected.MAYEUCAU
+                        }}</span></p>
+            </header>
+
+            <main class="modal-main">
+                <!-- Thông tin chi tiết sách mượn/trả sẽ được hiển thị ở đây -->
+                <h4 class="modal-main--title section_content">Thông tin yêu cầu</h4>
+
+                <div class="infor_user">
+                    <div class="infor_user-main">
+                        <li class="infor_user--items" v-for="(bookInfor, index) in infoRequest" :key="index">
+                            <p class="section_content user_content" v-if="bookInfor">
+                                {{ bookInfor.label }}: <span class="section_value"
+                                    v-if="this.requestSelected[bookInfor.key] === undefined">{{ 'Chưa xác định'
+                                    }}</span>
+                                <span class="section_value" v-else>{{ this.requestSelected[bookInfor.key]
+                                }}</span>
+                            </p>
+                        </li>
+                        <li class="infor_user--items">
+                            <p class="section_content user_content">Trạng thái: <span class="section_value">{{
+                                request[requestSelected.TRANGTHAI] }}</span></p>
+                        </li>
+                    </div>
+                    <h4 class="modal-main--title section_content">Danh sách sách</h4>
+                    <ol class="bookList mbt-32" start="1">
+                        <li class="infor_user--items bookList_item ml-24"
+                            v-for="(book, index) in requestSelected.bookDetails" :key="index">
+                            <p class="section_content user_content" v-if="book">
+                                <span class="section_value">{{ book.TENSACH }}</span>
+                            </p>
+                        </li>
+                    </ol>
+                </div>
+            </main>
+
+            <footer class="modal-footer">
+                <button class="btn btn--primary btn--close-modal bg-cancel" @click="showInfor = false">Đóng</button>
+            </footer>
+        </div>
+        <div class="overlay"></div>
+    </div>
 </template>
 
 <style scoped>
@@ -151,5 +273,15 @@ export default {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
+}
+
+.bookList_item {
+    list-style: normal;
+    font-size: 1.3rem;
+    color: var(--text-black);
+}
+
+.modal_showInfor {
+    width: 80vw;
 }
 </style>

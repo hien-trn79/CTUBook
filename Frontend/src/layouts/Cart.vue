@@ -11,7 +11,8 @@ export default {
             dataCart: [],
             request,
             ClassRequest,
-            Sended: false
+            Sended: false,
+            RemoveRequest: false
         }
     },
 
@@ -80,6 +81,22 @@ export default {
                 alert('Gửi yêu cầu mượn sách thành công!');
             } catch (error) {
                 console.log('Lỗi khi xử lý gửi yêu cầu', error);
+            }
+        },
+
+        // Kiểm tra những giỏ hàng có thể được xóa
+        CheckRemove(request) {
+            return request === 0 || request === 1;
+        },
+
+        // Xu ly nut xoa gio hang
+        async RemoveCart(cartItem) {
+            try {
+                const result = await meService.deleteMyCart(cartItem._id);
+                alert('Xóa sách khỏi giỏ hàng thành công!');
+                this.getAllCartItems();
+            } catch (error) {
+                console.log('Lỗi khi xóa sách khỏi giỏ hàng', error);
             }
         }
     },
@@ -169,7 +186,8 @@ export default {
                                 {{ request[cartItem.TRANGTHAI] }}
                             </td>
                             <td class="table-col table_content">
-                                <button class="btn btn_remove--cart">Xóa</button>
+                                <button class="btn btn_remove--cart" :disabled="CheckRemove(cartItem.TRANGTHAI)"
+                                    @click.prevent="RemoveCart(cartItem)">Xóa</button>
                             </td>
                         </tr>
                     </tbody>
@@ -405,5 +423,15 @@ export default {
 
 .btn-browse-books i {
     font-size: 1.8rem;
+}
+
+.btn_remove--cart:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.btn_remove--cart:disabled:hover {
+    transform: none;
+    box-shadow: none;
 }
 </style>

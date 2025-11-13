@@ -16,6 +16,10 @@ class RequestService {
     return (await this.api.post("/", data)).data;
   }
 
+  async getCount() {
+    return (await this.api.get("/count")).data;
+  }
+
   // [GET] http://localhost:8080/api/books/request/:maDocGia
   async getByMaDocGia(maDocGia) {
     return (await this.api.get(`/${maDocGia}`)).data;

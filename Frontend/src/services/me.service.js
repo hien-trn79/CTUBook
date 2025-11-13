@@ -20,8 +20,14 @@ class MeCService {
     return (await this.api.get(`/my-cart/${id}`)).data;
   }
 
+  // [PUT] http://localhost:8080/api/me/my-cart/:id
   async updateMyCart(id, data) {
     return (await this.api.put(`/my-cart/${id}`, data)).data;
+  }
+
+  // [DELETE] http://localhost:8080/api/me/my-cart/:id
+  async deleteMyCart(id) {
+    return (await this.api.delete(`/my-cart/${id}`)).data;
   }
 }
 

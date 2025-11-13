@@ -36,11 +36,27 @@ export default {
                     check: false
                 },
                 {
-                    name: 'Địa lý',
+                    name: 'Lịch sử & địa lý',
                     check: false
                 },
                 {
-                    name: 'Thực phẩm & chế biến',
+                    name: 'Công nghệ sinh học & thực phẩm',
+                    check: false
+                },
+                {
+                    name: 'Thủy sản',
+                    check: false
+                },
+                {
+                    name: 'Khoa học nghiên cứu',
+                    check: false
+                },
+                {
+                    name: 'Môi trường',
+                    check: false
+                },
+                {
+                    name: 'Máy tính & phần mềm',
                     check: false
                 }
             ],
@@ -67,13 +83,38 @@ export default {
             this.booksChoice.push(choice.map(item => item.name))
         },
         handlerSubmit(bookFilter) {
-            this.booksChoice = bookFilter.map(item => item.name)
+            this.filterSubmit = bookFilter.map(item => item.name);
+
         }
 
     },
 
-    computed() {
-        this.getChoice()
+    computed: {
+        filteredBooks() {
+            if (this.filterSubmit.length === 0) {
+                return this.books;
+            }
+
+            // Tính điểm trùng (matchCount) cho mỗi sách
+            const scoredBooks = this.books.map(book => {
+                const genres = Array.isArray(book.THELOAI)
+                    ? book.THELOAI
+                    : Object.values(book.THELOAI);
+
+                const matchCount = genres.filter(genre => this.filterSubmit.includes(genre)).length;
+
+                return {
+                    ...book,
+                    matchCount
+                };
+            });
+
+            // Tìm số lượng trùng cao nhất
+            const maxMatch = Math.max(...scoredBooks.map(b => b.matchCount));
+
+            // Lọc ra tất cả sách có matchCount = maxMatch (và phải có ít nhất 1 trùng)
+            return scoredBooks.filter(b => b.matchCount === maxMatch && b.matchCount > 0);
+        }
     },
 
     mounted() {
@@ -91,10 +132,10 @@ export default {
         </aside>
 
         <article class="bookList-article_main">
-            <div class="books_choice" v-if="booksChoice.length > 0">
-                <p class="section_content">Sắp xếp theo: {{ booksChoice.join(', ') }}</p>
+            <div class="books_choice" v-if="filterSubmit.length > 0">
+                <p class="section_content">Sắp xếp theo: {{ filterSubmit.join(',') }}</p>
             </div>
-            <BookShowList :books="this.books" />
+            <BookShowList :books="filteredBooks" />
         </article>
     </div>
 </template>

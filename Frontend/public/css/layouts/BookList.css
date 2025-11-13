@@ -25,7 +25,7 @@
 
 .book_list {
     column-gap: 8px;
-    justify-content: space-evenly;
+    justify-content: left;
     grid-template-columns: repeat(auto-fit, minmax(180px, 200px));;
 
 }

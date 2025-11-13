@@ -9,6 +9,9 @@ router.get("/", requestController.findAll);
 // Tạo mới yêu cầu mượn sách
 router.post("/", requestController.create);
 
+// Lay tong so yeu cau
+router.get("/count", requestController.getCount);
+
 // Lấy yêu cầu mượn sách theo mã độc giả
 router.get("/:maDocGia", requestController.findByMaDocGia);
 

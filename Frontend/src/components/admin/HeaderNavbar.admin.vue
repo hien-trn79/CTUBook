@@ -82,13 +82,6 @@ export default {
             const user = userLocal[0];
             const cartItems = await meService.getMyCart(user._id);
             this.total = cartItems.length;
-        },
-
-        isActive(path) {
-            const cleanPath = path.endsWith("/") ? path.slice(0, -1) : path;
-            const currentPath = this.$route.path;
-
-            return currentPath === cleanPath || currentPath.startsWith(cleanPath + "/");
         }
     },
 
@@ -115,10 +108,9 @@ export default {
         </div>
         <ul class="navbar_list">
             <li class="navbar_item" v-for="(navbarItem, index) in navbar" :key="index"
-                :class="{ active: activeIndex === index }">
-                <router-link :to="`/${navbarItem.url}`" class="navbar--link" @click="updateIndex(index)"
-                    :class="{ active: isActive(`/${navbarItem.url}`) }">{{
-                        navbarItem.name }}</router-link>
+                :class="{ active: activeIndex === index }" hidden="true">
+                <router-link :to="`/${navbarItem.url}`" class="navbar--link" @click="updateIndex(index)">{{
+                    navbarItem.name }}</router-link>
             </li>
             <li class="navbar_item navbar_item--user" v-if="!currentUser">
                 <router-link to="/signin" class="navbar--link navbar--link-login">

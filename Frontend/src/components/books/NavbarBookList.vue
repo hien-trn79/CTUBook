@@ -4,10 +4,18 @@ export default {
         bookFilters: { type: Array, default: [] }
     },
 
+    data() {
+        return {
+            choice: []
+        }
+    },
+
     emits: ["filterSubmit"],
     methods: {
         updateChecked(filter) {
             filter.check = !filter.check;
+            const result = this.bookFilters.filter((item) => item.check);
+            this.$emit('filterSubmit', result);
         },
 
         filterSubmit() {

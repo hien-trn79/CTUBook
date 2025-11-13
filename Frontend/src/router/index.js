@@ -21,6 +21,7 @@ import BookBorrowAdmin from "@/components/admin/BookBorrow.admin.vue";
 import BookAccountAdmin from "@/components/admin/BookAccount.admin.vue";
 import AddBookAdmin from "@/components/admin/AddBook.admin.vue";
 import UpdateBookAdmin from "@/components/admin/UpdateBook.admin.vue";
+import DashboardAdmin from "@/components/admin/Dashboard.admin.vue";
 import { path } from "framer-motion/client";
 
 const routes = [
@@ -84,7 +85,11 @@ const routes = [
     children: [
       {
         path: "",
-        redirect: "admin/books",
+        redirect: "/admin/overview",
+      },
+      {
+        path: "overview",
+        component: DashboardAdmin,
       },
       {
         path: "books",

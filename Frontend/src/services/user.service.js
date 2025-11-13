@@ -35,7 +35,6 @@ class UserService {
 
   // [GET] http://localhost:8080/api/users/:username
   async findByUsername(username) {
-    console.log("Finding user with username:", username);
     try {
       const response = await this.api.get(`/${username}`);
       return response.data;
