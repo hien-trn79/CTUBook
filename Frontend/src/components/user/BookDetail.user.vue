@@ -49,7 +49,7 @@ export default {
 
 <style>
 .page_book_detail {
-    max-width: 97%;
+    width: 90vw;
     margin: auto;
 }
 

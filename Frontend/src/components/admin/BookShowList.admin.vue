@@ -6,7 +6,7 @@ import HeadNotification from '../noti/HeadNotification.vue';
 
 // enum
 import { icon, iconColor } from '@/enums/icon.enum';
-import { bookClass, bookLabel } from '@/enums/book.status';
+import { trangThaiSach, ClassTrangThaiSach } from '@/enums/book.status';
 
 // service
 import bookService from '@/services/book.service';
@@ -44,8 +44,8 @@ export default {
                     color: iconColor.trash,
                 }
             ],
-            bookClass,
-            bookLabel,
+            ClassTrangThaiSach,
+            trangThaiSach,
             notiDeleteBook: {
                 title: "Xóa sách",
                 content: 'Bạn chắc chắn muốn xóa sách này chứ ?',
@@ -106,12 +106,17 @@ export default {
         showDetailBook(book) {
             this.bookSelected = book;
             this.showInfor = true;
-            console.log('Xem chi tiet sach: ', book);
         }
     },
 
     mounted() {
         this.getBooksAll();
+    },
+
+    watch: {
+        showInfor(newVal) {
+            document.body.classList.toggle("no-scroll", newVal);
+        }
     }
 }
 </script>
@@ -133,9 +138,6 @@ export default {
         <!-- <InputSearchAdmin /> -->
     </header>
     <main class="bookShowList-main">
-        <!-- <TableList :head-list-table="thead" :col-value-list="colValue" :books="books"
-            :col-value-contact-icon="colValueIcon" :col-class="bookClass" :col-label="bookLabel"
-            @remove-book="RemoveBook" /> -->
         <table class="bookList-table">
             <tr class="bookList_row row-head">
                 <th class="bookList_head" v-for="theadItem in thead">{{ theadItem }}</th>
@@ -148,7 +150,8 @@ export default {
                 <td class="bookList_col bookList_ten" v-for="(colValueItem) in colValue">{{
                     bookItem[colValueItem] }}
                 </td>
-                <td class="bookList_col" :class="bookClass[bookItem.TRANGTHAI]">{{ bookLabel[bookItem.TRANGTHAI] }}</td>
+                <td class="bookList_col" :class="ClassTrangThaiSach[bookItem.TRANGTHAI]">{{
+                    trangThaiSach[bookItem.TRANGTHAI] }}</td>
                 <td class="bookList_col bookList_update">
                     <button class="icon-btn" @click="showDetailBook(bookItem)">
                         <i class="fa-regular fa-eye btn-view icon color-orange"></i>
@@ -197,7 +200,7 @@ export default {
                         </li>
                         <li class="infor_user--items">
                             <p class="section_content user_content">Trạng thái: <span class="section_value">{{
-                                bookLabel[bookSelected.TRANGTHAI] }}</span></p>
+                                trangThaiSach[bookSelected.TRANGTHAI] }}</span></p>
                         </li>
                     </div>
                 </div>

@@ -43,6 +43,45 @@ class MuonController {
       return next(new ApiError(500, "khong the tim thay danh sach don muon"));
     }
   }
+
+  // [POST] /api/books/muon-tra
+  async create(req, res, next) {
+    let document = [];
+    try {
+      let data = req.body;
+      const muonService = new MuonService(MongoDB.client);
+      const result = await muonService.create(data);
+      return res.send({ message: "Tao don muon tra thanh cong" });
+    } catch (error) {
+      console.log("Loi tao don muon tra");
+      console.log(error);
+      return next(new ApiError(500, "Khong the tao don muon tra"));
+    }
+  }
+
+  // [DELETE] /api/books/muon-tra/:id
+  async delete(req, res, next) {
+    try {
+      const idDocGia = req.params.MADOCGIA;
+      const muonService = new MuonService(MongoDB.client);
+      const muonList = await muonService.find({
+        IDDOCGIA: ObjectId.isValid(idDocGia) ? new ObjectId(idDocGia) : null,
+      });
+      if (muonList.length > 0) {
+        await Promise.all(
+          muonList.map(async (muon) => {
+            const result = muonService.delete(muon._id);
+            return result;
+          })
+        );
+        return res.send({ message: "Xoa don muon tra thanh cong" });
+      }
+    } catch (error) {
+      console.log("Loi xoa don muon tra");
+      console.log(error);
+      return next(new ApiError(500, "Khong the xoa don muon tra"));
+    }
+  }
 }
 
 export default new MuonController();

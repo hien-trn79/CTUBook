@@ -27,6 +27,12 @@ class CartService {
     return cursor.toArray();
   }
 
+  findByIdCart(idCart) {
+    return this.Cart.findOne({
+      _id: ObjectId.isValid(idCart) ? new ObjectId(idCart) : null,
+    });
+  }
+
   async create(data) {
     const maDocGia = new ObjectId(data.MADOCGIA);
     const idSach = new ObjectId(data.book._id);
@@ -50,16 +56,12 @@ class CartService {
   }
 
   async updateByIdCart(idCart, data) {
-    console.log("Cập nhật giỏ hàng với id:", idCart);
     const idSach = new ObjectId(data.IDSACH);
     const THOIGIANDAT = new Date(data.THOIGIANDAT);
     const THOIGIANTRA = new Date(data.THOIGIANTRA);
     const SOLUONG = data.SOLUONG;
     const TRANGTHAI = data.TRANGTHAI;
     const MADOCGIA = new ObjectId(data.MADOCGIA);
-    const filter = {
-      _id: ObjectId.isValid(idCart) ? new ObjectId(idCart) : null,
-    };
 
     const updateData = this.extractCartData({
       IDSACH: idSach,
@@ -71,7 +73,7 @@ class CartService {
     });
 
     let result = await this.Cart.findOneAndUpdate(
-      filter,
+      { _id: ObjectId.isValid(idCart) ? new ObjectId(idCart) : null },
       {
         $set: updateData,
       },

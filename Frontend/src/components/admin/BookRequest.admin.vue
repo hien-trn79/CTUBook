@@ -67,10 +67,6 @@ export default {
                 {
                     key: 'SOQUYEN',
                     label: 'Số quyển'
-                },
-                {
-                    key: 'TRANGTHAI',
-                    label: 'Trạng thái'
                 }
             ]
         }
@@ -123,20 +119,29 @@ export default {
             }
         },
 
+        // Chap Nhan Yeu Cau
         async AcceptRequest(request) {
-            let data = request;
-            data.TRANGTHAI = 1; // Đặt trạng thái thành "Đã chấp nhận"
-            const result = await requestService.updateRequestById(request.MAYEUCAU, data);
+            try {
+                let data = request;
+                data.TRANGTHAI = 1; // Đặt trạng thái thành "Đã chấp nhận"
+                const result = await requestService.updateRequestById(data.MAYEUCAU, data);
+                alert("Chấp nhận yêu cầu thành công!");
+                this.getRequestAll();
+            } catch (error) {
+                alert("Không đủ sách để chấp nhận yêu cầu!");
+                this.getRequestAll();
+            }
         },
 
+        // Tu Choi Yeu Cau
         async RejectRequest(request) {
             let data = request;
             data.TRANGTHAI = 2; // Đặt trạng thái thành "Đã từ chối"
-            console.log('Request before reject:', data);
             const result = await requestService.updateRequestById(request.MAYEUCAU, data);
             console.log('Rejected request:', result);
         },
 
+        // Chi Tiet Yeu Cau
         async DetailRequest(request) {
             let dataRequest = { ...request };
             const maYeuCau = dataRequest.MAYEUCAU;
@@ -163,6 +168,12 @@ export default {
 
     mounted() {
         this.getRequestAll();
+    },
+
+    watch: {
+        showInfor(newVal) {
+            document.body.classList.toggle('no-scroll', newVal);
+        }
     }
 }
 </script>
@@ -233,7 +244,7 @@ export default {
                                     v-if="this.requestSelected[bookInfor.key] === undefined">{{ 'Chưa xác định'
                                     }}</span>
                                 <span class="section_value" v-else>{{ this.requestSelected[bookInfor.key]
-                                }}</span>
+                                    }}</span>
                             </p>
                         </li>
                         <li class="infor_user--items">

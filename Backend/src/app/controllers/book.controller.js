@@ -127,6 +127,12 @@ class book {
       let id = req.params.id;
       let data = req.body;
 
+      if (Number(data.SOQUYEN) <= 0) {
+        data.TRANGTHAI = "1"; // Het sach
+      } else {
+        data.TRANGTHAI = "0"; // Con sach
+      }
+
       if (req.file) {
         let file = req.file;
         const result = await cloudinary.uploader.upload(file.path, {

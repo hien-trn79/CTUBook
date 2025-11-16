@@ -95,6 +95,9 @@ class BookService {
     };
 
     const update = this.extractBookData(data);
+    if (update.SOQUYEN === 0) {
+      update.TRANGTHAI = 1; // Cập nhật trạng thái về "Hết sách"
+    }
     // returnDocument: 'after' để lấy document sau khi update
     let result = await this.Book.findOneAndUpdate(
       filter,

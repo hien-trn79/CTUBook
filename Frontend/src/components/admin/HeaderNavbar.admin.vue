@@ -45,7 +45,7 @@ export default {
             if (userData) {
                 try {
                     const parsed = JSON.parse(userData);
-                    this.currentUser = Array.isArray(parsed) ? parsed[0] : parsed;
+                    this.currentUser = parsed;
                 } catch (e) {
                     console.error('Error parsing user data:', e);
                     this.currentUser = null;
@@ -78,9 +78,8 @@ export default {
         },
 
         async totalRequest() {
-            const userLocal = JSON.parse(localStorage.getItem('currentUser'));
-            const user = userLocal[0];
-            const cartItems = await meService.getMyCart(user._id);
+            const userLocal = JSON.parse(localStorage.getItem('currentUser'));;
+            const cartItems = await meService.getMyCart(userLocal._id);
             this.total = cartItems.length;
         }
     },
@@ -151,13 +150,13 @@ export default {
                                     <span>Thông tin cá nhân</span>
                                 </router-link>
                             </li>
-                            <li class="dropdown-item dropdown-item--cart">
+                            <!-- <li class="dropdown-item dropdown-item--cart">
                                 <router-link to="/cart" class="dropdown-link" @click="closeUserMenu">
                                     <i class="fa-solid fa-box"></i>
                                     <span>Đơn hàng của tôi</span>
                                     <span class="totalRequest">{{ this.total }}</span>
                                 </router-link>
-                            </li>
+                            </li> -->
                             <li class="dropdown-divider"></li>
                             <li class="dropdown-item">
                                 <button class="dropdown-link logout-btn" @click="handleLogout">

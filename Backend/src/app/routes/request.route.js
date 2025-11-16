@@ -18,4 +18,7 @@ router.get("/:maDocGia", requestController.findByMaDocGia);
 // Cap nhat yeu cau theo _id yeu cau
 router.put("/:id", requestController.update);
 
+// Xóa yêu cầu theo _id yeu cau
+router.delete("/:id", requestController.delete);
+
 export default router;

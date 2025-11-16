@@ -19,6 +19,16 @@ export const bookClass = {
   [bookStatus.RETURNED]: "text-blue",
 };
 
+export const trangThaiSach = {
+  0: "Còn hàng",
+  1: "Hết hàng",
+};
+
+export const ClassTrangThaiSach = {
+  0: "text-green",
+  1: "text-red",
+};
+
 export const request = {
   0: "Chờ xác nhận",
   1: "Đã xác nhận",

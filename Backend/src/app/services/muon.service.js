@@ -51,6 +51,31 @@ class MuonService {
       );
     }
   }
+
+  // Xoa don muon va chi tiet don muon
+  async delete(idDonMuon) {
+    const chiTietService = new chiTietDonMuonService(MongoDB.client);
+
+    const chiTietList = await chiTietService.find({
+      IDDONMUON: ObjectId.isValid(idDonMuon) ? new ObjectId(idDonMuon) : null,
+    });
+
+    if (chiTietList.length > 0) {
+      // Xoa chi tiet don muon
+      await Promise.all(
+        chiTietList.map(async (chiTiet) => {
+          const resultDeleteChiTiet = await chiTietService.delete(chiTiet._id);
+          return resultDeleteChiTiet;
+        })
+      );
+    }
+
+    // Xoa don muon
+    const result = await this.Muon.deleteOne({
+      _id: ObjectId.isValid(idDonMuon) ? new ObjectId(idDonMuon) : null,
+    });
+    return result.deletedCount;
+  }
 }
 
 export default MuonService;

@@ -14,13 +14,13 @@ export default {
         async addToCart(book) {
             try {
                 const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-                const user = currentUser[0];
+                console.log(currentUser)
                 let data = {
-                    MADOCGIA: user._id,
+                    MADOCGIA: currentUser._id,
                     book: book
                 }
-                alert('Thêm vào giỏ hàng thành công!');
                 const result = await meService.create(data);
+                alert('Thêm vào giỏ hàng thành công!');
             } catch (error) {
                 console.log('Lỗi khi thêm vào giỏ hàng', error);
             }
@@ -63,9 +63,9 @@ export default {
                     <i class="fa-solid fa-cart-shopping detail_icon"></i>
                     Thêm vào giỏ hàng
                 </button>
-                <button class="btn btn_detail btn_borrow">
+                <!-- <button class="btn btn_detail btn_borrow" @click.prevent="SendRequestNow(book)">
                     <i class="fa-solid fa-book-tanakh detail--icon"></i>Mượn ngay
-                </button>
+                </button> -->
             </div>
         </div>
     </div>

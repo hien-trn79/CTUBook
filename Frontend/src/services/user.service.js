@@ -15,7 +15,7 @@ class UserService {
     try {
       const response = await this.formApi.post("/", data, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
       return response.data;
@@ -58,8 +58,8 @@ class UserService {
   }
 
   // [DELETE] http://localhost:8080/api/users/:username
-  async delete(id) {
-    return (await this.api.delete(`/${id}`)).data;
+  async delete(userid) {
+    return (await this.api.delete(`/${userid}`)).data;
   }
 }
 

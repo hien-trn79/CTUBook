@@ -1,7 +1,7 @@
 <script>
 import userService from '@/services/user.service';
 import InputSearchAdmin from './InputSearch.admin.vue';
-import { bookClass, bookLabel } from '@/enums/book.status';
+import { loaiTk, ClassLoaiTk } from '@/enums/user.enum.js';
 export default {
     components: {
         InputSearchAdmin,
@@ -13,6 +13,47 @@ export default {
             users: [],
             selected: [],
             checkAll: false,
+            showNotification: false,
+            userSelected: {},
+            RemoveContent: {
+                title: 'Xóa người dùng',
+                content: 'Bạn chắc chắn muốn xóa người dùng này?',
+                description: 'Sau khi xóa dữ liệu sẽ bị mất vĩnh viễn và không thể khôi phục lại.',
+            },
+            showInfor: false,
+            userSelected: {},
+            loaiTk,
+            ClassLoaiTk,
+            inforUser: [
+                {
+                    key: 'USERNAME',
+                    label: 'Tên người dùng'
+                },
+                {
+                    key: 'HOVATEN',
+                    label: 'Họ và tên'
+                },
+                {
+                    key: 'EMAIL',
+                    label: 'Email'
+                },
+                {
+                    key: 'NGAYSINH',
+                    label: 'Ngày sinh'
+                },
+                {
+                    key: 'PHAI',
+                    label: 'Giới tính'
+                },
+                {
+                    key: 'DIACHI',
+                    label: 'Địa chỉ'
+                },
+                {
+                    key: 'DIENTHOAI',
+                    label: 'Điện thoại'
+                }
+            ]
         }
     },
 
@@ -40,18 +81,10 @@ export default {
             }
         },
 
-        async RemoveUser(id) {
-            try {
-                const ok = window.confirm('Bạn có chắc muốn xóa người dùng này không?');
-                if (!ok) return;
-                await userService.delete(id);
-                this.users = this.users.filter(u => u._id !== id);
-                this.selected = this.selected.filter(x => x !== id);
-                alert('Xóa người dùng thành công');
-            } catch (error) {
-                console.error('Lỗi xóa người dùng:', error);
-                alert('Xóa không thành công');
-            }
+        async RemoveUser(userSelectedID) {
+            this.showNotification = true;
+            const user = await userService.findByUsername(userSelectedID);
+            this.userSelected = user[0];
         },
 
         // Delete all selected users
@@ -71,10 +104,70 @@ export default {
                 alert('Có lỗi khi xóa. Vui lòng thử lại.');
             }
         },
+
+
+        // Xác nhận xóa người dùng trong modal thông báo
+        async removeAccept(userID) {
+            try {
+                this.showNotification = false;
+                const resultDelete = await userService.delete(userID);
+
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+                if (currentUser && currentUser._id === userID) {
+                    // Nếu xóa chính tài khoản đang đăng nhập, đăng xuất người dùng
+                    localStorage.removeItem('currentUser');
+                    this.$router.push('/signin'); // Chuyển hướng đến trang đăng nhập
+                }
+
+                alert('Xóa người dùng thành công');
+                this.getUserssAll();
+            } catch (error) {
+                console.error('Lỗi khi xóa người dùng:', error);
+                alert('Có lỗi khi xóa người dùng. Vui lòng thử lại.');
+            }
+        },
+
+        // Xóa tất cả người dùng 
+        async deleteSelectedAll() {
+            try {
+                this.RemoveContent.title = 'Xóa tất cả người dùng trong hệ thống';
+                this.RemoveContent.content = `Bạn chắc chắn muốn xóa ${this.selected.length} người dùng đã chọn?`;
+                this.showNotification = true;
+                const reusultDeleteAll = await userService.deleteAll();
+
+            } catch (error) {
+                console.error('Lỗi khi xóa nhiều người dùng:', error);
+                alert('Có lỗi khi xóa. Vui lòng thử lại.');
+            }
+        },
+
+        // Hien thi thong tin chi tiet nguoi dung
+        async ShowDetail(user) {
+            this.userSelected = user;
+            this.userSelected.NGAYSINH = this.formatDate(this.userSelected.NGAYSINH);
+            this.showInfor = true;
+        },
+
+        // chuyen doi dinh dang thoi gian
+        formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        },
     },
 
     mounted() {
         this.getUserssAll()
+    },
+
+    watch: {
+        showNotification(newVal) {
+            document.body.classList.toggle("no-scroll", newVal);
+        },
+
+        showInfor(newVal) {
+            document.body.classList.toggle("no-scroll", newVal);
+        }
     },
 }
 
@@ -93,9 +186,9 @@ export default {
                 <th class="bookList_head"></th>
                 <th class="bookList_head">STT</th>
                 <th class="bookList_head">Mã độc giả</th>
-                <th class="bookList_head">Họ lót</th>
-                <th class="bookList_head">Tên</th>
+                <th class="bookList_head">Tên người dùng</th>
                 <th class="bookList_head">Email</th>
+                <th class="bookList_head">Loại TK</th>
                 <th class="bookList_head">Ngày sinh</th>
                 <th class="bookList_head">Phái</th>
                 <th class="bookList_head">Địa chỉ</th>
@@ -110,20 +203,21 @@ export default {
                         @change="toggleUserSelection(user._id, $event.target.checked)">
                 </td>
                 <td class="bookList_col bookList_ten">{{ index + 1 }}</td>
-                <td class="bookList_col bookList_ten">{{ user.MADOCGIA }}</td>
-                <td class="bookList_col bookList_ten">{{ user.HOLOT }}</td>
-                <td class="bookList_col bookList_ten">{{ user.TEN }}</td>
+                <td class="bookList_col bookList_ten">{{ user._id }}</td>
+                <td class="bookList_col bookList_ten">{{ user.USERNAME }}</td>
                 <td class="bookList_col bookList_ten">{{ user.EMAIL }}</td>
-                <td class="bookList_col bookList_ten">{{ user.NGAYSINH }}</td>
+                <td class="bookList_col bookList_ten" :class="ClassLoaiTk[user.LOAITK]">{{ loaiTk[user.LOAITK] }}</td>
+                <td class="bookList_col bookList_ten">{{ formatDate(user.NGAYSINH) }}</td>
                 <td class="bookList_col bookList_nxb">{{ user.PHAI }}</td>
                 <td class="bookList_col bookList_soluong">{{ user.DIACHI }}</td>
                 <td class="bookList_col bookList_ten">{{ user.DIENTHOAI }}</td>
                 <td class="bookList_col bookList_update">
-                    <i class="fa-regular fa-eye bookList--icon bookList_detail--icon"></i>
+                    <i class="fa-regular fa-eye bookList--icon bookList_detail--icon"
+                        @click.prevent="ShowDetail(user)"></i>
                 </td>
                 <td class="bookList_col bookList_delete">
                     <button class="icon-btn" @click="RemoveUser(user._id)"><i
-                            class="fa-solid fa-minus bookList--icon bookList_delete--icon"></i></button>
+                            class="fa-solid fa-trash bookList--icon bookList_delete--icon"></i></button>
                 </td>
             </tr>
         </table>
@@ -132,10 +226,69 @@ export default {
             <input type="checkbox" name="deleteAll" id="deleteAll" class="deleteAll-checkbox"
                 :checked="selected.length === users.length && users.length > 0"
                 @change="changeCheckAll($event.target.checked)">
-            <button class="btn btn-deleteAll" @click="deleteSelected" :disabled="selected.length === 0">Xóa tất
+            <button class="btn btn-deleteAll" @click="deleteSelectedAll" :disabled="selected.length === 0">Xóa tất
                 cả</button>
         </div>
     </main>
+
+    <!-- Notification -->
+    <div class="noti" v-if="showNotification">
+        <div class="noti-showInfor">
+            <header class="noti-header">
+                <h2 class="noti--title">{{ RemoveContent.title }}</h2>
+                <p class="section_content noti-book_selected">
+                    <!-- <img :src="this.bookSelected.IMAGE" alt="" class="noti-img"> -->
+                    <strong v-if="this.userSelected.EMAIL">Email: <span class="section_content">{{
+                        this.userSelected.EMAIL }}</span></strong>
+                </p>
+            </header>
+            <main class="noti-main">
+                <p class="section_content noti--content ">{{ RemoveContent.content }}</p>
+                <p class="section_content noti--description ">{{ RemoveContent.description }}</p>
+            </main>
+            <footer class="noti-footer mt-24">
+                <button class="btn btn--accept bg-cancel" @click="removeAccept(userSelected._id)">Xóa</button>
+                <button class="btn btn--close bg-submit" @click="showNotification = false">Đóng</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" v-if="showInfor">
+        <div class="modal_showInfor">
+            <!-- Nội dung modal hiển thị thông tin chi tiết sách mượn/trả sẽ được thêm vào đây -->
+            <header class="modal-header">
+                <h3 class="section--title modal--title">Thông tin chi tiết độc giả</h3>
+                <p class="section_content donMuon--id">Mã độc giả: <span class="section_value">{{ this.userSelected._id
+                }}</span></p>
+                <p class="section_content">
+                    <i class="fa-regular fa-clock"></i> Ngày tạo:
+                    <span class="timeStart"> {{ formatDate(this.userSelected.THOIGIANTAO) }}</span>
+                </p>
+            </header>
+
+            <main class="modal-main">
+                <!-- Thông tin chi tiết sách mượn/trả sẽ được hiển thị ở đây -->
+                <h4 class="modal-main--title section_content">Thông tin độc giả</h4>
+
+                <div class="infor_user">
+                    <img :src="this.userSelected.IMAGE" alt="User Image" class="infor_user-img">
+                    <div class="infor_user-main mt-24">
+                        <li class="infor_user--items" v-for="(user, index) in inforUser" :key="index">
+                            <p class="section_content user_content" v-if="user">
+                                {{ user.label }}: <span class="section_value">{{ this.userSelected[user.key] }}</span>
+                            </p>
+                        </li>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="modal-footer">
+                <button class="btn btn--primary btn--close-modal bg-cancel" @click="showInfor = false">Đóng</button>
+            </footer>
+        </div>
+        <div class="overlay"></div>
+    </div>
 </template>
 
 <style>
@@ -237,5 +390,63 @@ td {
     background-color: red;
     color: white;
     font-weight: bold;
+}
+
+
+/* ----------- Notification CSS --------------- */
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    backdrop-filter: blur(4px);
+}
+
+.noti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.noti-showInfor {
+    position: absolute;
+    top: 0;
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    z-index: 1002;
+    min-width: 500px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.noti--title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #ff0000;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.noti-footer {
+    text-align: right;
+}
+
+.btn {
+    min-width: 100px;
+    margin-left: 8px;
 }
 </style>

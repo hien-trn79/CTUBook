@@ -27,6 +27,13 @@ class ChiTietDonMuonService {
     const result = await this.ChiTietDonMuon.insertOne(chiTietDonMuon);
     return result;
   }
+
+  async delete(idChiTiet) {
+    const result = await this.ChiTietDonMuon.deleteOne({
+      _id: idChiTiet,
+    });
+    return result.deletedCount;
+  }
 }
 
 export default ChiTietDonMuonService;

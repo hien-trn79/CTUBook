@@ -79,8 +79,8 @@ export default {
 
         async totalRequest() {
             const userLocal = JSON.parse(localStorage.getItem('currentUser'));
-            const user = userLocal[0];
-            const cartItems = await meService.getMyCart(user._id);
+
+            const cartItems = await meService.getMyCart(userLocal._id);
             this.total = cartItems.length;
         },
 

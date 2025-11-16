@@ -20,11 +20,12 @@ export default {
         // Lay tat ca cac sach trong gio hang cua user trong kho GioHang
         async getAllCartItems() {
             const user = JSON.parse(localStorage.getItem('currentUser'));
-            this.currentUser = user ? user[0] : {};
+            this.currentUser = user ? user : {};
             const idUser = this.currentUser._id;
 
             try {
                 const cartItems = await meService.getMyCart(idUser);
+                console.log('Cart Items:', cartItems);
 
                 // Sử dụng Promise.all để đợi tất cả các async operations
                 this.dataCart = await Promise.all(
@@ -68,12 +69,13 @@ export default {
         // Xu ly nut "Gui yeu cau muon sach"
         async sendRequest() {
             try {
-                let dataRequest = this.dataCart.filter(item => item.TRANGTHAI === 3);
+                let dataRequest = this.dataCart.filter(item => item.TRANGTHAI !== 1);
 
                 // Gui yeu cau muon sach
-                const result = await requestService.createRequest(dataRequest)
+                const result = await requestService.createRequest(dataRequest);
                 // Chuyen doi du lieu muon sach trong gio hang
                 dataRequest.forEach(async item => {
+                    console.log('Cập nhật trạng thái giỏ hàng cho sách:', item);
                     item.TRANGTHAI = 0; // dang cho xac nhan
                     const updateResult = await meService.updateMyCart(item._id, item);
                 })

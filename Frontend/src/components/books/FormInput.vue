@@ -1,6 +1,6 @@
 <script>
 import UploadImage from '@/components/user/UploadImage.vue';
-import { bookLabel, bookStatus } from '@/enums/book.status';
+import { trangThaiSach } from '@/enums/book.status';
 
 export default {
     components: {
@@ -10,15 +10,15 @@ export default {
     props: {
         dataList: { type: Array, default: () => [] },
         book: { type: Object, default: () => ({}) },
-        isSubmitting: { type: Boolean, default: false }
+        isSubmitting: { type: Boolean, default: false },
+        theLoai: { type: Array, default: () => [] }
     },
 
     data() {
         return {
             file: {},
             formData: {},
-            bookLabel,
-            bookStatus
+            trangThaiSach
         }
     },
 
@@ -32,11 +32,6 @@ export default {
             // Kiểm tra các trường bắt buộc
             if (!this.formData.TENSACH || this.formData.TENSACH.trim() === '') {
                 alert('Vui lòng nhập tên sách!');
-                return false;
-            }
-
-            if (!this.formData.THELOAI || this.formData.THELOAI.trim() === '') {
-                alert('Vui lòng nhập thể loại!');
                 return false;
             }
 
@@ -77,8 +72,11 @@ export default {
 
             // Emit formData
             this.$emit('formData', this.formData);
-            console.log('Form Data Submitted:', this.formData);
         },
+
+        goBack() {
+            this.$emit('goBack');
+        }
     },
 
     mounted() {
@@ -100,10 +98,21 @@ export default {
                     :placeholder="formGroup.placeholder" v-model="formData[formGroup.name]">
             </div>
             <div class="form-select_area form-group ">
+                <label for="" class="form-label">Thể loại</label>
+                <select name="THELOAI" id="THELOAI" class="form-select form-control" v-model="this.formData.THELOAI"
+                    size="1" multiple>
+                    <option :value="theloaiItem" class="select_option" v-for="(theloaiItem, index) in this.theLoai"
+                        :key="index">{{ theloaiItem
+                        }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-select_area form-group ">
+                <label class="form-label">Trạng thái </label>
                 <select name="TRANGTHAI" id="TRANGTHAI" class="form-select form-control"
                     v-model="this.formData.TRANGTHAI">
-                    <option :value="bookStatusItem" class="select_option"
-                        v-for="(bookStatusItem, index) in this.bookStatus" :key="index">{{ bookLabel[bookStatusItem]
+                    <option :value="Number(index)" class="select_option" v-for="(trangThai, index) in trangThaiSach"
+                        :key="index">{{ trangThai
                         }}
                     </option>
                 </select>
@@ -117,7 +126,7 @@ export default {
             <button class="btn btn-save" @click.prevent="handleSubmit" :disabled="isSubmitting">
                 {{ isSubmitting ? 'Đang lưu...' : 'Lưu' }}
             </button>
-            <button class="btn btn-cancel" type="button" :disabled="isSubmitting">Hủy</button>
+            <button class="btn btn-cancel" type="button" :disabled="isSubmitting" @click="goBack">Hủy</button>
         </div>
     </form>
 </template>
@@ -148,8 +157,16 @@ export default {
     font-size: var(--text-font-sm);
 }
 
+.form-select.form-control {
+    min-width: 100%
+}
+
 .form-textarea {
     min-height: 120px;
+}
+
+option {
+    padding: 8px 0px;
 }
 
 .btn {

@@ -8,6 +8,10 @@ export default {
                 username: '',
                 password: ''
             },
+            errors: {
+                username: '',
+                password: ''
+            },
             notification: {
                 show: false,
                 message: '',
@@ -18,6 +22,40 @@ export default {
     },
 
     methods: {
+        clearError(field) {
+            this.errors[field] = '';
+        },
+
+        validateForm() {
+            // Reset errors
+            this.errors = {
+                username: '',
+                password: ''
+            };
+
+            let isValid = true;
+
+            // Validate Username
+            if (!this.formData.username.trim()) {
+                this.errors.username = 'Vui lòng nhập tên đăng nhập';
+                isValid = false;
+            } else if (this.formData.username.length < 3) {
+                this.errors.username = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+                isValid = false;
+            }
+
+            // Validate Password
+            if (!this.formData.password) {
+                this.errors.password = 'Vui lòng nhập mật khẩu';
+                isValid = false;
+            } else if (this.formData.password.length < 6) {
+                this.errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+
         /**
          * Show toast notification with an optional redirect when progress completes.
          * options: { duration: ms, redirect: string }
@@ -57,29 +95,37 @@ export default {
         },
 
         async handleSignIn() {
-            if (!this.formData.username || !this.formData.password) {
-                this.showNotification('Vui lòng nhập đầy đủ thông tin!', 'error');
+            // Validate form
+            console.log(this.formData);
+            if (!this.validateForm()) {
+                const firstError = Object.values(this.errors).find(error => error !== '');
+                if (firstError) {
+                    this.showNotification(firstError, 'error');
+                }
                 return;
             }
 
             try {
-                const user = await meService.getQuery({ username: this.formData.username, password: this.formData.password });
-                console.log(user)
+                let user = await meService.getQuery({ username: this.formData.username });
                 if (!user) {
                     this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
                     return;
                 }
 
+
                 if (user[0].PASSWORD !== this.formData.password) {
+                    this.errors.password = 'Mật khẩu không đúng';
                     this.showNotification('Mật khẩu không hợp lệ!', 'error');
                     return;
                 }
 
+                user = user[0];
                 // Lưu thông tin người dùng vào localStorage
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 // Show success toast and redirect when progress finishes
                 this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success', { redirect: '/', duration: 2000 });
             } catch (error) {
+                this.errors.username = 'Tài khoản không tồn tại';
                 this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
                 return;
             }
@@ -113,14 +159,25 @@ export default {
                 <h2 class="section--title form--title">Đăng nhập</h2>
                 <form @submit.prevent="handleSignIn" id="form-signIn">
                     <div class="form-group">
-                        <i class="form-icon fa-solid fa-user"></i>
-                        <input type="text" name="username" v-model="formData.username" placeholder="Tên đăng nhập"
-                            class="form-control" required>
+                        <i class="form-icon fa-solid fa-user" :class="{ 'icon-error': errors.username }"></i>
+                        <input type="text" name="username" v-model="formData.username" @input="clearError('username')"
+                            placeholder="Tên đăng nhập" :class="['form-control', { 'input-error': errors.username }]">
+                        <transition name="error-fade">
+                            <span v-if="errors.username" class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ errors.username }}
+                            </span>
+                        </transition>
                     </div>
                     <div class="form-group">
-                        <i class="form-icon fa-solid fa-lock"></i>
-                        <input type="password" name="password" v-model="formData.password" placeholder="Mật khẩu"
-                            class="form-control" required>
+                        <i class="form-icon fa-solid fa-lock" :class="{ 'icon-error': errors.password }"></i>
+                        <input type="password" name="password" v-model="formData.password"
+                            @input="clearError('password')" placeholder="Mật khẩu"
+                            :class="['form-control', { 'input-error': errors.password }]">
+                        <transition name="error-fade">
+                            <span v-if="errors.password" class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ errors.password }}
+                            </span>
+                        </transition>
                     </div>
 
                     <div class="form-group button_area">
@@ -202,6 +259,82 @@ export default {
     outline: none;
     border-color: var(--text-primary);
     box-shadow: 0 0 0 3px rgba(84, 152, 255, 0.1);
+}
+
+/* Error States */
+.form-control.input-error {
+    border-color: #f44336;
+    background-color: #fff5f5;
+    animation: shake 0.4s ease;
+}
+
+.form-control.input-error:focus {
+    border-color: #f44336;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.form-icon.icon-error {
+    color: #f44336;
+    animation: shake 0.4s ease;
+    transform: translateY(-137%);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #f44336;
+    font-size: 1.3rem;
+    margin-top: 6px;
+    font-weight: 500;
+    padding-left: 10px;
+}
+
+.error-message i {
+    font-size: 1.4rem;
+}
+
+/* Shake Animation */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Error Fade Transition */
+.error-fade-enter-active {
+    transition: all 0.3s ease;
+}
+
+.error-fade-leave-active {
+    transition: all 0.2s ease;
+}
+
+.error-fade-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.error-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-5px);
 }
 
 .button_area {

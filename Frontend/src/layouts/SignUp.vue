@@ -10,6 +10,12 @@ export default {
                 PASSWORD: '',
                 CONFIRM_PASSWORD: ''
             },
+            errors: {
+                USERNAME: '',
+                EMAIL: '',
+                PASSWORD: '',
+                CONFIRM_PASSWORD: ''
+            },
             notification: {
                 show: false,
                 message: '',
@@ -20,6 +26,63 @@ export default {
     },
 
     methods: {
+        clearError(field) {
+            this.errors[field] = '';
+        },
+
+        validateForm() {
+            // Reset errors
+            this.errors = {
+                USERNAME: '',
+                EMAIL: '',
+                PASSWORD: '',
+                CONFIRM_PASSWORD: ''
+            };
+
+            let isValid = true;
+
+            // Validate Username
+            if (!this.formData.USERNAME.trim()) {
+                this.errors.USERNAME = 'Vui lòng nhập tên đăng nhập';
+                isValid = false;
+            } else if (this.formData.USERNAME.length < 3) {
+                this.errors.USERNAME = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+                isValid = false;
+            } else if (!/^[a-zA-Z0-9_]+$/.test(this.formData.USERNAME)) {
+                this.errors.USERNAME = 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
+                isValid = false;
+            }
+
+            // Validate Email
+            if (!this.formData.EMAIL.trim()) {
+                this.errors.EMAIL = 'Vui lòng nhập email';
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.EMAIL)) {
+                this.errors.EMAIL = 'Email không hợp lệ';
+                isValid = false;
+            }
+
+            // Validate Password
+            if (!this.formData.PASSWORD) {
+                this.errors.PASSWORD = 'Vui lòng nhập mật khẩu';
+                isValid = false;
+            } else if (this.formData.PASSWORD.length < 6) {
+                this.errors.PASSWORD = 'Mật khẩu phải có ít nhất 6 ký tự';
+                isValid = false;
+            }
+
+            // Validate Confirm Password
+            if (!this.formData.CONFIRM_PASSWORD) {
+                this.errors.CONFIRM_PASSWORD = 'Vui lòng xác nhận mật khẩu';
+                isValid = false;
+            } else if (this.formData.PASSWORD !== this.formData.CONFIRM_PASSWORD) {
+                this.errors.CONFIRM_PASSWORD = 'Mật khẩu xác nhận không khớp';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+
         showNotification(message, type = 'error') {
             this.notification.message = message;
             this.notification.type = type;
@@ -46,26 +109,29 @@ export default {
         },
 
         async handleSignUp() {
-            // Validate
-            if (this.formData.PASSWORD !== this.formData.CONFIRM_PASSWORD) {
-                this.showNotification('Mật khẩu xác nhận không khớp!', 'error');
+            // Validate form
+            if (!this.validateForm()) {
+                const firstError = Object.values(this.errors).find(error => error !== '');
+                if (firstError) {
+                    this.showNotification(firstError, 'error');
+                }
                 return;
             }
 
-            // TODO: Call API đăng ký
+            // Call API đăng ký
             try {
                 this.formData['LOAITK'] = 0; // Mặc định là tài khoản người dùng
                 this.formData['IMAGE'] = 'https://res.cloudinary.com/dw7aqqwti/image/upload/v1761294585/UserDefault_vch7wc.jpg';
                 const result = await userService.create(this.formData);
                 this.showNotification('Đăng ký thành công! Đang chuyển hướng...', 'success');
+
+                setTimeout(() => {
+                    this.$router.push('/signin');
+                }, 3000);
             } catch (error) {
                 this.showNotification('Email hoặc Username của bạn đã được sử dụng!', 'error');
                 return;
             }
-
-            setTimeout(() => {
-                this.$router.push('/signin');
-            }, 3000)
         },
     }
 }
@@ -97,24 +163,46 @@ export default {
                 <form @submit.prevent="handleSignUp" id="form-signUp"
                     :action="`?username=${formData.USERNAME}&email=${formData.EMAIL}`">
                     <div class="form-group">
-                        <i class="form-icon fa-solid fa-user"></i>
-                        <input type="text" name="USERNAME" v-model="formData.USERNAME" placeholder="Tên đăng nhập"
-                            class="form-control" required>
+                        <i class="form-icon fa-solid fa-user" :class="{ 'icon-error': errors.USERNAME }"></i>
+                        <input type="text" name="USERNAME" v-model="formData.USERNAME" @input="clearError('USERNAME')"
+                            placeholder="Tên đăng nhập" :class="['form-control', { 'input-error': errors.USERNAME }]">
+                        <transition name="error-fade">
+                            <span v-if="errors.USERNAME" class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ errors.USERNAME }}
+                            </span>
+                        </transition>
                     </div>
                     <div class="form-group">
-                        <i class="form-icon fa-solid fa-envelope"></i>
-                        <input type="email" name="EMAIL" v-model="formData.EMAIL" placeholder="Email"
-                            class="form-control" required>
+                        <i class="form-icon fa-solid fa-envelope" :class="{ 'icon-error': errors.EMAIL }"></i>
+                        <input type="email" name="EMAIL" v-model="formData.EMAIL" @input="clearError('EMAIL')"
+                            placeholder="Email" :class="['form-control', { 'input-error': errors.EMAIL }]">
+                        <transition name="error-fade">
+                            <span v-if="errors.EMAIL" class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ errors.EMAIL }}
+                            </span>
+                        </transition>
                     </div>
                     <div class="form-group">
-                        <i class="form-icon fa-solid fa-lock"></i>
-                        <input type="password" name="PASSWORD" v-model="formData.PASSWORD" placeholder="Mật khẩu"
-                            class="form-control" required>
+                        <i class="form-icon fa-solid fa-lock" :class="{ 'icon-error': errors.PASSWORD }"></i>
+                        <input type="password" name="PASSWORD" v-model="formData.PASSWORD"
+                            @input="clearError('PASSWORD')" placeholder="Mật khẩu"
+                            :class="['form-control', { 'input-error': errors.PASSWORD }]">
+                        <transition name="error-fade">
+                            <span v-if="errors.PASSWORD" class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ errors.PASSWORD }}
+                            </span>
+                        </transition>
                     </div>
                     <div class="form-group">
-                        <i class="form-icon fa-solid fa-lock"></i>
+                        <i class="form-icon fa-solid fa-lock" :class="{ 'icon-error': errors.CONFIRM_PASSWORD }"></i>
                         <input type="password" name="COMFIRMPASSWORD" v-model="formData.CONFIRM_PASSWORD"
-                            placeholder="Xác nhận mật khẩu" class="form-control" required>
+                            @input="clearError('CONFIRM_PASSWORD')" placeholder="Xác nhận mật khẩu"
+                            :class="['form-control', { 'input-error': errors.CONFIRM_PASSWORD }]">
+                        <transition name="error-fade">
+                            <span v-if="errors.CONFIRM_PASSWORD" class="error-message">
+                                <i class="fa-solid fa-circle-exclamation"></i> {{ errors.CONFIRM_PASSWORD }}
+                            </span>
+                        </transition>
                     </div>
 
                     <div class="form-group button_area">
@@ -200,6 +288,82 @@ export default {
 
 .form-control:focus .form-icon {
     color: var(--text-primary);
+}
+
+/* Error States */
+.form-control.input-error {
+    border-color: #f44336;
+    background-color: #fff5f5;
+    animation: shake 0.4s ease;
+}
+
+.form-control.input-error:focus {
+    border-color: #f44336;
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.form-icon.icon-error {
+    color: #f44336;
+    transform: translateY(-137%);
+    animation: shake 0.4s ease;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #f44336;
+    font-size: 1.3rem;
+    margin-top: 6px;
+    font-weight: 500;
+    padding-left: 10px;
+}
+
+.error-message i {
+    font-size: 1.4rem;
+}
+
+/* Shake Animation */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Error Fade Transition */
+.error-fade-enter-active {
+    transition: all 0.3s ease;
+}
+
+.error-fade-leave-active {
+    transition: all 0.2s ease;
+}
+
+.error-fade-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.error-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-5px);
 }
 
 .button_area {

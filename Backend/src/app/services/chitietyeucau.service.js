@@ -29,6 +29,24 @@ class ChiTietYeuCauService {
     const chiTietMoi = await this.ChiTietYeuCau.insertOne(data);
     return { _id: chiTietMoi.insertedId, ...data };
   }
+
+  async update(idChiTiet, data) {
+    const result = await this.ChiTietYeuCau.findOneAndUpdate(
+      {
+        _id: ObjectId.isValid(idChiTiet) ? new ObjectId(idChiTiet) : null,
+      },
+      { $set: data },
+      { returnDocument: "after" }
+    );
+    return result.value;
+  }
+
+  async delete(idChiTiet) {
+    const result = await this.ChiTietYeuCau.deleteOne({
+      _id: ObjectId.isValid(idChiTiet) ? new ObjectId(idChiTiet) : null,
+    });
+    return result.deletedCount;
+  }
 }
 
 export default ChiTietYeuCauService;

@@ -41,6 +41,7 @@ class UserService {
       LOAITK: payload.LOAITK,
       USERNAME: payload.USERNAME,
       IMAGE: payload.IMAGE,
+      THOIGIANTAO: payload.THOIGIANTAO,
     };
 
     Object.keys(user).forEach((key) => {
@@ -67,7 +68,7 @@ class UserService {
 
   // [POST] /api/users/
   async create(data) {
-    console.log(data);
+    data.THOIGIANTAO = new Date();
     const user = this.extractUserData(data);
     const result = await this.User.insertOne(user);
     return result;
@@ -78,6 +79,9 @@ class UserService {
     const filter = {
       _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
     };
+
+    data.NGAYSINH = new Date(data.NGAYSINH);
+
     const updateData = this.extractUserData(data);
     const result = await this.User.findOneAndUpdate(
       filter,
@@ -92,7 +96,7 @@ class UserService {
     const result = await this.User.deleteOne({
       _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
     });
-    return result.value;
+    return result;
   }
 
   // [DELETE] /api/users/

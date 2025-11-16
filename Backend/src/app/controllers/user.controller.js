@@ -3,6 +3,10 @@ import UserService from "../services/user.service.js";
 import MongoDB from "../utils/mongodb.util.js";
 import config from "../config/index.js";
 import fs from "fs";
+import CartService from "../services/cart.service.js";
+import { ObjectId } from "mongodb";
+import RequestService from "../services/request.service.js";
+import MuonService from "../services/muon.service.js";
 
 const cloudinary = config.cloudinary;
 
@@ -25,7 +29,6 @@ class UserController {
   async create(req, res, next) {
     try {
       let data = req.body;
-
       const userService = new UserService(MongoDB.client);
       const resultEmail = await userService.find({
         EMAIL: data.EMAIL,
@@ -54,7 +57,7 @@ class UserController {
   async deleteAll(req, res, next) {
     try {
       const userService = new UserService(MongoDB.client);
-      const result = await userService.deleteAll({});
+      const result = await userService.deleteAll();
       return res.send({
         message: `Đã xóa thành công ${result} users`,
       });
@@ -99,9 +102,6 @@ class UserController {
       let data = { ...req.body };
       let file = req.file;
 
-      console.log("Updating user with ID:", userId);
-      console.log("Update data:", data);
-
       if (file) {
         try {
           const result = await cloudinary.uploader.upload(file.path, {
@@ -137,24 +137,70 @@ class UserController {
     }
   }
 
-  // [DELETE] /api/users/:id
+  // [DELETE] /api/users/:username
   async delete(req, res, next) {
     try {
-      const userService = new UserService(MongoDB.client);
-      const result = await userService.delete(req.params.id);
-      if (!result) {
-        return next(
-          new ApiError(500, `Không thể xóa user với id=${req.params.id}`)
+      const userID = req.params.username;
+      // xoa gio hang cua user neu co
+      const cartService = new CartService(MongoDB.client);
+      const cartListOfUSer = await cartService.find({
+        MADOCGIA: ObjectId.isValid(userID) ? new ObjectId(userID) : null,
+      });
+      if (cartListOfUSer.length > 0) {
+        await Promise.all(
+          cartListOfUSer.map(async (cart) => {
+            await cartService.delete(cart._id);
+          })
         );
       }
-      return res.send({
-        message: "Xóa thành công",
+
+      // Xoa yeu cau cua user
+      const requestService = new RequestService(MongoDB.client);
+      const requestList = await requestService.find({
+        MADOCGIA: ObjectId.isValid(userID) ? new ObjectId(userID) : null,
       });
+
+      if (requestList.length > 0) {
+        await Promise.all(
+          requestList.map(async (request) => {
+            await requestService.delete(request._id);
+          })
+        );
+      }
+
+      // Xoa don muon cua user
+      const muonService = new MuonService(MongoDB.client);
+      const muonList = await muonService.find({
+        IDDOCGIA: ObjectId.isValid(userID) ? new ObjectId(userID) : null,
+      });
+      if (muonList.length > 0) {
+        await Promise.all(
+          muonList.map(async (muon) => {
+            await muonService.delete(muon._id);
+          })
+        );
+      }
+
+      // Xoa user
+      const userService = new UserService(MongoDB.client);
+      const deletedCount = await userService.delete(userID);
+      if (deletedCount === 0) {
+        return next(
+          new ApiError(
+            404,
+            `Không tìm thấy user với username=${req.params.username}`
+          )
+        );
+      }
+      return res.send({ message: "Xóa user thành công" });
     } catch (error) {
       console.log("Lỗi xóa 1 user");
       console.log(error);
       return next(
-        new ApiError(500, `Không thể xóa user với id=${req.params.id}`)
+        new ApiError(
+          500,
+          `Không thể xóa user với username=${req.params.username}`
+        )
       );
     }
   }

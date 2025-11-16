@@ -28,6 +28,7 @@ class MeController {
       let body = req.body;
       const cartService = new CartService(MongoDB.client);
       const result = await cartService.create(body);
+      return res.send(result);
     } catch (error) {
       console.log("Lỗi khi tạo giỏ hàng");
       console.error(error);

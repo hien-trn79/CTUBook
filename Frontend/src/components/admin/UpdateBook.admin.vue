@@ -22,12 +22,6 @@ export default {
                     placeholder: 'Tên sách'
                 },
                 {
-                    name: 'THELOAI',
-                    label: 'Thể loại',
-                    type: 'text',
-                    placeholder: 'Chọn thể loại'
-                },
-                {
                     name: 'TACGIA',
                     label: 'Tác giả',
                     type: 'text',
@@ -70,6 +64,18 @@ export default {
                     placeholder: 'Chọn năm xuất bản sách'
                 }
             ],
+            theLoai: [
+                'Giáo trình',
+                'Công nghệ & kỹ thuật',
+                'Thể thao & sức khỏe',
+                'Công nghệ sinh học & thực phẩm',
+                'Thủy sản',
+                'Kỹ năng & văn hóa',
+                'Toán học',
+                'Khoa học nghiên cứu',
+                'Môi trường',
+                'Máy tính & phần mềm'
+            ]
         }
     },
 
@@ -100,6 +106,7 @@ export default {
 
                 // Chuyển đổi trạng thái sang số
                 formData['TRANGTHAI'] = Number(formData['TRANGTHAI']);
+                formData['THELOAI'] = Array.isArray(formData['THELOAI']) ? formData['THELOAI'] : [formData['THELOAI']];
 
 
                 // Gọi API update
@@ -118,6 +125,10 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+
+        goBack() {
+            this.$router.push('/admin/books');
         }
     },
 
@@ -141,8 +152,8 @@ export default {
         </div>
 
         <!-- Form -->
-        <FormInput v-else-if="book" :data-list="dataForm" :book="book" :isSubmitting="isLoading"
-            @formData="handleFromData" />
+        <FormInput v-else-if="book" :data-list="dataForm" :book="book" :isSubmitting="isLoading" :the-loai="theLoai"
+            @goBack="goBack" @formData="handleFromData" />
     </div>
 </template>
 

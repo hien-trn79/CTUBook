@@ -19,12 +19,6 @@ export default {
                     placeholder: 'Tên sách'
                 },
                 {
-                    name: 'THELOAI',
-                    label: 'Thể loại',
-                    type: 'text',
-                    placeholder: 'Chọn thể loại'
-                },
-                {
                     name: 'TACGIA',
                     label: 'Tác giả',
                     type: 'text',
@@ -68,6 +62,18 @@ export default {
                 }
             ],
             book: {},
+            theLoai: [
+                'Giáo trình',
+                'Công nghệ & kỹ thuật',
+                'Thể thao & sức khỏe',
+                'Công nghệ sinh học & thực phẩm',
+                'Thủy sản',
+                'Kỹ năng & văn hóa',
+                'Toán học',
+                'Khoa học nghiên cứu',
+                'Môi trường',
+                'Máy tính & phần mềm'
+            ]
         }
     },
 
@@ -92,6 +98,7 @@ export default {
 
                 // Chuyển đổi trạng thái sang số
                 formData['TRANGTHAI'] = Number(formData['TRANGTHAI']) || 0;
+                formData['THELOAI'] = Array.isArray(formData['THELOAI']) ? formData['THELOAI'] : [formData['THELOAI']];
 
                 // Gọi API create
                 const result = await bookService.create(formData);
@@ -111,6 +118,9 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        goBack() {
+            this.$router.push('/admin/books');
         }
     },
 }
@@ -132,8 +142,8 @@ export default {
                 <p>{{ error }}</p>
             </div>
 
-            <FormInput :data-list="dataForm" :book="book" :isSubmitting="isLoading" @file="handlerFile"
-                @formData="handleCreateData" />
+            <FormInput :data-list="dataForm" :book="book" :isSubmitting="isLoading" @file="handlerFile" @goBack="goBack"
+                :the-loai="theLoai" @formData="handleCreateData" />
         </div>
     </div>
 </template>

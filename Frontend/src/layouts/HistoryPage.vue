@@ -27,7 +27,7 @@ export default {
                 const currentUserData = localStorage.getItem('currentUser');
 
                 if (!currentUserData) {
-                    throw new Error('Chưa đăng nhập. Vui lòng đăng nhập để xem lịch sử.');
+                    throw new Error('Có lỗi khi xem lịch sử đơn mượn.');
                 }
 
                 const parsedData = JSON.parse(currentUserData);
