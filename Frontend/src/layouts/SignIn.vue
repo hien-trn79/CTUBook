@@ -1,6 +1,5 @@
 <script>
 import meService from '@/services/me.service';
-import userService from '@/services/user.service';
 export default {
     data() {
         return {
@@ -56,10 +55,6 @@ export default {
             return isValid;
         },
 
-        /**
-         * Show toast notification with an optional redirect when progress completes.
-         * options: { duration: ms, redirect: string }
-         */
         showNotification(message, type = 'error', options = {}) {
             const duration = options.duration || 3000;
             const redirect = options.redirect || null;
@@ -96,7 +91,6 @@ export default {
 
         async handleSignIn() {
             // Validate form
-            console.log(this.formData);
             if (!this.validateForm()) {
                 const firstError = Object.values(this.errors).find(error => error !== '');
                 if (firstError) {
@@ -106,24 +100,21 @@ export default {
             }
 
             try {
-                let user = await meService.getQuery({ username: this.formData.username });
-                if (!user) {
-                    this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
-                    return;
-                }
+                let { token, user } = await meService.getQuery({ username: this.formData.username, password: this.formData.password });
 
-
-                if (user[0].PASSWORD !== this.formData.password) {
-                    this.errors.password = 'Mật khẩu không đúng';
-                    this.showNotification('Mật khẩu không hợp lệ!', 'error');
-                    return;
-                }
-
-                user = user[0];
                 // Lưu thông tin người dùng vào localStorage
+                localStorage.setItem('authToken', token);
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 // Show success toast and redirect when progress finishes
-                this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success', { redirect: '/', duration: 2000 });
+                this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success', { duration: 2000 });
+                setTimeout(() => {
+                    if (user.LOAITK === 1) {
+                        this.$router.push('/admin');
+                    }
+                    if (user.LOAITK === 0) {
+                        this.$router.push('/');
+                    }
+                }, 2000)
             } catch (error) {
                 this.errors.username = 'Tài khoản không tồn tại';
                 this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');

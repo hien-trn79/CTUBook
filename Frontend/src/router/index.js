@@ -24,6 +24,9 @@ import UpdateBookAdmin from "@/components/admin/UpdateBook.admin.vue";
 import DashboardAdmin from "@/components/admin/Dashboard.admin.vue";
 import { path } from "framer-motion/client";
 
+// utils
+import { isLoggedIn, getCurrentUser } from "@/utils/auth.util";
+
 const routes = [
   // User Routes
   {
@@ -121,6 +124,11 @@ const routes = [
         ],
       },
     ],
+
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
   },
 
   // Auth Routes
@@ -166,6 +174,24 @@ const router = createRouter({
     // Default: cuon toi dau trang
     return { left: 0, top: 0, behavior: "smooth" };
   },
+});
+
+// Bodyguard route
+router.beforeEach((to, from, next) => {
+  const loggedIn = isLoggedIn();
+  const user = getCurrentUser();
+
+  if (to.meta.requiresAuth && !loggedIn) {
+    // Chưa login, redirect về login
+    return next("/signin");
+  }
+
+  if (to.meta.requiresAdmin && user?.LOAITK !== 1) {
+    // Không phải admin
+    return next("/signin");
+  }
+
+  next(); // hợp lệ, cho phép truy cập
 });
 
 export default router;

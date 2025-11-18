@@ -2,6 +2,7 @@
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.0",
     "framer-motion": "^12.23.24",
+    "jsonwebtoken": "^9.0.2",
     "motion": "^12.23.24",
     "motion-v": "^1.7.2",
     "react": "^18.3.1",

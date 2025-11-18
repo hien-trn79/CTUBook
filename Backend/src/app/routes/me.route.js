@@ -9,7 +9,14 @@ router.get("/", meController.findByUsername);
 // [POST] /api/me/
 router.post("/", meController.create);
 
+// Protected routes
+router.get(
+  "/protected",
+  meController.ensureAuthenticated,
+  meController.protectAuth
+);
 // [GET] /api/me/my-cart/:id
+
 router.get("/my-cart/:id", meController.getMyCart);
 
 // [PUT] /api/me/my-cart/:id
