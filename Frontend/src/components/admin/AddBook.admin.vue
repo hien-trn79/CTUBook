@@ -1,6 +1,7 @@
 <script>
 import bookService from '@/services/book.service';
 import FormInput from '@/components/books/FormInput.vue';
+import { useToast } from 'primevue/usetoast';
 export default {
     components: {
         FormInput,
@@ -77,6 +78,10 @@ export default {
         }
     },
 
+    created() {
+        this.toast = useToast();
+    },
+
     methods: {
         handlerFile(file) {
             console.log('File uploaded:', file);
@@ -106,15 +111,15 @@ export default {
                 console.log('Thêm sách thành công:', result);
 
                 // Hiển thị thông báo thành công
-                alert('Thêm sách mới thành công!');
-
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Thêm sách mới thành công!', life: 3000 });
                 // Chuyển hướng về trang danh sách
                 this.$router.push('/admin/books');
 
             } catch (error) {
                 console.error('Lỗi khi thêm sách:', error);
                 this.error = error.message || 'Không thể thêm sách. Vui lòng thử lại!';
-                alert(`Lỗi: ${this.error}`);
+                this.toast.add({ severity: 'error', summary: 'Lỗi khi thêm sách', detail: this.error, life: 4000 });
+
             } finally {
                 this.isLoading = false;
             }

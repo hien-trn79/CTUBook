@@ -149,7 +149,7 @@ class UserController {
       if (cartListOfUSer.length > 0) {
         await Promise.all(
           cartListOfUSer.map(async (cart) => {
-            await cartService.delete(cart._id);
+            await cartService.deleteByIdCart(cart._id);
           })
         );
       }

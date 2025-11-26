@@ -14,3 +14,8 @@ export const getCurrentUser = () => {
   const user = localStorage.getItem("currentUser");
   return user ? JSON.parse(user) : null;
 };
+
+export const getCurrentAdmin = () => {
+  const admin = localStorage.getItem("currentAdmin");
+  return admin ? JSON.parse(admin) : null;
+};

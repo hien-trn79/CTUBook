@@ -1,9 +1,11 @@
 <script setup>
-import mainPage from './layouts/UserLayouts.vue'
+import Toast from "primevue/toast";
 </script>
 
 <template>
   <router-view></router-view>
+
+  <Toast />
 </template>
 
 <style></style>

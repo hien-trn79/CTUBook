@@ -1,5 +1,9 @@
 <script>
 import meService from '@/services/me.service.js';
+import userService from '@/services/user.service';
+import { getCurrentUser } from '@/utils/auth.util';
+
+import { useToast } from 'primevue/usetoast';
 
 export default {
     props: ['book'],
@@ -10,19 +14,32 @@ export default {
         };
     },
 
+    created() {
+        this.toast = useToast();
+    },
+
     methods: {
         async addToCart(book) {
             try {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-                console.log(currentUser)
+                let user = getCurrentUser();
+                user = await userService.findByUsername(user.id);
+                if (user.length > 0) {
+                    user = user[0];
+                    console.log('Current User in addToCart:', user);
+                }
+                if (!user || user.length === 0) {
+                    this.toast.add({ severity: 'warn', summary: 'Cảnh báo', detail: 'Vui lòng đăng nhập để thêm vào giỏ hàng.', life: 3000 });
+                    return;
+                }
                 let data = {
-                    MADOCGIA: currentUser._id,
+                    MADOCGIA: user._id,
                     book: book
                 }
                 const result = await meService.create(data);
-                alert('Thêm vào giỏ hàng thành công!');
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Thêm vào giỏ hàng thành công!', life: 3000 });
             } catch (error) {
                 console.log('Lỗi khi thêm vào giỏ hàng', error);
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Không thể thêm vào giỏ hàng. Vui lòng thử lại!', life: 4000 });
             }
         }
     }
@@ -63,9 +80,6 @@ export default {
                     <i class="fa-solid fa-cart-shopping detail_icon"></i>
                     Thêm vào giỏ hàng
                 </button>
-                <!-- <button class="btn btn_detail btn_borrow" @click.prevent="SendRequestNow(book)">
-                    <i class="fa-solid fa-book-tanakh detail--icon"></i>Mượn ngay
-                </button> -->
             </div>
         </div>
     </div>

@@ -3,6 +3,10 @@ import bookService from '@/services/book.service';
 import meService from '@/services/me.service.js';
 import { request, ClassRequest } from '@/enums/book.status.js';
 import requestService from '@/services/request.service';
+import { getCurrentUser } from '@/utils/auth.util';
+import userService from '@/services/user.service';
+
+import { useToast } from 'primevue/usetoast';
 
 export default {
     data() {
@@ -16,11 +20,19 @@ export default {
         }
     },
 
+    created() {
+        this.toast = useToast();
+    },
+
     methods: {
         // Lay tat ca cac sach trong gio hang cua user trong kho GioHang
         async getAllCartItems() {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            this.currentUser = user ? user : {};
+            let user = getCurrentUser();
+            user = await userService.findByUsername(user.id);
+            if (user.length > 0) {
+                this.currentUser = user[0];
+                console.log('Current User:', this.currentUser);
+            }
             const idUser = this.currentUser._id;
 
             try {
@@ -57,8 +69,13 @@ export default {
 
         // Kiem tra trang thai yeu cau muon sach
         async sendStatus() {
+            let user = getCurrentUser();
+            user = await userService.findByUsername(user.id);
+            if (user.length > 0) {
+                this.currentUser = user[0];
+            }
             let dataRequest = await meService.getMyCart(this.currentUser._id);
-            const result = dataRequest.filter(item => item.TRANGTHAI === 3 || item.TRANGTHAI == 2);
+            const result = dataRequest.filter(item => item.TRANGTHAI === 3 || item.TRANGTHAI === 2);
             if (result.length > 0) {
                 this.Sended = false;
             } else {
@@ -75,12 +92,11 @@ export default {
                 const result = await requestService.createRequest(dataRequest);
                 // Chuyen doi du lieu muon sach trong gio hang
                 dataRequest.forEach(async item => {
-                    console.log('Cập nhật trạng thái giỏ hàng cho sách:', item);
                     item.TRANGTHAI = 0; // dang cho xac nhan
                     const updateResult = await meService.updateMyCart(item._id, item);
                 })
                 this.sendStatus();
-                alert('Gửi yêu cầu mượn sách thành công!');
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Gửi yêu cầu mượn sách thành công!', life: 3000 });
             } catch (error) {
                 console.log('Lỗi khi xử lý gửi yêu cầu', error);
             }
@@ -95,10 +111,11 @@ export default {
         async RemoveCart(cartItem) {
             try {
                 const result = await meService.deleteMyCart(cartItem._id);
-                alert('Xóa sách khỏi giỏ hàng thành công!');
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Xóa sách khỏi giỏ hàng thành công!', life: 3000 });
                 this.getAllCartItems();
             } catch (error) {
                 console.log('Lỗi khi xóa sách khỏi giỏ hàng', error);
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Không thể xóa sách khỏi giỏ hàng. Vui lòng thử lại!', life: 4000 });
             }
         }
     },

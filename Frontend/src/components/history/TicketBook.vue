@@ -69,7 +69,6 @@ export default {
     },
 
     mounted() {
-        console.log('ticket in TicketBook:', this.ticket);
     }
 }
 </script>

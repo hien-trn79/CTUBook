@@ -11,6 +11,9 @@ import { trangThaiSach, ClassTrangThaiSach } from '@/enums/book.status';
 // service
 import bookService from '@/services/book.service';
 
+// Primevue
+import { useToast } from 'primevue/usetoast';
+
 export default {
     components: {
         InputSearchAdmin,
@@ -67,8 +70,12 @@ export default {
                 { label: "Thể loại", key: "THELOAI" },
                 { label: "Mô tả", key: "MOTA" },
                 { label: "Yêu thích", key: "YEUTHICH" },
-            ]
+            ],
         }
+    },
+
+    created() {
+        this.toast = useToast();
     },
 
     methods: {
@@ -93,13 +100,13 @@ export default {
         async RemoveBookClick(bookId) {
             try {
                 const result = await bookService.delete(bookId);
-                alert('Xóa sách thành công!');
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Xóa sách thành công!', life: 3000 });
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000)
             } catch (error) {
                 console.error('Lỗi khi xóa sách:', error);
-                alert('Xóa sách thất bại. Vui lòng thử lại!');
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Xóa sách thất bại! Vui lòng thử lại.', life: 3000 });
             }
         },
 
@@ -232,9 +239,12 @@ export default {
     color: white;
     border-radius: 5px;
     padding: 8px 12px;
-    height: 20px;
+    height: fit-content;
 }
 
+.bookList_update {
+    width: 100px;
+}
 
 /* ---------------Modal CSS --------------- */
 /* ----------Modal ShowInformation ------------------ */

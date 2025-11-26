@@ -252,7 +252,7 @@ export default {
     gap: 20px;
     background: white;
     border-radius: 10px;
-    padding: 28px;
+    padding: 26px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;

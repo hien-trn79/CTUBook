@@ -14,6 +14,14 @@ class MuonService {
   async getByMaDocGia(maDocGia) {
     return (await this.api.get(`/${maDocGia}`)).data;
   }
+
+  async getByIdDonMuon(idDonMuon) {
+    return (await this.api.get(`/don-muon/${idDonMuon}`)).data;
+  }
+
+  async updateByIdDonMuon(idDonMuon, data) {
+    return (await this.api.put(`/don-muon/${idDonMuon}`, data)).data;
+  }
 }
 
 export default new MuonService();

@@ -152,8 +152,7 @@ export default {
 }
 
 .form-control {
-    min-width: 95%;
-    height: 2.2rem;
+    min-width: 100%;
     font-size: var(--text-font-sm);
 }
 

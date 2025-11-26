@@ -2,7 +2,7 @@
 import muonService from '@/services/muon.service';
 import requestService from '@/services/request.service';
 import chitietdonmuonService from '@/services/chitietdonmuon.service';
-import { getCurrentUser } from '@/utils/auth.util.js';
+import { getCurrentAdmin, getCurrentUser } from '@/utils/auth.util.js';
 import userService from '@/services/user.service';
 
 export default {
@@ -74,7 +74,7 @@ export default {
 
         async getCurrentUser() {
             try {
-                let user = getCurrentUser();
+                let user = getCurrentAdmin();
                 user = await userService.findByUsername(user.id);
                 if (user.length > 0) {
                     this.currentUser = user[0];
@@ -155,7 +155,7 @@ export default {
         <article class="userPage-article">
             <header class="userPage-header">
                 <h3 class="userPage-header--title">Thông tin độc giả</h3>
-                <router-link :to="`/user/${getValue('_id')}/edit`" class="edit-btn">Chỉnh sửa</router-link>
+                <router-link :to="`/admin/${getValue('_id')}/updateAdmin`" class="edit-btn">Chỉnh sửa</router-link>
             </header>
 
             <main class="userPage-main">
@@ -183,7 +183,7 @@ export default {
             </main>
         </article>
 
-        <aside class="userPage-aside">
+        <!-- <aside class="userPage-aside">
             <header class="userPage-header userPage-aside-header">
                 <h3 class="userPage-header--title">Lưu trữ & Thống kê</h3>
             </header>
@@ -215,17 +215,16 @@ export default {
 
                 <div v-if="isLoadingStats" class="stats-loading">Đang tải thống kê...</div>
             </div>
-        </aside>
+        </aside> -->
     </div>
 </template>
 
 <style scoped>
 .userPage {
     position: relative;
-    display: grid;
-    grid-template-areas: 'userPage-article userPage-aside';
-    grid-template-columns: 3fr 2fr;
-    min-width: 96vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -308,7 +307,10 @@ export default {
 .userPage-article {
     grid-area: userPage-article;
     padding: 20px;
-    border-right: 2px solid #ccc;
+    border-left: 2px solid var(--text-primary);
+    background-color: white;
+    width: 75vw;
+    border-radius: 10px;
 }
 
 .userPage-main {

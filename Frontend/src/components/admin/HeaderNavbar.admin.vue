@@ -1,5 +1,7 @@
 <script>
 import meService from '@/services/me.service';
+import userService from '@/services/user.service';
+import { getCurrentAdmin, getCurrentUser } from '@/utils/auth.util';
 
 export default {
     data() {
@@ -40,16 +42,11 @@ export default {
             this.isScrolled = window.scrollY > 50;
         },
 
-        getCurrentUser() {
-            const userData = localStorage.getItem('currentUser');
-            if (userData) {
-                try {
-                    const parsed = JSON.parse(userData);
-                    this.currentUser = parsed;
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                    this.currentUser = null;
-                }
+        async getCurrentUser() {
+            let userData = getCurrentAdmin()
+            userData = await userService.findByUsername(userData.id);
+            if (userData.length > 0) {
+                this.currentUser = userData[0];
             }
         },
 
@@ -76,12 +73,6 @@ export default {
                 this.closeUserMenu();
             }
         },
-
-        async totalRequest() {
-            const userLocal = JSON.parse(localStorage.getItem('currentUser'));;
-            const cartItems = await meService.getMyCart(userLocal._id);
-            this.total = cartItems.length;
-        }
     },
 
     mounted() {
@@ -89,7 +80,6 @@ export default {
         window.addEventListener('scroll', this.handleScroll);
         document.addEventListener('click', this.handleClickOutside);
         this.getCurrentUser();
-        this.totalRequest()
     },
 
     beforeUnmount() {
@@ -144,19 +134,13 @@ export default {
                         <div class="dropdown-divider"></div>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item">
-                                <router-link :to="`/user/${this.currentUser._id}`" class="dropdown-link"
+                                <router-link :to="`/admin/${this.currentUser._id}`" class="dropdown-link"
                                     @click="closeUserMenu">
                                     <i class="fa-solid fa-user"></i>
                                     <span>Thông tin cá nhân</span>
                                 </router-link>
                             </li>
-                            <!-- <li class="dropdown-item dropdown-item--cart">
-                                <router-link to="/cart" class="dropdown-link" @click="closeUserMenu">
-                                    <i class="fa-solid fa-box"></i>
-                                    <span>Đơn hàng của tôi</span>
-                                    <span class="totalRequest">{{ this.total }}</span>
-                                </router-link>
-                            </li> -->
+
                             <li class="dropdown-divider"></li>
                             <li class="dropdown-item">
                                 <button class="dropdown-link logout-btn" @click="handleLogout">

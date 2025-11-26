@@ -39,6 +39,9 @@ class RequestService {
     let requestTrungLap = {};
     const requestList = await this.Request.find({
       TRANGTHAI: { $ne: 1 },
+      MADOCGIA: ObjectId.isValid(data[0].MADOCGIA)
+        ? new ObjectId(data[0].MADOCGIA)
+        : null,
     }).toArray();
     console.log("Danh sách yêu cầu chưa hoàn thành:", requestList);
     if (requestList.length > 0) {

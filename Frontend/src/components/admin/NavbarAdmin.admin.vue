@@ -4,7 +4,7 @@ export default {
         return {
             navbarVer: [
                 {
-                    name: 'Dashboard',
+                    name: 'Tổng quan',
                     url: 'overview',
                     icon: 'fa-solid fa-chart-simple'
                 },

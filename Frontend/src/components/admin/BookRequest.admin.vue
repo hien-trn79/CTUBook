@@ -7,6 +7,8 @@ import userService from '@/services/user.service';
 import { request, ClassRequest } from '@/enums/book.status';
 import chitietyeucauService from '@/services/chitietyeucau.service';
 import bookService from '@/services/book.service';
+
+import { useToast } from 'primevue';
 export default {
     components: {
         InputSearchAdmin,
@@ -72,6 +74,10 @@ export default {
         }
     },
 
+    created() {
+        this.toast = useToast();
+    },
+
     methods: {
         async getRequestAll() {
             try {
@@ -125,10 +131,10 @@ export default {
                 let data = request;
                 data.TRANGTHAI = 1; // Đặt trạng thái thành "Đã chấp nhận"
                 const result = await requestService.updateRequestById(data.MAYEUCAU, data);
-                alert("Chấp nhận yêu cầu thành công!");
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Chấp nhận yêu cầu thành công!', life: 3000 });
                 this.getRequestAll();
             } catch (error) {
-                alert("Không đủ sách để chấp nhận yêu cầu!");
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Không đủ sách để chấp nhận yêu cầu!', life: 4000 });
                 this.getRequestAll();
             }
         },
@@ -138,6 +144,8 @@ export default {
             let data = request;
             data.TRANGTHAI = 2; // Đặt trạng thái thành "Đã từ chối"
             const result = await requestService.updateRequestById(request.MAYEUCAU, data);
+            this.getRequestAll();
+            this.toast.add({ severity: 'info', summary: 'Thông báo', detail: 'Từ chối yêu cầu thành công!', life: 3000 });
             console.log('Rejected request:', result);
         },
 
@@ -244,7 +252,7 @@ export default {
                                     v-if="this.requestSelected[bookInfor.key] === undefined">{{ 'Chưa xác định'
                                     }}</span>
                                 <span class="section_value" v-else>{{ this.requestSelected[bookInfor.key]
-                                    }}</span>
+                                }}</span>
                             </p>
                         </li>
                         <li class="infor_user--items">
@@ -294,5 +302,9 @@ export default {
 
 .modal_showInfor {
     width: 80vw;
+}
+
+.bookList_update {
+    width: 100px;
 }
 </style>

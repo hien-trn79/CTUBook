@@ -5,6 +5,8 @@ import chitietdonmuonService from '@/services/chitietdonmuon.service';
 import muonService from '@/services/muon.service';
 
 import TicketBook from '@/components/history/TicketBook.vue';
+import { getCurrentUser } from '@/utils/auth.util';
+import userService from '@/services/user.service';
 
 export default {
     components: {
@@ -24,17 +26,16 @@ export default {
         async getDonMuon() {
             try {
                 // lay nguoi dung hien tai
-                const currentUserData = localStorage.getItem('currentUser');
+                let currentUserData = getCurrentUser();
+                currentUserData = await userService.findByUsername(currentUserData.id);
 
                 if (!currentUserData) {
                     throw new Error('Có lỗi khi xem lịch sử đơn mượn.');
                 }
 
-                const parsedData = JSON.parse(currentUserData);
 
                 // Xử lý cả trường hợp array và object
-                this.currentUser = Array.isArray(parsedData) ? parsedData[0] : parsedData;
-
+                this.currentUser = currentUserData[0];
                 if (!this.currentUser || !this.currentUser._id) {
                     throw new Error('Thông tin người dùng không hợp lệ.');
                 }
@@ -84,7 +85,7 @@ export default {
 
             } catch (error) {
                 console.error('Lỗi khi cập nhật thông tin đơn mượn:', error);
-                this.error = 'Vui lòng đăng nhập để xem lịch sử đơn mượn.';
+                this.error = 'Không có thông tin đơn mượn.';
             }
         },
 
@@ -148,7 +149,7 @@ export default {
                     <h3 class="info-title">Thông tin chi tiết</h3>
                     <p class="info-content">Tổng số đơn mượn: <strong>{{ tickets.length }}</strong></p>
                     <p class="info-content">Tổng số sách đã mượn: <strong class="text-red">{{ getTotalBooks()
-                    }}</strong></p>
+                            }}</strong></p>
                 </div>
             </section>
         </article>

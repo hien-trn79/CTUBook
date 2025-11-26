@@ -48,6 +48,9 @@ ul {
     margin-right: 6px;
 }
 
+.bookList-table {
+    width: 100%;
+}
 
 .btn {
     border: none;
@@ -79,6 +82,7 @@ ul {
     padding: 8px 16px;
     border: 1px solid #ccc;
     border-radius: 7px;
+    font-size: 1.3rem;
 }
 
 .form-control:focus {
@@ -266,4 +270,25 @@ ul {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1001;
     backdrop-filter: blur(4px);
+}
+
+
+/* Đảm bảo Font size cho nội dung chính */
+.p-toast {
+    padding: 12px 16px !important;
+    min-width: 300px !important;
+    max-width: 700px !important;
+}
+
+.p-toast-message-content {
+    padding: 12px;
+}
+
+.p-toast-message .p-toast-detail,
+.p-toast-message .p-toast-summary {
+    font-size: 1.4rem !important;
+}
+
+.p-toast-icon {
+    font-size: 2.2rem !important;
 }

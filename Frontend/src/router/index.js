@@ -22,10 +22,11 @@ import BookAccountAdmin from "@/components/admin/BookAccount.admin.vue";
 import AddBookAdmin from "@/components/admin/AddBook.admin.vue";
 import UpdateBookAdmin from "@/components/admin/UpdateBook.admin.vue";
 import DashboardAdmin from "@/components/admin/Dashboard.admin.vue";
-import { path } from "framer-motion/client";
+import UserAdminDetail from "@/components/admin/UserProfile.admin.vue";
+import UpdateUserAdmin from "@/components/admin/UpdateUser.admin.vue";
 
 // utils
-import { isLoggedIn, getCurrentUser } from "@/utils/auth.util";
+import { isLoggedIn, getCurrentUser, getCurrentAdmin } from "@/utils/auth.util";
 
 const routes = [
   // User Routes
@@ -118,6 +119,14 @@ const routes = [
         path: ":id",
         children: [
           {
+            path: "",
+            component: UserAdminDetail,
+          },
+          {
+            path: "updateAdmin",
+            component: UpdateUserAdmin,
+          },
+          {
             path: "edit",
             component: UpdateBookAdmin,
           },
@@ -178,20 +187,33 @@ const router = createRouter({
 
 // Bodyguard route
 router.beforeEach((to, from, next) => {
-  const loggedIn = isLoggedIn();
-  const user = getCurrentUser();
+  const currentAdmin = getCurrentAdmin();
+  const tokenAdmin = localStorage.getItem("authTokenAdmin");
+  const tokenUser = localStorage.getItem("authToken");
 
-  if (to.meta.requiresAuth && !loggedIn) {
-    // Chưa login, redirect về login
-    return next("/signin");
+  if (to.path.startsWith("/admin")) {
+    if (tokenAdmin) {
+      next(); // cho phep vao khi co token admin
+    } else {
+      next("/signin"); // chuyen huong den trang dang nhap
+    }
+    return;
   }
 
-  if (to.meta.requiresAdmin && user?.LOAITK !== 1) {
-    // Không phải admin
-    return next("/signin");
-  }
+  // Logic bao ve trang dang nhap
+  // if (to.path === "/signin") {
+  //   if (tokenAdmin) {
+  //     next("/admin");
+  //   } else if (tokenUser) {
+  //     next("/");
+  //   } else {
+  //     next(); // cho phep vao trang dang nhap
+  //   }
+  //   return;
+  // }
 
-  next(); // hợp lệ, cho phép truy cập
+  // // Neu khong phai trang admin hay dang nhap, cho phep di tiep
+  next();
 });
 
 export default router;

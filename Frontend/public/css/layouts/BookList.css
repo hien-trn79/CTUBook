@@ -8,7 +8,8 @@
     grid-template-areas: 'bookList-aside bookList-article';;
     grid-template-columns: 1fr 5.5fr;;
     column-gap: 12px;
-    width: 100%;
+    width: 98%;
+    margin: auto;
 }
 
 .bookList-aside_navbar {

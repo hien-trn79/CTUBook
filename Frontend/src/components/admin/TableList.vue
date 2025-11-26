@@ -105,9 +105,7 @@ td {
 }
 
 .bookList--icon {
-    border: 2px solid #ccc;
     padding: 4px;
-    border-radius: 50%;
     text-align: center;
     font-size: 1.1rem;
     margin-right: 6px;
@@ -115,10 +113,6 @@ td {
 
 .bookList--icon:hover {
     cursor: pointer;
-}
-
-.bookList_update {
-    min-width: 100px;
 }
 
 .bookList_update--icon {

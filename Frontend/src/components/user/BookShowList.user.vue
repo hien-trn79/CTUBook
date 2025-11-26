@@ -99,7 +99,6 @@ export default {
 .book_item {
     padding: 12px;
     border-radius: 10px;
-    height: fit-content;
     text-align: center;
     background-color: #fff;
     border: 2px solid transparent;
@@ -108,6 +107,7 @@ export default {
     position: relative;
     overflow: hidden;
     margin: 12px 0px;
+    max-height: 400px;
 }
 
 /* Hiệu ứng gradient overlay khi hover */

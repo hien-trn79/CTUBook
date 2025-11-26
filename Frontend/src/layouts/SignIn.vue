@@ -101,23 +101,22 @@ export default {
 
             try {
                 let { token, user } = await meService.getQuery({ username: this.formData.username, password: this.formData.password });
-
-                // Lưu thông tin người dùng vào localStorage
-                localStorage.setItem('authToken', token);
-                localStorage.setItem('currentUser', JSON.stringify(user));
                 // Show success toast and redirect when progress finishes
-                this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success', { duration: 2000 });
-                setTimeout(() => {
-                    if (user.LOAITK === 1) {
-                        this.$router.push('/admin');
-                    }
-                    if (user.LOAITK === 0) {
-                        this.$router.push('/');
-                    }
-                }, 2000)
+                if (user.LOAITK == 1) {
+                    localStorage.setItem('authTokenAdmin', token);
+                    localStorage.setItem('currentAdmin', JSON.stringify(user));
+                    this.showNotification('Đăng nhập thành công! Chuyển hướng đến trang quản trị...', 'success', { duration: 2000, redirect: '/admin' });
+                }
+                if (user.LOAITK == 0) {
+                    localStorage.setItem('authToken', token);
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.showNotification('Đăng nhập thành công! Chuyển hướng đến trang chủ...', 'success', { duration: 2000, redirect: '/' });
+                }
             } catch (error) {
+                console.error('Lỗi đăng nhập:', error);
                 this.errors.username = 'Tài khoản không tồn tại';
-                this.showNotification('Bạn có chưa tạo tài khoản? Vui lòng đăng ký tài khoản mới!', 'error');
+                this.errors.password = 'Mật khẩu không đúng';
+                this.showNotification('Tên đăng nhập hoặc mật khẩu không chính xác!', 'error');
                 return;
             }
         }
@@ -238,7 +237,7 @@ export default {
 }
 
 .form-control {
-    width: 85%;
+    width: 100%;
     padding: 12px 12px 12px 45px;
     border: 2px solid #e0e0e0;
     border-radius: 10px;

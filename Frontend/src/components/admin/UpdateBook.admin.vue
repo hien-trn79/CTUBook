@@ -2,10 +2,11 @@
 import bookService from '@/services/book.service';
 import FormInput from '@/components/books/FormInput.vue';
 import BrandService from '@/services/brand.service';
+import { useToast } from 'primevue/usetoast';
 
 export default {
     components: {
-        FormInput
+        FormInput,
     },
 
     data() {
@@ -75,8 +76,12 @@ export default {
                 'Khoa học nghiên cứu',
                 'Môi trường',
                 'Máy tính & phần mềm'
-            ]
+            ],
         }
+    },
+
+    created() {
+        this.toast = useToast();
     },
 
     methods: {
@@ -113,15 +118,14 @@ export default {
                 const result = await bookService.update(formData._id, formData);
 
                 // Hiển thị thông báo thành công
-                alert('Cập nhật sách thành công!');
-
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật sách thành công!', life: 3000 });
                 // Chuyển hướng về trang danh sách
                 this.$router.push('/admin/books');
 
             } catch (error) {
                 console.error('Lỗi khi cập nhật sách:', error);
                 this.error = 'Không thể cập nhật sách. Vui lòng thử lại!';
-                alert('Lỗi: Không thể cập nhật sách!');
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Không thể cập nhật sách!', life: 3000 });
             } finally {
                 this.isLoading = false;
             }
@@ -155,6 +159,7 @@ export default {
         <FormInput v-else-if="book" :data-list="dataForm" :book="book" :isSubmitting="isLoading" :the-loai="theLoai"
             @goBack="goBack" @formData="handleFromData" />
     </div>
+
 </template>
 
 <style scoped>

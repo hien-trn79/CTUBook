@@ -84,7 +84,6 @@ export default {
                 // Validate file type
                 if (!file.type.startsWith('image/')) {
                     this.toast.add({ severity: 'warn', summary: 'Lỗi', detail: 'Vui lòng chọn file ảnh hợp lệ!', life: 4000 });
-                    return;
                 }
                 // Validate file size (max 5MB)
                 if (file.size > 5 * 1024 * 1024) {
@@ -115,16 +114,13 @@ export default {
                     formData.append('IMAGE', this.file);
                 }
 
+                console.log('Sending update request with user ID:', this.currentUser._id);
                 const result = await userService.update(this.currentUser._id, formData);
 
                 if (result && result.data) {
                     // Update localStorage with the returned user data
-                    this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật thông tin thành công!', life: 3000 });
-                    setTimeout(() => {
-                        this.toast.clear();
-                        window.location.reload();
-                    }, 3000);
-                    this.$router.push('/user/' + this.currentUser._id);
+                    this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật thông tin cá nhân thành công!', life: 3000 });
+                    this.$router.push('/admin/' + this.currentUser._id + '/updateAdmin');
                 } else {
                     throw new Error('Update failed - no data returned');
                 }
@@ -195,6 +191,9 @@ export default {
 .updateUser_page {
     min-width: 60vw;
     margin: auto;
+    background-color: white;
+    padding: 12px;
+    border-radius: 10px;
 }
 
 .updateUser--title {

@@ -51,6 +51,7 @@ export default {
     grid-template-columns: 1fr 4fr;
     column-gap: 20px;
     background: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
+    width: 98vw;
 }
 
 .page_admin-aside {

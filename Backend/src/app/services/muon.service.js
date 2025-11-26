@@ -52,6 +52,16 @@ class MuonService {
     }
   }
 
+  async update(idDonMuon, data) {
+    const dataMuon = this.extractMuonData(data);
+    const result = await this.Muon.updateOne(
+      { _id: ObjectId.isValid(idDonMuon) ? new ObjectId(idDonMuon) : null },
+      { $set: dataMuon },
+      { returnDocument: "after" }
+    );
+    return result;
+  }
+
   // Xoa don muon va chi tiet don muon
   async delete(idDonMuon) {
     const chiTietService = new chiTietDonMuonService(MongoDB.client);

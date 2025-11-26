@@ -6,6 +6,9 @@ import userService from '@/services/user.service';
 import muonService from '@/services/muon.service';
 import { hinhthuc, trangthai, ClassTrangThai } from '@/enums/muon.enum';
 import chitietdonmuonService from '@/services/chitietdonmuon.service';
+
+import { useToast } from 'primevue/usetoast';
+import bookService from '@/services/book.service';
 export default {
     components: {
         InputSearchAdmin,
@@ -50,6 +53,10 @@ export default {
         }
     },
 
+    created() {
+        this.toast = useToast();
+    },
+
     methods: {
 
         getFullName(holot, ten) {
@@ -81,12 +88,46 @@ export default {
                 yeuCau['THOIGIANTRA'] = new Date(yeuCau.THOIGIANTRA).toLocaleDateString('en-GB');
 
                 yeuCau.DOCGIA = user[0];
+                yeuCau.DOCGIA.NGAYSINH = new Date(yeuCau.DOCGIA.NGAYSINH).toLocaleDateString('en-GB');
             })
         },
 
-        handlerDetail(book) {
+        async handlerDetail(book) {
             this.ticketSelected = book;
+            const idDonMuon = book._id;
+            const chiTietList = await chitietdonmuonService.getIDDonMuon(idDonMuon);
+            this.ticketSelected.bookDetails = [];
+            await Promise.all(
+                chiTietList.map(async chiTiet => {
+                    const bookinfor = await bookService.getId(chiTiet.MASACH);
+                    bookinfor.SOLUONG = chiTiet.SOLUONG;
+                    this.ticketSelected.bookDetails.push(bookinfor);
+                })
+            )
+            console.log(this.ticketSelected);
             this.showInfor = true;
+        },
+        // Xác nhận đã trả sách
+        async borrowedBook(book) {
+            const idDonMuon = book._id;
+            const donMuon = await muonService.getByIdDonMuon(idDonMuon);
+            let updatedDonMuon = { ...donMuon };
+            updatedDonMuon.TRANGTHAI = 0; // Cập nhật trạng thái thành "Đã trả"
+            const chiTietList = await chitietdonmuonService.getIDDonMuon(idDonMuon);
+            // Cập nhật số lượng sách trong kho
+            chiTietList.forEach(async chiTiet => {
+                let bookInfor = await bookService.getId(chiTiet.MASACH);
+                let updatedBook = { ...bookInfor };
+                updatedBook.SOQUYEN += Number(chiTiet.SOLUONG);
+                const resultBook = await bookService.update(chiTiet.MASACH, updatedBook);
+            })
+            const result = await muonService.updateByIdDonMuon(idDonMuon, updatedDonMuon);
+            if (result) {
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Xác nhận trả sách thành công!', life: 3000 });
+                this.getDataAll();
+            } else {
+                this.toast.add({ severity: 'error', summary: 'Thất bại', detail: 'Xác nhận trả sách thất bại!', life: 3000 });
+            }
         }
     },
 
@@ -98,6 +139,7 @@ export default {
 
     mounted() {
         this.getDataAll()
+
     },
 
 }
@@ -134,6 +176,10 @@ export default {
                             <i class="fa-regular fa-eye btn-detail icon color-orange"></i>
                         </button>
                     </router-link>
+
+                    <button class="icon-btn" @click.prevent="borrowedBook(bookItem)">
+                        <i class="fa-solid fa-circle-check icon color-green"></i>
+                    </button>
                 </td>
             </tr>
         </table>
@@ -145,7 +191,7 @@ export default {
             <header class="modal-header">
                 <h3 class="section--title modal--title">Thông tin chi tiết đơn mượn</h3>
                 <p class="section_content donMuon--id">Mã đơn mượn: <span class="section_value">{{ ticketSelected._id
-                        }}</span></p>
+                }}</span></p>
                 <p class="section_content">
                     <i class="fa-regular fa-clock"></i>
                     <span class="timeStart">{{ ticketSelected.THOIGIANMUON }}</span> - <span class="timeFinish">{{
@@ -157,23 +203,37 @@ export default {
                 <!-- Thông tin chi tiết sách mượn/trả sẽ được hiển thị ở đây -->
                 <h4 class="modal-main--title section_content">Thông tin độc giả</h4>
 
+                <img :src="ticketSelected.DOCGIA.IMAGE" alt="User Image" class="infor_user-img">
+                <div class="infor_user-main">
+                    <li class="infor_user--items" v-for="(userInfor, index) in inforUser" :key="index">
+                        <p class="section_content user_content" v-if="userInfor">
+                            {{ userInfor.label }}: <span class="section_value"
+                                v-if="this.ticketSelected.DOCGIA[userInfor.key] === undefined">{{ 'Chưa xác định'
+                                }}</span>
+                            <span class="section_value" v-else>{{ this.ticketSelected.DOCGIA[userInfor.key]
+                            }}</span>
+                        </p>
+                    </li>
+                </div>
+
+                <h4 class="modal-main--title section_content">Thông tin sách mượn</h4>
                 <div class="infor_user">
-                    <img :src="ticketSelected.DOCGIA.IMAGE" alt="User Image" class="infor_user-img">
-                    <div class="infor_user-main">
-                        <li class="infor_user--items" v-for="(userInfor, index) in inforUser" :key="index">
-                            <p class="section_content user_content" v-if="userInfor">
-                                {{ userInfor.label }}: <span class="section_value"
-                                    v-if="this.ticketSelected.DOCGIA[userInfor.key] === undefined">{{ 'Chưa xác định'
-                                    }}</span>
-                                <span class="section_value" v-else>{{ this.ticketSelected.DOCGIA[userInfor.key]
-                                    }}</span>
+                    <ol class=" borrowed_book-list">
+                        <li class="infor_user--items " v-for="(book, index) in ticketSelected.bookDetails" :key="index">
+                            <!-- <img :src="book.IMAGE" alt="User Image" class="infor_user-img"> -->
+                            <p class="user_content section_content">
+                                Tên sách:
+                                <span class="section_value">{{ book.TENSACH }}</span>
+                                <br></br>Số lượng:
+                                <span class="section_value">{{ book.SOLUONG }}</span>
                             </p>
                         </li>
-                    </div>
+                    </ol>
                 </div>
+
             </main>
 
-            <footer class="modal-footer">
+            <footer class="modal-footer mt-24">
                 <button class="btn btn--primary btn--close-modal bg-cancel" @click="showInfor = false">Đóng</button>
             </footer>
         </div>
@@ -182,6 +242,10 @@ export default {
 </template>
 
 <style scoped>
+.bookList_update {
+    min-width: 80px;
+}
+
 /* ----------Modal ShowInformation ------------------ */
 .modal {
     position: fixed;

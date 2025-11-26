@@ -1,10 +1,12 @@
 {
   "dependencies": {
+    "@primeuix/themes": "^1.2.5",
     "@vitejs/plugin-react": "^5.1.0",
     "framer-motion": "^12.23.24",
     "jsonwebtoken": "^9.0.2",
     "motion": "^12.23.24",
     "motion-v": "^1.7.2",
+    "primevue": "^4.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

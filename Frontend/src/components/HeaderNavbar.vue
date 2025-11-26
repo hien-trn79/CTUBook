@@ -1,5 +1,7 @@
 <script>
 import meService from '@/services/me.service';
+import userService from '@/services/user.service';
+import { getCurrentUser } from '@/utils/auth.util.js';
 
 export default {
     data() {
@@ -40,16 +42,11 @@ export default {
             this.isScrolled = window.scrollY > 50;
         },
 
-        getCurrentUser() {
-            const userData = localStorage.getItem('currentUser');
-            if (userData) {
-                try {
-                    const parsed = JSON.parse(userData);
-                    this.currentUser = Array.isArray(parsed) ? parsed[0] : parsed;
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                    this.currentUser = null;
-                }
+        async getCurrentUser() {
+            let user = getCurrentUser();
+            user = await userService.findByUsername(user.id);
+            if (user.length > 0) {
+                this.currentUser = user[0];
             }
         },
 
@@ -89,6 +86,13 @@ export default {
             const currentPath = this.$route.path;
 
             return currentPath === cleanPath || currentPath.startsWith(cleanPath + "/");
+        },
+
+        async totalCart() {
+            const userLocal = getCurrentUser();
+            const idUser = userLocal.id;
+            const cartList = await meService.getMyCart(idUser);
+            this.total = cartList.length;
         }
     },
 
@@ -97,7 +101,7 @@ export default {
         window.addEventListener('scroll', this.handleScroll);
         document.addEventListener('click', this.handleClickOutside);
         this.getCurrentUser();
-        this.totalRequest()
+        this.totalCart();
     },
 
     beforeUnmount() {

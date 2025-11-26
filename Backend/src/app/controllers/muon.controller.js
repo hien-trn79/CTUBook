@@ -44,6 +44,48 @@ class MuonController {
     }
   }
 
+  // [GET] /api/books/muon-tra/don-muon/:id
+  async findByIdDonMuon(req, res, next) {
+    const idDonMuon = req.params.id;
+    let document = [];
+    try {
+      const muonService = new MuonService(MongoDB.client);
+      document = await muonService.find({
+        _id: ObjectId.isValid(idDonMuon) ? new ObjectId(idDonMuon) : null,
+      });
+      if (!document || document.length === 0) {
+        return next(
+          new ApiError(404, "Khong tim thay don muon tra voi id don muon nay")
+        );
+      }
+      return res.send(document);
+    } catch (error) {
+      console.log("Loi tim kiem don muon tra");
+      console.log(error);
+      return next(new ApiError(500, "Khong the tim thay don muon tra"));
+    }
+  }
+
+  // [PUT] /api/books/muon-tra/don-muon/:id
+  async updateByIdDonMuon(req, res, next) {
+    const data = req.body;
+    const idDonMuon = req.params.id;
+    try {
+      const muonService = new MuonService(MongoDB.client);
+      const result = await muonService.update(idDonMuon, data);
+      if (!result) {
+        return next(
+          new ApiError(404, "Khong tim thay don muon tra voi id don muon nay")
+        );
+      }
+      return res.send({ message: "Cap nhat don muon tra thanh cong" });
+    } catch (error) {
+      console.log("Loi cap nhat don muon tra");
+      console.log(error);
+      return next(new ApiError(500, "Khong the cap nhat don muon tra"));
+    }
+  }
+
   // [POST] /api/books/muon-tra
   async create(req, res, next) {
     let document = [];

@@ -2,6 +2,7 @@
 import userService from '@/services/user.service';
 import InputSearchAdmin from './InputSearch.admin.vue';
 import { loaiTk, ClassLoaiTk } from '@/enums/user.enum.js';
+import { useToast } from 'primevue';
 export default {
     components: {
         InputSearchAdmin,
@@ -53,8 +54,12 @@ export default {
                     key: 'DIENTHOAI',
                     label: 'Điện thoại'
                 }
-            ]
+            ],
         }
+    },
+
+    created() {
+        this.toast = useToast();
     },
 
     methods: {
@@ -98,10 +103,10 @@ export default {
                 this.users = this.users.filter(u => !this.selected.includes(u._id));
                 this.selected = [];
                 this.checkAll = false;
-                alert('Xóa người dùng đã chọn thành công');
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Xóa người dùng đã chọn thành công', life: 3000 });
             } catch (error) {
                 console.error('Lỗi khi xóa nhiều người dùng:', error);
-                alert('Có lỗi khi xóa. Vui lòng thử lại.');
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Có lỗi khi xóa. Vui lòng thử lại.', life: 3000 });
             }
         },
 
@@ -120,11 +125,11 @@ export default {
                     this.$router.push('/signin'); // Chuyển hướng đến trang đăng nhập
                 }
 
-                alert('Xóa người dùng thành công');
+                this.toast.add({ severity: 'success', summary: 'Thành công', detail: 'Xóa người dùng thành công', life: 3000 });
                 this.getUserssAll();
             } catch (error) {
                 console.error('Lỗi khi xóa người dùng:', error);
-                alert('Có lỗi khi xóa người dùng. Vui lòng thử lại.');
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Có lỗi khi xóa người dùng. Vui lòng thử lại.', life: 3000 });
             }
         },
 
@@ -138,7 +143,7 @@ export default {
 
             } catch (error) {
                 console.error('Lỗi khi xóa nhiều người dùng:', error);
-                alert('Có lỗi khi xóa. Vui lòng thử lại.');
+                this.toast.add({ severity: 'error', summary: 'Lỗi', detail: 'Có lỗi khi xóa. Vui lòng thử lại.', life: 3000 });
             }
         },
 
@@ -329,11 +334,9 @@ td {
 }
 
 .bookList--icon {
-    border: 2px solid #ccc;
     padding: 4px;
-    border-radius: 50%;
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.6rem;
 }
 
 .bookList--icon:hover {
@@ -347,13 +350,16 @@ td {
 
 .bookList_delete--icon {
     color: red;
-    border-color: red;
 }
 
 .bookList_detail--icon {
     border: none;
     color: orange;
     font-size: 1.6rem;
+}
+
+.bookList_update {
+    width: 50px;
 }
 
 /* ------CSS Input Search--------- */
