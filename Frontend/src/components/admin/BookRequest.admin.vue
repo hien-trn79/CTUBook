@@ -70,7 +70,8 @@ export default {
                     key: 'SOQUYEN',
                     label: 'Số quyển'
                 }
-            ]
+            ],
+            statusRequestChoice: null
         }
     },
 
@@ -119,7 +120,7 @@ export default {
                 );
 
                 // Gán dữ liệu sau khi toàn bộ Promise đã hoàn tất
-                this.dataList = dataRequests;
+                return dataRequests;
             } catch (error) {
                 console.error("Lỗi khi tải danh sách yêu cầu:", error);
             }
@@ -171,16 +172,35 @@ export default {
             this.requestSelected = dataRequest;
             console.log('Request selected details:', this.requestSelected);
             this.showInfor = true;
+        },
+
+        filterRequestStatusValue(event) {
+            this.statusRequestChoice = parseInt(event.target.value);
+            this.filterRequestStatus;
         }
     },
 
-    mounted() {
-        this.getRequestAll();
+    async mounted() {
+        this.dataList = await this.getRequestAll();
     },
 
     watch: {
         showInfor(newVal) {
             document.body.classList.toggle('no-scroll', newVal);
+        }
+    },
+
+    computed: {
+        async filterRequestStatus() {
+            let status = this.statusRequestChoice;
+            console.log('Filtering requests with status:', status);
+            let dataRequest = await this.getRequestAll();
+            if (status !== -1) {
+                dataRequest = dataRequest.filter(request => {
+                    return request.TRANGTHAI === status;
+                });
+            }
+            this.dataList = dataRequest;
         }
     }
 }
@@ -192,6 +212,21 @@ export default {
             <i class="fa-solid fa-book-open-reader"></i>
             {{ choiceSideBar }}
         </h2>
+
+        <div class="borrow-admin ">
+            <div class="form-group">
+                <label for="request-search" class="form-label">Tìm kiếm sách</label>
+                <input type="text" class="form-control" placeholder="Search" id="request-search">
+            </div>
+            <div class="form-group">
+                <label for="request-filter" class="form-label">Trạng thái</label>
+                <select name="request-filter" id="request-filter" class="form-select request_filter form-control"
+                    v-model="statusRequestChoice" @change="filterRequestStatusValue($event)">
+                    <option :value="-1">- Chọn -</option>
+                    <option :value="index" v-for="(status, index) in request" :key="index">{{ status }}</option>
+                </select>
+            </div>
+        </div>
     </header>
     <main class="bookShowList-main">
         <table class="bookList-table">
@@ -281,6 +316,22 @@ export default {
 </template>
 
 <style scoped>
+/* ------ Search ------ */
+.borrow-admin {
+    display: flex;
+    gap: 16px;
+    margin: 8px 0px;
+}
+
+.form-group {
+    display: flex;
+    gap: 10px;
+}
+
+#request-search {
+    width: 300px;
+}
+
 .bookShowList-header {
     margin-bottom: 16px;
     background-color: white;

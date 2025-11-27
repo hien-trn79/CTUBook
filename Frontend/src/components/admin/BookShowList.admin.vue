@@ -196,33 +196,6 @@ export default {
 
             this.books = dataBook;
         },
-
-        // loc sach theo trang thai
-        // async filterBookStatus() {
-        //     let keyword = this.statusBookChoice;
-        //     if (keyword == -1) {
-        //         this.getBooksAll();
-        //         return;
-        //     }
-        //     let dataBook = await bookService.getAll();
-        //     if (keyword) {
-        //         // Tinh diem trung (MatchCount) cho moi sach
-        //         const scoredBooks = dataBook.map(book => {
-        //             const genres = Array.isArray(book.TRANGTHAI) ? book.TRANGTHAI : [book.TRANGTHAI];
-        //             const matchCount = genres.filter(genre => genre === keyword).length;
-
-        //             return {
-        //                 ...book,
-        //                 matchCount
-        //             };
-        //         })
-
-        //         // Tim so luong trung cao nhat
-        //         const maxMatch = Math.max(...scoredBooks.map(b => b.matchCount));
-        //         // Loc ra tat ca sach co matchCount = maxMatch (va phai co it nhat 1 trung)
-        //         this.books = scoredBooks.filter(b => b.matchCount === maxMatch && b.matchCount > 0);
-        //     }
-        // }
     }
 }
 </script>
@@ -314,7 +287,7 @@ export default {
             <header class="modal-header">
                 <h3 class="section--title modal--title">Thông tin chi tiết sách</h3>
                 <p class="section_content donMuon--id">Mã sách: <span class="section_value">{{ bookSelected._id
-                }}</span></p>
+                        }}</span></p>
             </header>
 
             <main class="modal-main">
@@ -330,7 +303,7 @@ export default {
                                     v-if="this.bookSelected[bookInfor.key] === undefined">{{ 'Chưa xác định'
                                     }}</span>
                                 <span class="section_value" v-else>{{ this.bookSelected[bookInfor.key]
-                                }}</span>
+                                    }}</span>
                             </p>
                         </li>
                         <li class="infor_user--items">
