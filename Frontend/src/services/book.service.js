@@ -11,6 +11,11 @@ class BookService {
     return (await this.api.get("/")).data;
   }
 
+  // [GET] http://localhost:8080/api/books/search?search=abc
+  async getQuery(query = {}) {
+    return (await this.api.get("/search", { params: query })).data;
+  }
+
   // [POST] http://localhost:8080/api/books/
   async create(data) {
     return (
@@ -59,11 +64,13 @@ class BookService {
 
   // [PUT] http://localhost:8080/api/books/:id
   async update(id, data) {
-    return (await this.formApi.put(`/${id}`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })).data;
+    return (
+      await this.formApi.put(`/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    ).data;
   }
 
   // [DELETE] http://localhost:8080/api/books/:id

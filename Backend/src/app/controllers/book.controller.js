@@ -67,6 +67,34 @@ class book {
     }
   }
 
+  // [GET] /api/books/search?search=abc
+  async searchBooks(req, res, next) {
+    try {
+      const search = req.query.search || "";
+      let condition = {};
+      let document = [];
+      if (search) {
+        const keyword = { $regex: new RegExp(search), $options: "i" }; // khong phan biet hoa thuong
+        condition = {
+          TENSACH: keyword, // tim gan dung va khong phan biet hoa thuong
+        };
+      }
+      try {
+        const bookService = new BookService(MongoDB.client);
+        document = await bookService.find(condition);
+      } catch (error) {
+        console.log("LOI tim kiem sach");
+        console.error(error);
+        return next(new ApiError(500, "Khong the tim kiem sach"));
+      }
+      return res.send(document);
+    } catch (error) {
+      console.log("LOI tim kiem sach");
+      console.error(error);
+      return next(new ApiError(500, "Có lỗi trong quá trình tìm kiếm sách"));
+    }
+  }
+
   // [GET] /api/books/count
   async countBooks(req, res, next) {
     try {

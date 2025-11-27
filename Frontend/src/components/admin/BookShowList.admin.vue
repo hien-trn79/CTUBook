@@ -71,6 +71,31 @@ export default {
                 { label: "Mô tả", key: "MOTA" },
                 { label: "Yêu thích", key: "YEUTHICH" },
             ],
+            theLoai: [
+                'Giáo trình',
+                'Công nghệ & kỹ thuật',
+                'Thể thao & sức khỏe',
+                'Công nghệ sinh học & thực phẩm',
+                'Thủy sản',
+                'Kỹ năng & văn hóa',
+                'Toán học',
+                'Khoa học nghiên cứu',
+                'Môi trường',
+                'Máy tính & phần mềm'
+            ],
+            bookBrand: [
+                'Giáo dục Việt Nam',
+                'Trẻ',
+                'Kim Đồng',
+                'Văn học',
+                'Tổng hợp Thành phố Hồ Chí Minh',
+                'Lao Động',
+                'Thế Giới',
+                'Đại học Cần Thơ'
+            ],
+            typeBookChoice: '',
+            statusBookChoice: null,
+            brandBookChoice: '',
         }
     },
 
@@ -113,6 +138,21 @@ export default {
         showDetailBook(book) {
             this.bookSelected = book;
             this.showInfor = true;
+        },
+
+        filterBookTypeValue(event) {
+            this.typeBookChoice = event.target.value;
+            this.filterBookType;
+        },
+
+        filterBookStatusValue(event) {
+            this.statusBookChoice = event.target.value;
+            this.filterBookType;
+        },
+
+        filterBookBrandValue(event) {
+            this.brandBookChoice = event.target.value;
+            this.filterBookType;
         }
     },
 
@@ -124,6 +164,65 @@ export default {
         showInfor(newVal) {
             document.body.classList.toggle("no-scroll", newVal);
         }
+    },
+
+    computed: {
+        // Loc sach theo the loai
+        async filterBookType() {
+            let keyword = this.typeBookChoice;
+            let statusKeyword = this.statusBookChoice;
+            let brandChoice = this.brandBookChoice
+            let dataBook = await bookService.getAll();
+
+
+            // loc theo the loai
+            if (keyword && keyword !== '') {
+                dataBook = dataBook.filter(book => {
+                    return Array.isArray(book.THELOAI) ? book.THELOAI.includes(keyword) : book.THELOAI === keyword
+                });
+            }
+
+            // loc theo trang thai
+            if (statusKeyword) {
+                dataBook = dataBook.filter(book => {
+                    return book.TRANGTHAI === statusKeyword;
+                });
+            }
+
+            // loc theo nha xuat ban
+            if (brandChoice && brandChoice !== '') {
+                dataBook = dataBook.filter(book => book.TENNXB === brandChoice);
+            }
+
+            this.books = dataBook;
+        },
+
+        // loc sach theo trang thai
+        // async filterBookStatus() {
+        //     let keyword = this.statusBookChoice;
+        //     if (keyword == -1) {
+        //         this.getBooksAll();
+        //         return;
+        //     }
+        //     let dataBook = await bookService.getAll();
+        //     if (keyword) {
+        //         // Tinh diem trung (MatchCount) cho moi sach
+        //         const scoredBooks = dataBook.map(book => {
+        //             const genres = Array.isArray(book.TRANGTHAI) ? book.TRANGTHAI : [book.TRANGTHAI];
+        //             const matchCount = genres.filter(genre => genre === keyword).length;
+
+        //             return {
+        //                 ...book,
+        //                 matchCount
+        //             };
+        //         })
+
+        //         // Tim so luong trung cao nhat
+        //         const maxMatch = Math.max(...scoredBooks.map(b => b.matchCount));
+        //         // Loc ra tat ca sach co matchCount = maxMatch (va phai co it nhat 1 trung)
+        //         this.books = scoredBooks.filter(b => b.matchCount === maxMatch && b.matchCount > 0);
+        //     }
+        // }
     }
 }
 </script>
@@ -142,7 +241,36 @@ export default {
                 Thêm sách mới
             </router-link>
         </div>
-        <!-- <InputSearchAdmin /> -->
+        <div class="search-admin ">
+            <div class="form-group">
+                <label for="book-search" class="form-label">Tìm kiếm sách</label>
+                <input type="text" class="form-control" placeholder="Search" id="book-search">
+            </div>
+            <div class="form-group">
+                <label for="book-brand" class="form-label">Nhà xuất bản</label>
+                <select name="book-brand" id="book-brand" class="form-select book_brand form-control"
+                    @change="filterBookBrandValue($event)" v-model="brandBookChoice">
+                    <option value="">- Chọn -</option>
+                    <option :value="brand" v-for="(brand, index) in bookBrand" :key="index">{{ brand }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="book-type" class="form-label">Thể loại</label>
+                <select name="book-type" id="book-type" class="form-select book_type form-control"
+                    @change="filterBookTypeValue($event)" v-model="typeBookChoice">
+                    <option value="">- Chọn -</option>
+                    <option :value="type" v-for="(type, index) in theLoai" :key="index">{{ type }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="book-filter" class="form-label">Trạng thái</label>
+                <select name="book-filter" id="book-filter" class="form-select book_filter form-control"
+                    v-model="statusBookChoice" @change="filterBookStatusValue($event)">
+                    <option :value="-1">- Chọn -</option>
+                    <option :value="index" v-for="(status, index) in trangThaiSach" :key="index">{{ status }}</option>
+                </select>
+            </div>
+        </div>
     </header>
     <main class="bookShowList-main">
         <table class="bookList-table">
@@ -186,7 +314,7 @@ export default {
             <header class="modal-header">
                 <h3 class="section--title modal--title">Thông tin chi tiết sách</h3>
                 <p class="section_content donMuon--id">Mã sách: <span class="section_value">{{ bookSelected._id
-                        }}</span></p>
+                }}</span></p>
             </header>
 
             <main class="modal-main">
@@ -202,7 +330,7 @@ export default {
                                     v-if="this.bookSelected[bookInfor.key] === undefined">{{ 'Chưa xác định'
                                     }}</span>
                                 <span class="section_value" v-else>{{ this.bookSelected[bookInfor.key]
-                                    }}</span>
+                                }}</span>
                             </p>
                         </li>
                         <li class="infor_user--items">
@@ -224,6 +352,25 @@ export default {
 </template>
 
 <style scoped>
+/* ------ Search book -------- */
+.search-admin {
+    display: flex;
+    gap: 16px;
+    margin: 8px 0px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.form-group {
+    display: flex;
+    gap: 10px;
+}
+
+.book_brand,
+.book_type {
+    max-width: 150px;
+}
+
 .bookShowList-header {
     padding: 12px;
 }

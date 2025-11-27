@@ -62,7 +62,8 @@ export default {
             ],
             booksChoice: [],
             filter: {},
-            filterSubmit: []
+            filterSubmit: [],
+            searchText: ''
         }
     },
 
@@ -82,11 +83,31 @@ export default {
             })
             this.booksChoice.push(choice.map(item => item.name))
         },
+
         handlerSubmit(bookFilter) {
             this.filterSubmit = bookFilter.map(item => item.name);
+        },
 
+        async handleSearch() {
+            const keyword = this.$route.query.search || '';
+            if (keyword) {
+                try {
+                    const results = await bookService.getQuery({ search: keyword });
+                    this.books = results;
+                } catch (error) {
+                    console.log('Co loi trong qua trinh tim kiem sach!')
+                    console.log(error);
+                }
+            }
         }
+    },
 
+    created() {
+        this.handleSearch();
+    },
+
+    watch: {
+        '$route.query.search': 'handleSearch'
     },
 
     computed: {
@@ -120,6 +141,7 @@ export default {
     mounted() {
         // Lay danh sach sach
         this.getAllBook();
+        this.handleSearch();
     }
 }
 </script>

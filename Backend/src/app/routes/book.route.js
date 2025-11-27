@@ -19,6 +19,9 @@ router.get("/", book.findAll);
 router.post("/", upload.single("IMAGE"), book.create);
 router.delete("/", book.deleteAll);
 
+// /api/books/search
+router.get("/search", book.searchBooks);
+
 // /api/books/count
 router.get("/count", book.countBooks);
 

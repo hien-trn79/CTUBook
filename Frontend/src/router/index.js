@@ -45,6 +45,12 @@ const routes = [
       {
         path: "books",
         component: User_BookList,
+        children: [
+          {
+            path: "search",
+            component: User_BookList,
+          },
+        ],
       },
       {
         path: "books/:id",
@@ -199,20 +205,6 @@ router.beforeEach((to, from, next) => {
     }
     return;
   }
-
-  // Logic bao ve trang dang nhap
-  // if (to.path === "/signin") {
-  //   if (tokenAdmin) {
-  //     next("/admin");
-  //   } else if (tokenUser) {
-  //     next("/");
-  //   } else {
-  //     next(); // cho phep vao trang dang nhap
-  //   }
-  //   return;
-  // }
-
-  // // Neu khong phai trang admin hay dang nhap, cho phep di tiep
   next();
 });
 

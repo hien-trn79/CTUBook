@@ -334,3 +334,34 @@
         transform: translateY(-10px);
     }
 }
+
+/* -------------- CSS Search --------------- */
+.header-search {
+    position: relative;
+}
+
+.icon-search {
+    position: absolute;
+    top: 50%;
+    left: 3.5%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+}
+
+.icon-search:hover {
+    cursor: pointer;
+}
+
+.input-search {
+    background-color: transparent;
+    padding-left: 32px;
+    border: none;
+    border-radius: 0px;
+    font-size: 1.4rem;
+    border-bottom: 1px solid var(--text-primary);
+}
+
+.input-search:focus {
+    outline: none;
+    box-shadow: none;
+}

@@ -28,7 +28,9 @@ export default {
             isScrolled: false,
             currentUser: null,
             showUserMenu: false,
-            total: 0
+            total: 0,
+            focusInput: false,
+            searchText: ''
         }
     },
 
@@ -93,6 +95,18 @@ export default {
             const idUser = userLocal.id;
             const cartList = await meService.getMyCart(idUser);
             this.total = cartList.length;
+        },
+        // Xử lý hiển thị input search
+        showInputSearch() {
+            this.focusInput = !this.focusInput;
+        },
+
+        handlerSeach() {
+            if (this.searchText.trim() !== '') {
+                this.$router.push({ path: '/books/search', query: { search: this.searchText.trim() } });
+                this.searchText = '';
+                this.focusInput = false;
+            }
         }
     },
 
@@ -116,6 +130,13 @@ export default {
     <nav class="header-navbar" :class="{ 'scrolled': isScrolled }">
         <div class="header_logo">
             <img src="/CTUBook_Logo.png" alt="" class="header_logo-img">
+            <div class="header-search ml-32">
+                <i class="fa-solid fa-magnifying-glass icon-search" @click.prevent="showInputSearch"></i>
+                <form action="#" class="form-search" @submit.prevent="handlerSeach">
+                    <input type="text" name="" id="" class="input-search form-control" placeholder="Search"
+                        v-model="searchText" v-if="focusInput">
+                </form>
+            </div>
         </div>
         <ul class="navbar_list">
             <li class="navbar_item" v-for="(navbarItem, index) in navbar" :key="index"
