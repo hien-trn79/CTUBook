@@ -55,6 +55,8 @@ export default {
                     label: 'Điện thoại'
                 }
             ],
+
+            loaiTkChoice: -1,
         }
     },
 
@@ -159,6 +161,11 @@ export default {
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString(undefined, options);
         },
+
+        filterLoaiTaiKhoanValue(event) {
+            this.loaiTkChoice = parseInt(event.target.value);
+            this.filterLoaiTaiKhoan;
+        },
     },
 
     mounted() {
@@ -174,6 +181,18 @@ export default {
             document.body.classList.toggle("no-scroll", newVal);
         }
     },
+
+    computed: {
+        async filterLoaiTaiKhoan() {
+            let status = this.loaiTkChoice;
+            let dataRequest = await userService.getAll();
+
+            if (status != -1) {
+                dataRequest = dataRequest.filter(request => request.LOAITK == status);
+            }
+            this.users = dataRequest;
+        }
+    }
 }
 
 </script>
@@ -184,6 +203,21 @@ export default {
             <i class="fa-solid fa-users"></i>
             {{ choiceSideBar }}
         </h2>
+
+        <div class="borrow-admin">
+            <div class="form-group">
+                <label for="borrow-search" class="form-label">Tìm kiếm sách</label>
+                <input type="text" class="form-control" placeholder="Search" id="borrow-search">
+            </div>
+            <div class="form-group">
+                <label for="borrow-filter" class="form-label">Loại tài khoản</label>
+                <select name="borrow-filter" id="borrow-filter" class="form-select request_filter form-control"
+                    v-model="loaiTkChoice" @change="filterLoaiTaiKhoanValue($event)">
+                    <option :value="-1">- Chọn -</option>
+                    <option :value="index" v-for="(status, index) in loaiTk" :key="index">{{ status }}</option>
+                </select>
+            </div>
+        </div>
     </header>
     <main class="bookShowList-main">
         <table class="bookList-table">
@@ -265,7 +299,7 @@ export default {
             <header class="modal-header">
                 <h3 class="section--title modal--title">Thông tin chi tiết độc giả</h3>
                 <p class="section_content donMuon--id">Mã độc giả: <span class="section_value">{{ this.userSelected._id
-                }}</span></p>
+                        }}</span></p>
                 <p class="section_content">
                     <i class="fa-regular fa-clock"></i> Ngày tạo:
                     <span class="timeStart"> {{ formatDate(this.userSelected.THOIGIANTAO) }}</span>
@@ -296,7 +330,23 @@ export default {
     </div>
 </template>
 
-<style>
+<style scoped>
+/* ------ Search ------ */
+.borrow-admin {
+    display: flex;
+    gap: 16px;
+    margin: 8px 0px;
+}
+
+.form-group {
+    display: flex;
+    gap: 10px;
+}
+
+#request-search {
+    width: 300px;
+}
+
 .bookShowList--title {
     font-size: 2.4rem;
     padding: 12px;

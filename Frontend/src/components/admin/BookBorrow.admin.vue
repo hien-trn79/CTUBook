@@ -49,7 +49,9 @@ export default {
             }, {
                 key: 'DIENTHOAI',
                 label: 'Điện thoại'
-            }]
+            }],
+            statusBorrowChoice: -1,
+            statusHinhThucChoice: -1
         }
     },
 
@@ -70,26 +72,29 @@ export default {
 
         async getDataAll() {
             this.dataList = await muonService.getAll();
-            this.dataList.forEach(async yeuCau => {
-                const user = await userService.findByUsername(yeuCau.IDDOCGIA);
-                yeuCau['EMAIL'] = user[0].EMAIL;
-                const chitietdonmuon = await chitietdonmuonService.getIDDonMuon(yeuCau._id);
-                let soLuong = 0;
-                if (chitietdonmuon.length > 0) {
-                    chitietdonmuon.forEach(item => {
-                        soLuong += item.SOLUONG;
-                    });
-                }
-                yeuCau['SOQUYEN'] = soLuong;
-                // Cap nhat hinh thuc
-                yeuCau['HINHTHUC'] = this.hinhthuc[yeuCau.HINHTHUC];
-                // dieu chinh format thoi gian
-                yeuCau['THOIGIANMUON'] = new Date(yeuCau.THOIGIANMUON).toLocaleDateString('en-GB');
-                yeuCau['THOIGIANTRA'] = new Date(yeuCau.THOIGIANTRA).toLocaleDateString('en-GB');
+            Promise.all(
+                this.dataList.map(async yeuCau => {
+                    const user = await userService.findByUsername(yeuCau.IDDOCGIA);
+                    yeuCau['EMAIL'] = user[0].EMAIL;
+                    const chitietdonmuon = await chitietdonmuonService.getIDDonMuon(yeuCau._id);
+                    let soLuong = 0;
+                    if (chitietdonmuon.length > 0) {
+                        chitietdonmuon.forEach(item => {
+                            soLuong += item.SOLUONG;
+                        });
+                    }
+                    yeuCau['SOQUYEN'] = soLuong;
+                    // Cap nhat hinh thuc
+                    yeuCau['HINHTHUC'] = this.hinhthuc[yeuCau.HINHTHUC];
+                    // dieu chinh format thoi gian
+                    yeuCau['THOIGIANMUON'] = new Date(yeuCau.THOIGIANMUON).toLocaleDateString('en-GB');
+                    yeuCau['THOIGIANTRA'] = new Date(yeuCau.THOIGIANTRA).toLocaleDateString('en-GB');
 
-                yeuCau.DOCGIA = user[0];
-                yeuCau.DOCGIA.NGAYSINH = new Date(yeuCau.DOCGIA.NGAYSINH).toLocaleDateString('en-GB');
-            })
+                    yeuCau.DOCGIA = user[0];
+                    yeuCau.DOCGIA.NGAYSINH = new Date(yeuCau.DOCGIA.NGAYSINH).toLocaleDateString('en-GB');
+                })
+            )
+            return this.dataList
         },
 
         async handlerDetail(book) {
@@ -128,6 +133,16 @@ export default {
             } else {
                 this.toast.add({ severity: 'error', summary: 'Thất bại', detail: 'Xác nhận trả sách thất bại!', life: 3000 });
             }
+        },
+
+        filterBorrowStatusValue(event) {
+            this.statusBorrowChoice = event.target.value;
+            this.filterBorrowStatus;
+        },
+
+        choiceHinhThucValue(event) {
+            this.statusHinhThucChoice = event.target.value;
+            this.filterBorrowStatus;
         }
     },
 
@@ -139,8 +154,25 @@ export default {
 
     mounted() {
         this.getDataAll()
-
     },
+
+    computed: {
+        async filterBorrowStatus() {
+            let status = this.statusBorrowChoice;
+            let hinhThuc = this.statusHinhThucChoice;
+            let dataBorrow = await this.getDataAll();
+            let filteredData = [...dataBorrow];
+            if (status != -1) {
+                filteredData = Array.from(dataBorrow).filter(borrow => borrow.TRANGTHAI == status);
+            }
+
+            if (hinhThuc != -1) {
+                filteredData = Array.from(filteredData).filter(borrow => borrow.HINHTHUC == hinhThuc);
+            }
+
+            this.dataList = filteredData;
+        }
+    }
 
 }
 </script>
@@ -153,7 +185,29 @@ export default {
                 {{ this.choiceSideBar }}
             </h2>
         </div>
-        <!-- <InputSearchAdmin /> -->
+        <div class="borrow-admin">
+            <div class="form-group">
+                <label for="borrow-search" class="form-label">Tìm kiếm sách</label>
+                <input type="text" class="form-control" placeholder="Search" id="borrow-search">
+            </div>
+            <div class="form-group">
+                <label for="borrow-filter" class="form-label">Trạng thái</label>
+                <select name="borrow-filter" id="borrow-filter" class="form-select request_filter form-control"
+                    v-model="statusBorrowChoice" @change="filterBorrowStatusValue($event)">
+                    <option :value="-1">- Chọn -</option>
+                    <option :value="index" v-for="(status, index) in trangthai" :key="index">{{ status }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="borrow-filter" class="form-label">Hình thức</label>
+                <select name="borrow-filter" id="borrow-filter" class="form-select request_filter form-control"
+                    v-model="statusHinhThucChoice" @change="choiceHinhThucValue($event)">
+                    <option :value="-1">- Chọn -</option>
+                    <option :value="index" v-for="(status, index) in hinhthuc" :key="index">{{ status }}</option>
+                </select>
+            </div>
+        </div>
     </header>
     <main class="bookShowList-main">
         <table class="bookList-table">
@@ -191,7 +245,7 @@ export default {
             <header class="modal-header">
                 <h3 class="section--title modal--title">Thông tin chi tiết đơn mượn</h3>
                 <p class="section_content donMuon--id">Mã đơn mượn: <span class="section_value">{{ ticketSelected._id
-                }}</span></p>
+                        }}</span></p>
                 <p class="section_content">
                     <i class="fa-regular fa-clock"></i>
                     <span class="timeStart">{{ ticketSelected.THOIGIANMUON }}</span> - <span class="timeFinish">{{
@@ -211,7 +265,7 @@ export default {
                                 v-if="this.ticketSelected.DOCGIA[userInfor.key] === undefined">{{ 'Chưa xác định'
                                 }}</span>
                             <span class="section_value" v-else>{{ this.ticketSelected.DOCGIA[userInfor.key]
-                            }}</span>
+                                }}</span>
                         </p>
                     </li>
                 </div>
@@ -242,6 +296,22 @@ export default {
 </template>
 
 <style scoped>
+/* ------ Search ------ */
+.borrow-admin {
+    display: flex;
+    gap: 16px;
+    margin: 8px 0px;
+}
+
+.form-group {
+    display: flex;
+    gap: 10px;
+}
+
+#request-search {
+    width: 300px;
+}
+
 .bookList_update {
     min-width: 80px;
 }
@@ -324,6 +394,13 @@ export default {
 
 .bookShowList-header {
     padding: 12px;
+}
+
+.bookShowList--title {
+    font-size: 2.4rem;
+    padding: 12px;
+    color: #1e40af;
+    font-weight: 700;
 }
 
 .bookList-header_area {

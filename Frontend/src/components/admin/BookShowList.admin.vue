@@ -214,7 +214,7 @@ export default {
                 Thêm sách mới
             </router-link>
         </div>
-        <div class="search-admin ">
+        <div class="search-admin">
             <div class="form-group">
                 <label for="book-search" class="form-label">Tìm kiếm sách</label>
                 <input type="text" class="form-control" placeholder="Search" id="book-search">
@@ -287,7 +287,7 @@ export default {
             <header class="modal-header">
                 <h3 class="section--title modal--title">Thông tin chi tiết sách</h3>
                 <p class="section_content donMuon--id">Mã sách: <span class="section_value">{{ bookSelected._id
-                        }}</span></p>
+                }}</span></p>
             </header>
 
             <main class="modal-main">
@@ -303,7 +303,7 @@ export default {
                                     v-if="this.bookSelected[bookInfor.key] === undefined">{{ 'Chưa xác định'
                                     }}</span>
                                 <span class="section_value" v-else>{{ this.bookSelected[bookInfor.key]
-                                    }}</span>
+                                }}</span>
                             </p>
                         </li>
                         <li class="infor_user--items">
@@ -367,6 +367,10 @@ export default {
 }
 
 /* ---------------Modal CSS --------------- */
+.infor_user-img {
+    border-radius: 0;
+}
+
 /* ----------Modal ShowInformation ------------------ */
 .modal {
     position: fixed;
@@ -439,5 +443,12 @@ export default {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1001;
     backdrop-filter: blur(4px);
+}
+
+.bookShowList--title {
+    font-size: 2.4rem;
+    padding: 12px;
+    color: #1e40af;
+    font-weight: 700;
 }
 </style>

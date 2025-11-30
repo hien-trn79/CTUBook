@@ -213,7 +213,7 @@ export default {
             {{ choiceSideBar }}
         </h2>
 
-        <div class="borrow-admin ">
+        <div class="borrow-admin">
             <div class="form-group">
                 <label for="request-search" class="form-label">Tìm kiếm sách</label>
                 <input type="text" class="form-control" placeholder="Search" id="request-search">
@@ -357,5 +357,12 @@ export default {
 
 .bookList_update {
     width: 100px;
+}
+
+.bookShowList--title {
+    font-size: 2.4rem;
+    padding: 12px;
+    color: #1e40af;
+    font-weight: 700;
 }
 </style>
