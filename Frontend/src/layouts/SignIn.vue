@@ -101,6 +101,7 @@ export default {
 
             try {
                 let { token, user } = await meService.getQuery({ username: this.formData.username, password: this.formData.password });
+
                 // Show success toast and redirect when progress finishes
                 if (user.LOAITK == 1) {
                     localStorage.setItem('authTokenAdmin', token);
@@ -113,7 +114,6 @@ export default {
                     this.showNotification('Đăng nhập thành công! Chuyển hướng đến trang chủ...', 'success', { duration: 2000, redirect: '/' });
                 }
             } catch (error) {
-                console.error('Lỗi đăng nhập:', error);
                 this.errors.username = 'Tài khoản không tồn tại';
                 this.errors.password = 'Mật khẩu không đúng';
                 this.showNotification('Tên đăng nhập hoặc mật khẩu không chính xác!', 'error');

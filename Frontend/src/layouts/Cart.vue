@@ -147,7 +147,7 @@ export default {
             <h2 class="empty-cart-title">Giỏ hàng trống</h2>
             <p class="empty-cart-message">Bạn chưa có sách nào trong giỏ hàng.</p>
             <p class="empty-cart-submessage">Hãy khám phá và thêm sách yêu thích vào giỏ hàng của bạn!</p>
-            <router-link to="/" class="btn-browse-books">
+            <router-link to="/books" class="btn-browse-books">
                 <i class="fa-solid fa-book"></i> Khám phá sách
             </router-link>
         </div>

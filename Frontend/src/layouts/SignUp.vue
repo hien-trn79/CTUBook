@@ -118,7 +118,7 @@ export default {
                 return;
             }
 
-            // Call API đăng ký
+            // Call API đăng ký 
             try {
                 this.formData['LOAITK'] = 0; // Mặc định là tài khoản người dùng
                 this.formData['IMAGE'] = 'https://res.cloudinary.com/dw7aqqwti/image/upload/v1761294585/UserDefault_vch7wc.jpg';

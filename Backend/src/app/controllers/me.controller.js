@@ -75,7 +75,7 @@ class MeController {
   protectAuth(req, res, next) {
     try {
       return res.json({
-        message: "Lay thong tin dang nhap thanh cong",
+        message: "Lấy thông tin người dùng thành công",
         user: req.user,
       });
     } catch (error) {
